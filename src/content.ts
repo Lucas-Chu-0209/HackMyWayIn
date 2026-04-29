@@ -63,8 +63,8 @@ export const projects = [
     title: "Decision Helper",
     description:
       "A LINE Bot cafe recommendation system that helps users decide where to eat using conversational AI and location-based filtering.",
-    tags: ["Python", "LINE Bot", "NLP", "Web Scraping"],
-    github: "",
+    tags: ["Python", "LINE Bot", "Heroku", "Google Geocoding API", "Web Scraping"],
+    github: "https://github.com/tacochan0129/helpyouchoose",
     demo: "https://youtu.be/WOkEea_jgek",
     writeup: "",
     theme: "B",
