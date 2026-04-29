@@ -57,6 +57,7 @@ export const projects = [
     demo: "",
     writeup: "",
     theme: "A",
+    image: { src: "/projects/anoni-me.png", alt: "AnoniMe project preview" },
   },
   {
     title: "Decision Helper",
@@ -67,6 +68,7 @@ export const projects = [
     demo: "https://youtu.be/WOkEea_jgek",
     writeup: "",
     theme: "B",
+    image: { src: "/projects/decision-helper.png", alt: "Decision Helper project preview" },
   },
   {
     title: "HackMyWayIn",
@@ -77,6 +79,7 @@ export const projects = [
     demo: "",
     writeup: "",
     theme: "A",
+    image: { src: "/projects/hack-my-way-in.png", alt: "HackMyWayIn project preview" },
   },
 ];
 
