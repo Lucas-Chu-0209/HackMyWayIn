@@ -26,8 +26,29 @@ Edit that file to update:
 - Skills (languages, tools)
 - Education
 - Experience
-- Projects (title, description, tags, links)
+- Projects (title, description, tags, links, image)
 - Contact links (email, GitHub, LinkedIn, etc.)
+
+## Project Images
+
+Project images live in `public/projects/` and are referenced from `src/content.ts`.
+
+### Adding an image to a project
+
+1. Add your image file to `public/projects/` (e.g. `public/projects/my-project.png`).
+   - Recommended size: **1200 × 675 px** (16:9) or **1200 × 900 px** (4:3)
+   - Recommended format: WebP, PNG, or JPG — keep files under 300 KB
+2. In `src/content.ts`, add an `image` field to the project entry:
+
+```ts
+{
+  title: "My Project",
+  // ...other fields...
+  image: { src: "/projects/my-project.png", alt: "My Project preview" },
+}
+```
+
+If no `image` field is provided (or the field is omitted), the card shows a decorative placeholder automatically.
 
 ## Avatar
 

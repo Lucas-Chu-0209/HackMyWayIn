@@ -29,13 +29,13 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
               <button
                 onClick={() => scrollToSection("contact")}
-                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
               >
                 {siteConfig.ctaPrimary}
               </button>
               <button
                 onClick={() => scrollToSection("projects")}
-                className="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:border-blue-500 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:border-blue-500 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
               >
                 {siteConfig.ctaSecondary}
               </button>

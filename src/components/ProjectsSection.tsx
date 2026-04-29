@@ -21,6 +21,7 @@ export default function ProjectsSection() {
               demo={project.demo}
               writeup={project.writeup}
               theme={project.theme as "A" | "B"}
+              image={project.image}
             />
           ))}
         </div>
