@@ -1,17 +1,17 @@
 export const siteConfig = {
   brand: "Hack My Way In",
   name: "Lucas Chu",
-  roles: ["Creative Programmer", "Developer", "Ethical Hacker"],
+  roles: ["Innovative Programmer", "Developer", "and Ethical Hacker"],
   tagline: "I build playful experiences and secure systems—one challenge at a time.",
-  ctaPrimary: "Get in touch",
+  ctaPrimary: "Contact me",
   ctaSecondary: "View projects",
 };
 
 export const bio = `I'm a creative and innovative programmer with a growing focus on cybersecurity. I've built web projects end-to-end and explored areas like backend security systems, log analysis, and web scraping. As a security beginner, I'm actively learning through hands-on projects and challenges. I'm also an outgoing, collaborative teammate—proactive, easy to work with, and always curious to learn more.`;
 
 export const skills = {
-  languages: ["Python", "C/C++", "Java", "JavaScript", "HTML/CSS"],
-  tools: ["GitHub", "React", "Tailwind CSS", "Wireshark"],
+  languages: ["Python", "C/C++", "HTML", "CSS", "Java", "JavaScript", "R"],
+  tools: ["GitHub", "React", "Tailwind CSS", "Wireshark", "Kali Linux"],
 };
 
 export const education = [
@@ -37,7 +37,7 @@ export const experience = [
     year: "2025",
     title: "Finalist",
     organization: "Qualcomm Edge AI Developer Hackathon",
-    bullets: ["AnoniMe: real-time on-device de-identification application"],
+    bullets: ["AnoniMe: a real-time on-device de-identification application"],
   },
   {
     year: "2023",
@@ -52,8 +52,8 @@ export const projects = [
     title: "AnoniMe",
     description:
       "A real-time on-device de-identification application built for the Qualcomm Edge AI Developer Hackathon. Runs entirely on-device to protect user privacy without cloud dependency.",
-    tags: ["Python", "Edge AI", "Qualcomm", "Privacy"],
-    github: "",
+    tags: ["Python", "QML", "KUWA GenAI OS", "Llama 3.1 8B @NPU", "Qualcomm"],
+    github: "https://github.com/penpenpenguin/AnoniMe",
     demo: "",
     writeup: "",
     theme: "A",
@@ -64,7 +64,7 @@ export const projects = [
       "A LINE Bot cafe recommendation system that helps users decide where to eat using conversational AI and location-based filtering.",
     tags: ["Python", "LINE Bot", "NLP", "Web Scraping"],
     github: "",
-    demo: "",
+    demo: "https://youtu.be/WOkEea_jgek",
     writeup: "",
     theme: "B",
   },
