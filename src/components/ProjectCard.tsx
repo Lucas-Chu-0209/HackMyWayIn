@@ -24,23 +24,25 @@ export default function ProjectCard({ title, description, tags, github, demo, wr
       className={`group flex flex-col md:flex-row gap-0 rounded-2xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${bg}`}
     >
       {/* Project image or placeholder */}
-      <div className="md:w-2/5 relative overflow-hidden bg-gradient-to-br from-blue-200/60 to-blue-100/60 min-h-[200px] md:min-h-[240px] flex items-center justify-center">
-        {image ? (
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, 40vw"
-          />
-        ) : (
-          <div className="transition-transform duration-500 group-hover:scale-105 flex flex-col items-center gap-2 text-blue-700/60">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-14 h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-xs font-mono">image placeholder</span>
-          </div>
-        )}
+      <div className="md:w-2/5 bg-gradient-to-br from-blue-200/60 to-blue-100/60 flex items-center justify-center p-5 md:p-7">
+        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-sm ring-1 ring-blue-200/50 flex items-center justify-center bg-inherit">
+          {image ? (
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              className="object-contain transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 40vw"
+            />
+          ) : (
+            <div className="transition-transform duration-500 group-hover:scale-105 flex flex-col items-center gap-2 text-blue-700/60">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-14 h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span className="text-xs font-mono">image placeholder</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Text content */}
