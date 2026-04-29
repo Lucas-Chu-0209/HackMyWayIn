@@ -84,7 +84,7 @@ export const projects = [
 ];
 
 export const contactLinks = [
-  { label: "Email", href: "", icon: "email" },
+  { label: "Email", href: "mailto:lucasauriant0209@gmail.com", icon: "email" },
   { label: "GitHub", href: "https://github.com/Lucas-Chu-0209", icon: "github" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/lucas-chu-931a45363/", icon: "linkedin" },
   { label: "Instagram", href: "https://www.instagram.com/lucas._.hmwi?igsh=MXYyNWR6a2Y1azUxbQ%3D%3D&utm_source=qr", icon: "instagram" },
