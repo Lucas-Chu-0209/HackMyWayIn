@@ -82,7 +82,7 @@ export default function ProjectCard({ title, description, tags, github, demo, wr
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
-              Demo
+              Demo Sample
             </a>
           )}
           {writeup && (
