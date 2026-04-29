@@ -6,7 +6,6 @@ interface ProjectCardProps {
   demo: string;
   writeup: string;
   theme: "A" | "B";
-  index: number;
 }
 
 export default function ProjectCard({ title, description, tags, github, demo, writeup, theme }: ProjectCardProps) {

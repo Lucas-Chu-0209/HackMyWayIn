@@ -42,9 +42,9 @@ function getIcon(icon: string) {
 }
 
 export default function SocialLinkButton({ label, href, icon }: SocialLinkButtonProps) {
-  const isDisabled = !href || href === "mailto:";
+  const isDisabled = !href || href === "mailto:" || href === "";
 
-  if (isDisabled && icon !== "email") {
+  if (isDisabled) {
     return (
       <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-400 cursor-not-allowed text-sm font-medium">
         {getIcon(icon)}

@@ -9,7 +9,7 @@ export default function TimelineItem({ period, title, organization, bullets }: T
   return (
     <div className="relative pl-8 pb-8 last:pb-0">
       {/* Vertical line */}
-      <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-200 last:hidden" />
+      <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-200" />
       {/* Dot */}
       <div className="absolute left-[-5px] top-1 w-3 h-3 rounded-full bg-emerald-600 border-2 border-white ring-2 ring-emerald-200" />
       <p className="text-xs font-mono text-emerald-600 mb-1">{period}</p>
