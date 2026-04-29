@@ -14,13 +14,13 @@ export default function HeroSection() {
         <div className="flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16">
           {/* Text content */}
           <div className="flex-1 text-center md:text-left">
-            <p className="inline-block text-sm font-mono text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 mb-4">
+            <p className="inline-block text-sm font-mono text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 mb-4">
               {siteConfig.brand}
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4">
               I&apos;m {siteConfig.name}.
             </h1>
-            <p className="text-xl sm:text-2xl text-emerald-700 font-semibold mb-4">
+            <p className="text-xl sm:text-2xl text-blue-700 font-semibold mb-4">
               {siteConfig.roles.join(", ")}.
             </p>
             <p className="text-base text-gray-500 max-w-lg mb-8 mx-auto md:mx-0">
@@ -29,13 +29,13 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
               <button
                 onClick={() => scrollToSection("contact")}
-                className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {siteConfig.ctaPrimary}
               </button>
               <button
                 onClick={() => scrollToSection("projects")}
-                className="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:border-emerald-500 hover:text-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:border-blue-500 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {siteConfig.ctaSecondary}
               </button>
