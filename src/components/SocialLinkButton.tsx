@@ -58,7 +58,7 @@ export default function SocialLinkButton({ label, href, icon }: SocialLinkButton
       href={href}
       target={icon !== "email" ? "_blank" : undefined}
       rel={icon !== "email" ? "noopener noreferrer" : undefined}
-      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 transition-all text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-50 transition-all text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
       {getIcon(icon)}
       {label}

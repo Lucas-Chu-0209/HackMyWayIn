@@ -61,7 +61,7 @@ export default function Navbar() {
             {/* Brand */}
             <button
               onClick={() => handleNavClick("#home")}
-              className="font-bold text-lg text-gray-900 hover:text-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
+              className="font-bold text-lg text-gray-900 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
             >
               {siteConfig.brand}
             </button>
@@ -72,7 +72,7 @@ export default function Navbar() {
                 <li key={link.href}>
                   <button
                     onClick={() => handleNavClick(link.href)}
-                    className="text-sm font-medium text-gray-600 hover:text-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded px-1 py-0.5"
+                    className="text-sm font-medium text-gray-600 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1 py-0.5"
                   >
                     {link.label}
                   </button>
@@ -85,7 +85,7 @@ export default function Navbar() {
               aria-label="Open navigation menu"
               aria-expanded={drawerOpen}
               onClick={() => setDrawerOpen(true)}
-              className="md:hidden p-2 text-gray-700 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
+              className="md:hidden p-2 text-gray-700 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -118,7 +118,7 @@ export default function Navbar() {
           <button
             aria-label="Close navigation menu"
             onClick={() => setDrawerOpen(false)}
-            className="p-2 text-gray-600 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded"
+            className="p-2 text-gray-600 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -131,7 +131,7 @@ export default function Navbar() {
               <li key={link.href}>
                 <button
                   onClick={() => handleNavClick(link.href)}
-                  className="w-full text-left px-6 py-3 text-base font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors focus:outline-none focus:bg-emerald-50"
+                  className="w-full text-left px-6 py-3 text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:bg-blue-50"
                 >
                   {link.label}
                 </button>
