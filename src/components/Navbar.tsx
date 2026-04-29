@@ -15,11 +15,12 @@ export default function Navbar() {
   const [visible, setVisible] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const lastScrollY = useRef(0);
+  const SCROLL_THRESHOLD = 80;
 
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-      if (currentY <= 80) {
+      if (currentY <= SCROLL_THRESHOLD) {
         setVisible(true);
       } else if (currentY < lastScrollY.current) {
         setVisible(true);

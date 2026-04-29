@@ -81,7 +81,7 @@ export const projects = [
 ];
 
 export const contactLinks = [
-  { label: "Email", href: "mailto:", icon: "email" },
+  { label: "Email", href: "", icon: "email" },
   { label: "GitHub", href: "https://github.com/Lucas-Chu-0209", icon: "github" },
   { label: "LinkedIn", href: "", icon: "linkedin" },
   { label: "Instagram", href: "", icon: "instagram" },

@@ -11,7 +11,7 @@ export default function ProjectsSection() {
           subtitle="Selected work across security, web, and creative coding."
         />
         <div className="space-y-8">
-          {projects.map((project, i) => (
+          {projects.map((project) => (
             <ProjectCard
               key={project.title}
               title={project.title}
