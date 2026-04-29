@@ -18,14 +18,19 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ title, description, tags, github, demo, writeup, theme, image }: ProjectCardProps) {
   const bg = theme === "A" ? "bg-[#F0F4F7]" : "bg-[#F5F5F0]";
+  const mediaBg = theme === "A"
+  ? "bg-gradient-to-br from-sky-200/60 to-blue-100/60"
+  : "bg-gradient-to-br from-amber-100/60 to-orange-100/50";
+  // : "bg-gradient-to-br from-emerald-100/60 to-teal-100/50"; 淺綠色
+  // : "bg-gradient-to-br from-blue-200/50 to-indigo-100/60"; 偏靛藍一點點（仍然很淡）
 
   return (
     <div
       className={`group flex flex-col md:flex-row gap-0 rounded-2xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${bg}`}
     >
       {/* Project image or placeholder */}
-      <div className="md:w-2/5 bg-gradient-to-br from-blue-200/60 to-blue-100/60 flex items-center justify-center p-5 md:p-7">
-        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-sm ring-1 ring-blue-200/50 flex items-center justify-center bg-inherit">
+      <div className={`md:w-2/5 ${mediaBg} flex items-center justify-center p-5 md:p-7`}>
+        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-sm ring-1 ring-blue-200/50 flex items-center justify-center bg-white/50">
           {image ? (
             <Image
               src={image.src}
