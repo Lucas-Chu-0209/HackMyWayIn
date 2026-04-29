@@ -33,11 +33,30 @@ Edit that file to update:
 
 Project images live in `public/projects/` and are referenced from `src/content.ts`.
 
+### Supported formats
+
+PNG, JPG, WebP, and AVIF are all supported (handled natively by Next.js `next/image`). WebP is recommended for the best file-size-to-quality ratio; PNG is ideal when you need a transparent background.
+
+### Card image presentation
+
+The left panel of each project card uses a **4:3 aspect-ratio frame** with padding. Images are displayed with `object-contain`, so they are always shown in full without cropping. The frame's background colour (blue gradient) remains visible around the image on all sides, giving a clean, padded look.
+
+- **Landscape / desktop demo images** — the image fills the width of the frame and gains top/bottom margins.
+- **Portrait / mobile demo images** — the image fills the height of the frame and gains left/right margins.
+- Both orientations display correctly on desktop and mobile screens.
+
+### Recommended image dimensions
+
+| Demo type | Ratio | Recommended resolution | Notes |
+|-----------|-------|------------------------|-------|
+| Desktop app / website | 16:10 or 4:3 | **1600 × 1000 px** (16:10) or **1200 × 900 px** (4:3) | Common browser-window screenshot ratios |
+| Mobile app | 9:16 or 3:4 | **1080 × 1920 px** (9:16) or **1200 × 1600 px** (3:4) | Standard smartphone screenshot size |
+
+Keep files **under 300 KB** — use WebP or optimise with tools like [Squoosh](https://squoosh.app/).
+
 ### Adding an image to a project
 
 1. Add your image file to `public/projects/` (e.g. `public/projects/my-project.png`).
-   - Recommended size: **1200 × 675 px** (16:9) or **1200 × 900 px** (4:3)
-   - Recommended format: WebP, PNG, or JPG — keep files under 300 KB
 2. In `src/content.ts`, add an `image` field to the project entry:
 
 ```ts
