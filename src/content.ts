@@ -11,7 +11,7 @@ export const bio = `I'm a creative and innovative programmer with a growing focu
 
 export const skills = {
   languages: ["Python", "C/C++", "HTML", "CSS", "Java", "JavaScript", "R"],
-  tools: ["GitHub", "React", "Tailwind CSS", "Wireshark", "Kali Linux"],
+  tools: ["GitHub", "React", "Tailwind CSS", "Wireshark", "VMWare", "UTM", "Kali Linux"],
 };
 
 export const education = [
