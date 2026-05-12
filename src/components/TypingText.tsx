@@ -40,7 +40,7 @@ export default function TypingText({
   }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion || sentences.length === 0) return;
+    if (sentences.length === 0) return;
 
     const currentSentence = sentences[sentenceIndex] ?? "";
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -59,18 +59,20 @@ export default function TypingText({
     }
 
     return () => clearTimeout(timeoutId);
-  }, [charIndex, deletingSpeed, isDeleting, pauseMs, prefersReducedMotion, sentenceIndex, sentences, typingSpeed]);
+  }, [charIndex, deletingSpeed, isDeleting, pauseMs, sentenceIndex, sentences, typingSpeed]);
 
   const text = useMemo(() => {
     if (sentences.length === 0) return "";
-    if (prefersReducedMotion) return sentences[0];
     return (sentences[sentenceIndex] ?? "").slice(0, charIndex);
-  }, [charIndex, prefersReducedMotion, sentenceIndex, sentences]);
+  }, [charIndex, sentenceIndex, sentences]);
 
   return (
     <span className={className}>
       {text}
-      <span aria-hidden className={`ml-1 inline-block ${prefersReducedMotion ? "" : "animate-pulse"}`}>
+      <span
+        aria-hidden
+        className={`ml-1 inline-block ${prefersReducedMotion ? "" : "animate-pulse"}`}
+      >
         {cursor}
       </span>
     </span>
