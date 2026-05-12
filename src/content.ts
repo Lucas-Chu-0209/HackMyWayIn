@@ -1,7 +1,7 @@
 export const siteConfig = {
   brand: "Hack My Way In",
   name: "Lucas Chu",
-  roles: ["Innovative Programmer", "Developer", "and Ethical Hacker"],
+  roles: ["Innovative Programmer", "Developer", "and Ethical Hacker."],
   tagline: "I build playful experiences and secure systems—one challenge at a time.",
   ctaPrimary: "Contact me",
   ctaSecondary: "View projects",

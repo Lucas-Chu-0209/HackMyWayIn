@@ -11,8 +11,8 @@ function scrollToSection(id: string) {
 export default function HeroSection() {
   const typingMessages = [
     siteConfig.roles.join(", "),
-    "Keep exploring and learning",
-    "Feel free to connect",
+    "Keep exploring and learning!",
+    "Feel free to connect!",
   ];
   const TYPING_LINE_MIN_HEIGHT = "clamp(64px, 6vw, 72px)";
 
@@ -22,7 +22,7 @@ export default function HeroSection() {
         <svg className="absolute inset-0 h-full w-full opacity-35" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="hero-grid-pattern" width="44" height="44" patternUnits="userSpaceOnUse">
-              <path d="M44 0H0V44" fill="none" stroke="rgba(34, 211, 238, 0.28)" strokeWidth="1" />
+              <path d="M44 0H0V44" fill="none" stroke="rgba(120, 167, 234, 0.28)" strokeWidth="1" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#hero-grid-pattern)" />
@@ -36,13 +36,13 @@ export default function HeroSection() {
         <div className="flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16">
           {/* Text content */}
           <div className="flex-1 text-center md:text-left">
-            <p className="inline-block text-sm font-mono text-cyan-200 bg-slate-900/75 border border-cyan-400/40 rounded-full px-3 py-1 mb-4">
+            <p className="inline-block text-sm font-mono text-sky-300 bg-slate-900/75 border border-cyan-400/40 rounded-full px-3 py-1 mb-4">
               {siteConfig.brand}
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-100 leading-tight mb-4">
               I&apos;m {siteConfig.name}.
             </h1>
-            <p className="text-xl sm:text-2xl text-cyan-300 font-semibold mb-4" style={{ minHeight: TYPING_LINE_MIN_HEIGHT }}>
+            <p className="text-xl sm:text-2xl text-sky-200 font-semibold mb-4" style={{ minHeight: TYPING_LINE_MIN_HEIGHT }}>
               <TypingText sentences={typingMessages} />
             </p>
             <p className="text-base text-slate-300 max-w-lg mb-8 mx-auto md:mx-0">
