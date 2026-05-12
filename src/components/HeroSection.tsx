@@ -1,6 +1,6 @@
 "use client";
+import Image from "next/image";
 import { siteConfig } from "@/content";
-import Avatar from "./Avatar";
 import TypingText from "./TypingText";
 
 function scrollToSection(id: string) {
@@ -33,40 +33,39 @@ export default function HeroSection() {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-        <div className="flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16">
-          {/* Text content */}
-          <div className="flex-1 text-center md:text-left">
-            <p className="inline-block text-sm font-mono text-sky-300 bg-slate-900/75 border border-cyan-400/40 rounded-full px-3 py-1 mb-4">
-              {siteConfig.brand}
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-100 leading-tight mb-4">
-              I&apos;m {siteConfig.name}.
-            </h1>
-            <p className="text-xl sm:text-2xl text-sky-200 font-semibold mb-4" style={{ minHeight: TYPING_LINE_MIN_HEIGHT }}>
-              <TypingText sentences={typingMessages} />
-            </p>
-            <p className="text-base text-slate-300 max-w-lg mb-8 mx-auto md:mx-0">
-              {siteConfig.tagline}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-              <button
-                onClick={() => scrollToSection("contact")}
-                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
-              >
-                {siteConfig.ctaPrimary}
-              </button>
-              <button
-                onClick={() => scrollToSection("projects")}
-                className="px-6 py-3 rounded-xl border-2 border-slate-500 text-slate-100 font-semibold hover:border-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
-              >
-                {siteConfig.ctaSecondary}
-              </button>
-            </div>
+        <div className="flex flex-col items-center text-center gap-0">
+          <div className="inline-flex mb-4 bg-slate-900/75 border border-cyan-400/40 rounded-2xl px-4 py-2">
+            <Image
+              src="/Hack_My_Way_In.png"
+              alt="Hack My Way In logo"
+              width={192}
+              height={48}
+              className="h-12 w-auto"
+              priority
+            />
           </div>
-
-          {/* Avatar */}
-          <div className="flex-shrink-0">
-            <Avatar />
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-100 leading-tight mb-4">
+            I&apos;m {siteConfig.name}.
+          </h1>
+          <p className="text-xl sm:text-2xl text-sky-200 font-semibold mb-4" style={{ minHeight: TYPING_LINE_MIN_HEIGHT }}>
+            <TypingText sentences={typingMessages} />
+          </p>
+          <p className="text-base text-slate-300 max-w-lg mb-8">
+            {siteConfig.tagline}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => scrollToSection("contact")}
+              className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+            >
+              {siteConfig.ctaPrimary}
+            </button>
+            <button
+              onClick={() => scrollToSection("projects")}
+              className="px-6 py-3 rounded-xl border-2 border-slate-500 text-slate-100 font-semibold hover:border-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+            >
+              {siteConfig.ctaSecondary}
+            </button>
           </div>
         </div>
       </div>
