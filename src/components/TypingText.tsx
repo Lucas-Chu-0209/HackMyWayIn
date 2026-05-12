@@ -43,22 +43,22 @@ export default function TypingText({
     if (prefersReducedMotion || sentences.length === 0) return;
 
     const currentSentence = sentences[sentenceIndex] ?? "";
-    let timeoutId = 0;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && charIndex < currentSentence.length) {
-      timeoutId = window.setTimeout(() => setCharIndex((value) => value + 1), typingSpeed);
+      timeoutId = setTimeout(() => setCharIndex((value) => value + 1), typingSpeed);
     } else if (!isDeleting && charIndex === currentSentence.length) {
-      timeoutId = window.setTimeout(() => setIsDeleting(true), pauseMs);
+      timeoutId = setTimeout(() => setIsDeleting(true), pauseMs);
     } else if (isDeleting && charIndex > 0) {
-      timeoutId = window.setTimeout(() => setCharIndex((value) => value - 1), deletingSpeed);
+      timeoutId = setTimeout(() => setCharIndex((value) => value - 1), deletingSpeed);
     } else {
-      timeoutId = window.setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setIsDeleting(false);
         setSentenceIndex((value) => (value + 1) % sentences.length);
       }, DEFAULT_SWITCH_DELAY_MS);
     }
 
-    return () => window.clearTimeout(timeoutId);
+    return () => clearTimeout(timeoutId);
   }, [charIndex, deletingSpeed, isDeleting, pauseMs, prefersReducedMotion, sentenceIndex, sentences, typingSpeed]);
 
   const text = useMemo(() => {

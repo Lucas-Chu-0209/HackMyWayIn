@@ -9,11 +9,12 @@ function scrollToSection(id: string) {
 }
 
 export default function HeroSection() {
-  const roleSentences = [
+  const typingMessages = [
     siteConfig.roles.join(", "),
     "Keep exploring and learning",
     "Feel free to connect",
   ];
+  const TYPING_LINE_MIN_HEIGHT = "clamp(64px, 6vw, 72px)";
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-[#050816] pt-16">
@@ -41,8 +42,8 @@ export default function HeroSection() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-100 leading-tight mb-4">
               I&apos;m {siteConfig.name}.
             </h1>
-            <p className="text-xl sm:text-2xl text-cyan-300 font-semibold mb-4 min-h-[64px] md:min-h-[72px]">
-              <TypingText sentences={roleSentences} />
+            <p className="text-xl sm:text-2xl text-cyan-300 font-semibold mb-4" style={{ minHeight: TYPING_LINE_MIN_HEIGHT }}>
+              <TypingText sentences={typingMessages} />
             </p>
             <p className="text-base text-slate-300 max-w-lg mb-8 mx-auto md:mx-0">
               {siteConfig.tagline}
