@@ -4,7 +4,7 @@ import ProjectCard from "./ProjectCard";
 
 export default function ProjectsSection() {
   return (
-    <section id="projects" className="py-24 bg-[#F7F7F5]">
+    <section id="projects" className="py-24 bg-slate-900 transition-colors duration-200 hover:bg-[#0a1020]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="Projects"

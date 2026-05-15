@@ -10,11 +10,13 @@ export default function Home() {
       <Navbar />
       <main>
         <HeroSection />
-        <AboutSection />
-        <ProjectsSection />
-        <ContactSection />
+        <div className="bg-black">
+          <AboutSection />
+          <ProjectsSection />
+          <ContactSection />
+        </div>
       </main>
-      <footer className="py-6 text-center text-sm text-gray-400 bg-white border-t border-gray-100">
+      <footer className="py-6 text-center text-sm text-gray-500 bg-black border-t border-gray-800">
         © {new Date().getFullYear()} Lucas Chu · Hack My Way In
       </footer>
     </>
