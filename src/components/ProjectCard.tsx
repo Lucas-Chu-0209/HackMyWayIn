@@ -19,10 +19,10 @@ interface ProjectCardProps {
 export default function ProjectCard({ title, description, tags, github, demo, writeup, theme, image }: ProjectCardProps) {
   const bg = theme === "A"
     ? "bg-white dark:bg-zinc-800"
-    : "bg-slate-50 dark:bg-zinc-800";
+    : "bg-zinc-50 dark:bg-zinc-800";
   const mediaBg = theme === "A"
-    ? "bg-gradient-to-br from-zinc-100 to-slate-200 dark:from-zinc-700/60 dark:to-zinc-800/60"
-    : "bg-gradient-to-br from-slate-200 to-zinc-100 dark:from-zinc-800/60 dark:to-zinc-700/60";
+    ? "bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-700/60 dark:to-zinc-800/60"
+    : "bg-gradient-to-br from-zinc-200 to-zinc-100 dark:from-zinc-800/60 dark:to-zinc-700/60";
 
   return (
     <div
