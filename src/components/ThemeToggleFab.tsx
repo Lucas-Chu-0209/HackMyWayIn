@@ -5,14 +5,14 @@ import { useTheme } from "next-themes";
 
 export default function ThemeToggleFab() {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(
+  const isClient = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false
   );
 
   // Render only after client mount to avoid hydration mismatches.
-  if (!mounted) return null;
+  if (!isClient) return null;
 
   const activeTheme = resolvedTheme ?? theme ?? "dark";
 
