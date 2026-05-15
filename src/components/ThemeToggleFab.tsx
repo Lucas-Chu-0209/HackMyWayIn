@@ -31,7 +31,7 @@ export default function ThemeToggleFab() {
       {open && (
         <button
           type="button"
-          onClick={() => setTheme(isDark ? "light" : "dark")}
+          onClick={() => { setTheme(isDark ? "light" : "dark"); setOpen(false); }}
           className="pointer-events-auto absolute bottom-[5.25rem] right-6 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800 text-zinc-100 shadow-lg transition-all duration-200 hover:scale-110 hover:bg-zinc-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-100"
           aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
