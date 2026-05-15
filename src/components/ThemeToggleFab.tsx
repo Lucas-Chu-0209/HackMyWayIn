@@ -1,25 +1,15 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 
 export default function ThemeToggleFab() {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  const isClient = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
-
-  // Render only after client mount to avoid hydration mismatches.
-  if (!isClient) return null;
-
   const activeTheme = resolvedTheme ?? theme ?? "dark";
 
   return (
     <button
       onClick={() => setTheme(activeTheme === "dark" ? "light" : "dark")}
-      className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-zinc-900 text-white shadow-lg hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600 cursor-pointer"
+      className="fixed bottom-6 right-6 z-[60] cursor-pointer rounded-full bg-zinc-900 p-3 text-white shadow-lg transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
       aria-label="Toggle dark/light mode"
       title={activeTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
     >
