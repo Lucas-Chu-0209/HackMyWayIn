@@ -6,7 +6,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="rounded-3xl border border-zinc-200 bg-white px-6 py-14 shadow-sm transition-[background-color,border-color,box-shadow] duration-200 hover:bg-zinc-50 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:shadow-2xl dark:hover:shadow-black/20 sm:px-8 lg:px-10"
+      className="rounded-3xl border border-zinc-200 bg-white px-6 py-14 shadow-sm transition-[border-color,box-shadow] duration-200 hover:bg-zinc-50 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:shadow-2xl dark:hover:shadow-black/20 sm:px-8 lg:px-10"
     >
       <div>
         <SectionHeader
