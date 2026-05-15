@@ -10,13 +10,13 @@ export default function Home() {
       <Navbar />
       <main>
         <HeroSection />
-        <div className="bg-black">
+        <div className="bg-white dark:bg-zinc-950">
           <AboutSection />
           <ProjectsSection />
           <ContactSection />
         </div>
       </main>
-      <footer className="py-6 text-center text-sm text-gray-500 bg-black border-t border-gray-800">
+      <footer className="py-6 text-center text-sm text-zinc-500 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
         © {new Date().getFullYear()} Lucas Chu · Hack My Way In
       </footer>
     </>
