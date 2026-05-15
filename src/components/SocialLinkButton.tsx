@@ -46,7 +46,7 @@ export default function SocialLinkButton({ label, href, icon }: SocialLinkButton
 
   if (isDisabled) {
     return (
-      <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-700 text-gray-500 cursor-not-allowed text-sm font-medium">
+      <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 cursor-not-allowed text-sm font-medium">
         {getIcon(icon)}
         {label}
       </span>
@@ -58,7 +58,7 @@ export default function SocialLinkButton({ label, href, icon }: SocialLinkButton
       href={href}
       target={icon !== "email" ? "_blank" : undefined}
       rel={icon !== "email" ? "noopener noreferrer" : undefined}
-      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-600 text-gray-300 hover:border-blue-400 hover:text-blue-300 hover:bg-blue-900/20 transition-all text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:border-zinc-900 hover:text-zinc-900 hover:bg-zinc-100 dark:hover:border-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-transparent transition-all text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
     >
       {getIcon(icon)}
       {label}
