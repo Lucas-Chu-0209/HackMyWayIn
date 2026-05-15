@@ -5,7 +5,7 @@ import TimelineItem from "./TimelineItem";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-24 bg-gray-900 transition-colors duration-200 hover:bg-[#0f1724]">
+    <section id="about" className="py-24 bg-gray-900 transition-colors duration-200 hover:bg-slate-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="About"
