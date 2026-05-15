@@ -17,7 +17,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ title, description, tags, github, demo, writeup, theme, image }: ProjectCardProps) {
-  const bg = theme === "A" ? "bg-[#1e2533]" : "bg-[#1a2030]";
+  const bg = theme === "A" ? "bg-gray-800" : "bg-slate-800";
   const mediaBg = theme === "A"
   ? "bg-gradient-to-br from-sky-900/60 to-blue-800/60"
   : "bg-gradient-to-br from-amber-900/60 to-orange-800/50";
