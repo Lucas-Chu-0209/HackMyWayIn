@@ -5,7 +5,7 @@ import TimelineItem from "./TimelineItem";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-24 bg-white">
+    <section id="about" className="py-24 bg-gray-900 transition-colors duration-200 hover:bg-slate-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="About"
@@ -16,7 +16,7 @@ export default function AboutSection() {
           {/* Bio */}
           <div className="grid md:grid-cols-[120px_1fr] gap-4 md:gap-8">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-400">Bio</h3>
-            <p className="text-gray-700 leading-relaxed">{bio}</p>
+            <p className="text-gray-300 leading-relaxed">{bio}</p>
           </div>
 
           {/* Skills */}
@@ -24,7 +24,7 @@ export default function AboutSection() {
             <h3 className="text-sm font-semibold uppercase tracking-widest text-gray-400">Skills</h3>
             <div className="space-y-6">
               <div>
-                <p className="text-sm font-semibold text-gray-600 mb-3">Programming Languages</p>
+                <p className="text-sm font-semibold text-gray-400 mb-3">Programming Languages</p>
                 <div className="flex flex-wrap gap-2">
                   {skills.languages.map((s) => (
                     <SkillChip key={s} label={s} />
@@ -32,7 +32,7 @@ export default function AboutSection() {
                 </div>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-600 mb-3">Tools &amp; Platforms</p>
+                <p className="text-sm font-semibold text-gray-400 mb-3">Tools &amp; Platforms</p>
                 <div className="flex flex-wrap gap-2">
                   {skills.tools.map((s) => (
                     <SkillChip key={s} label={s} />
