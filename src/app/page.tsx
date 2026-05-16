@@ -13,9 +13,9 @@ export default function Home() {
         <HeroSection />
         <div className="bg-zinc-100 dark:bg-zinc-950">
           {/* Desktop: two-column grid with sticky sidebar */}
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
-            {/* Main content — centered within its grid column */}
-            <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
+          <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
+            {/* Main content — wider + no centering inside the column */}
+            <div className="min-w-0 flex w-full max-w-4xl flex-col gap-8">
               <AboutSection />
               <ProjectsSection />
               <ContactSection />
@@ -24,7 +24,7 @@ export default function Home() {
             {/* Desktop sidebar — sticky, height-constrained, internally scrollable */}
             <aside aria-label="Sidebar" className="hidden lg:block">
               <div className="sticky top-6">
-                <div className="max-h-[calc(100vh-3rem)] overflow-y-auto">
+                <div className="pr-1">
                   <BlogSidebar />
                 </div>
               </div>
@@ -33,7 +33,7 @@ export default function Home() {
 
           {/* Mobile sidebar — below main content, above footer */}
           <div className="border-t border-zinc-200 px-4 pb-12 pt-8 dark:border-zinc-800 sm:px-6 lg:hidden">
-            <div className="mx-auto max-w-sm">
+            <div className="w-full">
               <BlogSidebar />
             </div>
           </div>
