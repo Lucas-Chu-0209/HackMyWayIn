@@ -30,7 +30,7 @@ export default function ProjectCard({ title, description, tags, github, demo, wr
     >
       {/* Project image or placeholder */}
       <div className={`md:w-2/5 ${mediaBg} flex items-center justify-center p-5 md:p-7`}>
-        <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50 flex items-center justify-center bg-zinc-100 dark:bg-zinc-700/50">
+        <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden ring-0 ring-zinc-200 dark:ring-white/10 flex items-center justify-center bg-transparent">
           {image ? (
             <Image
               src={image.src}
@@ -80,7 +80,7 @@ export default function ProjectCard({ title, description, tags, github, demo, wr
               href={demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-blue-700 text-white hover:bg-zinc-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-blue-700 text-white hover:bg-blue-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
             >
               Demo Sample
             </a>

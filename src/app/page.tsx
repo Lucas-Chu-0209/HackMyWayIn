@@ -23,7 +23,7 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <footer className="border-t border-zinc-800 bg-zinc-950 py-6 text-center text-sm text-zinc-500">
+      <footer className="border-t border-zinc-800 bg-zinc-950 py-12 text-center text-sm text-zinc-500">
         © 2026 Lucas Chu · Hack My Way In
       </footer>
     </>

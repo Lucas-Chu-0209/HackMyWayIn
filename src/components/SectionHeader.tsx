@@ -10,7 +10,7 @@ export default function SectionHeader({ title, subtitle }: SectionHeaderProps) {
       {subtitle && (
         <p className="mt-2 text-zinc-500 dark:text-zinc-400 text-base">{subtitle}</p>
       )}
-      <div className="mt-3 w-12 h-1 bg-zinc-400 dark:bg-zinc-600 rounded-full" />
+      <div className="mt-3 w-12 h-1 bg-blue-600 dark:bg-cyan-600 rounded-full" />
     </div>
   );
 }
