@@ -12,6 +12,9 @@ body {
   /* Default dark appearance before the theme class is applied (prevents flash). */
   background-color: #09090b;
   color: #e4e4e7;
+  
+  /* add: smooth theme transition */
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 /* Dark mode: next-themes adds class="dark" to <html> */
@@ -24,4 +27,16 @@ html.dark body {
 html:not(.dark) body {
   background-color: #f4f4f5; /* zinc-100 */
   color: #18181b;            /* zinc-900 */
+}
+
+/* Smooth theme switching for common UI surfaces */
+body,
+header,
+footer,
+section,
+main,
+nav,
+aside,
+div {
+  transition: background-color 600ms ease, color 600ms ease, border-color 600ms ease;
 }
