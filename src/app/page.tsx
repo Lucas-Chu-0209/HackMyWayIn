@@ -18,7 +18,7 @@ export default function Home() {
               <ContactSection />
             </div>
             <aside aria-hidden="true" className="hidden lg:block">
-              <div className="sticky top-24 min-h-[1px]" />
+              <div className="sticky top-24 min-h-px" />
             </aside>
           </div>
         </div>

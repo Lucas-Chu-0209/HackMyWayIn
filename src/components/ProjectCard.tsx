@@ -30,7 +30,7 @@ export default function ProjectCard({ title, description, tags, github, demo, wr
     >
       {/* Project image or placeholder */}
       <div className={`md:w-2/5 ${mediaBg} flex items-center justify-center p-5 md:p-7`}>
-        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50 flex items-center justify-center bg-zinc-100 dark:bg-zinc-700/50">
+        <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700/50 flex items-center justify-center bg-zinc-100 dark:bg-zinc-700/50">
           {image ? (
             <Image
               src={image.src}
