@@ -18,8 +18,8 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ title, description, tags, github, demo, writeup, theme, image }: ProjectCardProps) {
   const bg = theme === "A"
-    ? "bg-white dark:bg-zinc-800"
-    : "bg-zinc-50 dark:bg-zinc-800";
+    ? "bg-white dark:bg-zinc-900"
+    : "bg-zinc-50 dark:bg-zinc-900";
   const mediaBg = theme === "A"
     ? "bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-700/60 dark:to-zinc-800/60"
     : "bg-gradient-to-br from-zinc-200 to-zinc-100 dark:from-zinc-800/60 dark:to-zinc-700/60";
@@ -80,7 +80,7 @@ export default function ProjectCard({ title, description, tags, github, demo, wr
               href={demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-zinc-700 text-white hover:bg-zinc-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-blue-700 text-white hover:bg-zinc-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
             >
               Demo Sample
             </a>
