@@ -60,7 +60,7 @@ export default function BlogSidebar() {
         {/* Articles + Hacker Space */}
         <div className="mt-4 flex flex-col gap-1.5">
           <a
-            href="#"
+            href="/articles"
             className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
           >
             Articles
