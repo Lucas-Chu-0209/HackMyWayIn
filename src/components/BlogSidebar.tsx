@@ -64,6 +64,7 @@ export default function BlogSidebar() {
               src="/images/4C8A2320.jpg"
               alt="Lucas Chu avatar"
               fill
+              sizes="160px"
               className="object-cover"
               priority
             />
