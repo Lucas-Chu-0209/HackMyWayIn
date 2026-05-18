@@ -43,14 +43,16 @@ export default function PageHeader({ title }: PageHeaderProps) {
       }}
     >
       {/* ─── Overlay ──────────────────────────────────────────────────────────
-          Dark mode  : rgba(0,0,0,0.35) — moderate darkening keeps contrast.
-          Light mode : rgba(0,0,0,0.20) — slightly lighter so the page doesn't
-                       feel too heavy in a bright UI; gradient already reads.
+          Light mode : bg-black/20 — slightly lighter; gradient already reads
+                       well in a bright UI, keeps the look consistent without
+                       being too heavy.
+          Dark mode  : bg-black/35 — moderate darkening for extra contrast.
 
-          To adjust overlay strength, change the opacity values in these two
-          classes. Tailwind arbitrary values work too: `bg-black/[0.35]`.
+          To adjust overlay strength, change the opacity values:
+            light  →  `bg-black/20`  (increase for more darkening in light mode)
+            dark   →  `dark:bg-black/35`  (increase for more darkening in dark mode)
       ──────────────────────────────────────────────────────────────────────── */}
-      <div className="absolute inset-0 bg-black/35 dark:bg-black/35" />
+      <div className="absolute inset-0 bg-black/20 dark:bg-black/35" />
 
       {/* ─── Centered title ──────────────────────────────────────────────── */}
       <div className="relative z-10 flex h-full items-center justify-center px-4">
