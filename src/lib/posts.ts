@@ -92,11 +92,7 @@ function extractHeadings(source: string): TocItem[] {
       text: sanitizeHeadingText(match[2]),
     }))
     .filter((item) => item.level >= TOC_MIN_HEADING_LEVEL && item.level <= TOC_MAX_HEADING_LEVEL)
-    .filter((item) => item.text.length > 0)
-    .map((item) => ({
-      level: item.level,
-      text: item.text,
-    }));
+    .filter((item) => item.text.length > 0);
 }
 
 export async function getAllPosts(): Promise<PostSummary[]> {
