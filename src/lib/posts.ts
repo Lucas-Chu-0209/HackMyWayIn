@@ -41,8 +41,14 @@ function assertFrontmatter(frontmatter: PostFrontmatter, slug: string) {
   if (!DATE_PATTERN.test(frontmatter.date)) {
     throw new Error(`Invalid frontmatter.date in post: ${slug}. Expected YYYY-MM-DD`);
   }
-  const parsedDate = new Date(frontmatter.date);
-  if (Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== frontmatter.date) {
+  const [year, month, day] = frontmatter.date.split("-").map(Number);
+  const parsedDate = new Date(Date.UTC(year, month - 1, day));
+  if (
+    Number.isNaN(parsedDate.getTime()) ||
+    parsedDate.getUTCFullYear() !== year ||
+    parsedDate.getUTCMonth() !== month - 1 ||
+    parsedDate.getUTCDate() !== day
+  ) {
     throw new Error(`Invalid frontmatter.date in post: ${slug}. Expected a real calendar date`);
   }
   if (!frontmatter.category || typeof frontmatter.category !== "string") {
@@ -108,14 +114,14 @@ function extractHeadings(source: string): TocItem[] {
     }))
     .filter((item) => item.level >= TOC_MIN_HEADING_LEVEL && item.level <= TOC_MAX_HEADING_LEVEL)
     .filter((item) => item.text.length > 0)
-    .map((item) => {
+    .map((item, index) => {
       const baseId = slugifyHeading(item.text) || "section";
       const count = idCounts.get(baseId) ?? 0;
       idCounts.set(baseId, count + 1);
 
       return {
         ...item,
-        id: count === 0 ? baseId : `${baseId}-${count}`,
+        id: count === 0 ? (baseId === "section" ? `section-${index}` : baseId) : `${baseId}-${count}`,
       };
     });
 }
@@ -157,11 +163,11 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
     const source = await readPostFile(slug);
     const toc = extractHeadings(source);
-    let tocIndex = 0;
+    let currentHeadingIndex = 0;
 
     const nextHeadingId = () => {
-      const id = toc[tocIndex]?.id;
-      tocIndex += 1;
+      const id = toc[currentHeadingIndex]?.id ?? `section-${currentHeadingIndex}`;
+      currentHeadingIndex += 1;
       return id;
     };
 
