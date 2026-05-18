@@ -1,8 +1,9 @@
 import { contactLinks } from "@/content";
+import type { TocItem } from "@/lib/posts";
 import Image from "next/image";
+import Link from "next/link";
 
 function SocialIcon({ icon }: { icon: string }) {
-  // icon size upgraded: w-5 h-5 (was 4)
   const cls = "h-5 w-5";
   switch (icon) {
     case "email":
@@ -52,12 +53,22 @@ function SocialIcon({ icon }: { icon: string }) {
   }
 }
 
-export default function BlogSidebar() {
+type BlogSidebarProps = {
+  articlesCount?: number;
+  tags?: string[];
+  categories?: string[];
+  toc?: TocItem[];
+};
+
+export default function BlogSidebar({
+  articlesCount = 0,
+  tags = [],
+  categories = [],
+  toc = [],
+}: BlogSidebarProps) {
   return (
     <div className="flex flex-col gap-5">
-      {/* Bio Card */}
       <div className="rounded-2xl border border-zinc-200 bg-white/70 p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
-        {/* Avatar + Name + Tagline */}
         <div className="flex flex-col items-center text-center">
           <div className="relative h-40 w-40 overflow-hidden rounded-full">
             <Image
@@ -74,17 +85,16 @@ export default function BlogSidebar() {
           <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">I LOVE cats.</div>
         </div>
 
-        {/* Articles / Hacker Space (no box, no special bg) */}
         <div className="mt-5 grid grid-cols-2 text-center">
-          <a
+          <Link
             href="/posts"
             className="group rounded-xl px-2 py-2 transition-colors hover:bg-zinc-100/70 dark:hover:bg-white/5"
           >
             <div className="text-xs font-medium text-zinc-500 transition-colors group-hover:text-zinc-700 dark:text-zinc-400 dark:group-hover:text-zinc-200">
               Articles
             </div>
-            <div className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">0</div>
-          </a>
+            <div className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{articlesCount}</div>
+          </Link>
 
           <div className="rounded-xl px-2 py-2">
             <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Hacker Space</div>
@@ -92,7 +102,6 @@ export default function BlogSidebar() {
           </div>
         </div>
 
-        {/* Social icons row (bigger + centered) */}
         <div className="mt-5 flex items-center justify-center gap-4">
           {contactLinks.map((link) => (
             <a
@@ -109,31 +118,53 @@ export default function BlogSidebar() {
         </div>
       </div>
 
-      {/* Featured Articles */}
-      <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Featured Articles</h2>
-        <p className="text-xs text-zinc-400 dark:text-zinc-500">No featured articles yet.</p>
-      </div>
+      {toc.length > 0 && (
+        <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
+          <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
+            {toc.map((item, index) => (
+              <li key={`${item.text}-${index}`} className={item.level === 3 ? "pl-4" : "pl-0"}>
+                {item.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-      {/* Tags */}
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tags</h2>
-        <p className="text-xs text-zinc-400 dark:text-zinc-500">No tags yet.</p>
+        {tags.length === 0 ? (
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">No tags yet.</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span key={tag} className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Categories */}
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Categories</h2>
-        <p className="text-xs text-zinc-400 dark:text-zinc-500">No categories yet.</p>
+        {categories.length === 0 ? (
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">No categories yet.</p>
+        ) : (
+          <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
+            {categories.map((category) => (
+              <li key={category}>{category}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      {/* Site Stats */}
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Site Info</h2>
         <dl className="space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="flex items-center justify-between">
             <dt>Articles</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">0</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{articlesCount}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Total Words</dt>
