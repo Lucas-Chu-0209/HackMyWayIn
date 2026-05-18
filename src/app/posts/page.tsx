@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
+import PageHeader from "@/components/PageHeader";
 import { getAllPosts, getImportantPosts, getPostsPage, getTotalPages, POSTS_PAGE_SIZE } from "@/lib/posts";
 
 type PostsPageProps = {
@@ -34,11 +35,14 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
   return (
     <>
       <Navbar />
-      <main className="bg-zinc-100 pt-24 dark:bg-zinc-950">
+      {/* Page-level cover banner */}
+      <div className="pt-16">
+        <PageHeader title="Posts" />
+      </div>
+      <main className="bg-zinc-100 dark:bg-zinc-950">
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
           <div className="flex w-full max-w-4xl flex-col gap-6">
             <header>
-              <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">Posts</h1>
               <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
                 MDX notes, build logs, and security-learning writeups.
               </p>

@@ -2,6 +2,7 @@ import AboutSection from "@/components/AboutSection";
 import BlogSidebar from "@/components/BlogSidebar";
 import ContactSection from "@/components/ContactSection";
 import Navbar from "@/components/Navbar";
+import PageHeader from "@/components/PageHeader";
 import ProjectsSection from "@/components/ProjectsSection";
 import { getAllPosts, getImportantPosts } from "@/lib/posts";
 
@@ -11,14 +12,14 @@ export default async function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className="bg-zinc-100 pt-24 dark:bg-zinc-950">
+      {/* Page-level cover banner */}
+      <div className="pt-16">
+        <PageHeader title="About" />
+      </div>
+      <main className="bg-zinc-100 dark:bg-zinc-950">
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
           <div className="min-w-0 flex w-full max-w-4xl flex-col gap-8">
             <header className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-10 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 sm:px-8">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">About</p>
-              <h1 className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                The story, projects, and ways to connect
-              </h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
                 Home now focuses on the latest writing. This page keeps the personal profile, featured projects, and contact details together in one place.
               </p>
