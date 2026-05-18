@@ -124,7 +124,9 @@ export default function BlogSidebar({
           <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
             {toc.map((item) => (
               <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
-                {item.text}
+                <a href={`#${item.id}`} className="hover:text-zinc-900 dark:hover:text-zinc-100">
+                  {item.text}
+                </a>
               </li>
             ))}
           </ul>

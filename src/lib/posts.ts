@@ -2,7 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { compileMDX } from "next-mdx-remote/rsc";
-import type { ReactElement } from "react";
+import { createElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 export type PostFrontmatter = {
   title: string;
@@ -88,9 +89,9 @@ function sanitizeHeadingText(text: string) {
 function slugifyHeading(text: string) {
   return text
     .toLowerCase()
-    .replace(/[^a-z0-9\\s-]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
     .trim()
-    .replace(/\\s+/g, "-");
+    .replace(/\s+/g, "-");
 }
 
 function extractHeadings(source: string): TocItem[] {
@@ -155,10 +156,23 @@ export async function getAllPosts(): Promise<PostSummary[]> {
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
     const source = await readPostFile(slug);
+    const toc = extractHeadings(source);
+    let tocIndex = 0;
+
+    const nextHeadingId = () => {
+      const id = toc[tocIndex]?.id;
+      tocIndex += 1;
+      return id;
+    };
+
     const { frontmatter, content } = await compileMDX<PostFrontmatter>({
       source,
       options: {
         parseFrontmatter: true,
+      },
+      components: {
+        h2: ({ children }: { children: ReactNode }) => createElement("h2", { id: nextHeadingId() }, children),
+        h3: ({ children }: { children: ReactNode }) => createElement("h3", { id: nextHeadingId() }, children),
       },
     });
 
@@ -168,7 +182,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       slug,
       ...frontmatter,
       content,
-      toc: extractHeadings(source),
+      toc,
     };
   } catch {
     return null;
