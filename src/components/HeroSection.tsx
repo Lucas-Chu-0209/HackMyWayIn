@@ -1,12 +1,8 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { siteConfig } from "@/content";
 import TypingText from "./TypingText";
-
-function scrollToSection(id: string) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-}
 
 export default function HeroSection() {
   const typingMessages = [
@@ -56,18 +52,18 @@ export default function HeroSection() {
             {siteConfig.tagline}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => scrollToSection("contact")}
+            <Link
+              href="/about#contact"
               className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
             >
               {siteConfig.ctaPrimary}
-            </button>
-            <button
-              onClick={() => scrollToSection("projects")}
+            </Link>
+            <Link
+              href="/about#projects"
               className="px-6 py-3 rounded-xl border-2 border-slate-500 text-slate-100 font-semibold hover:border-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
             >
               {siteConfig.ctaSecondary}
-            </button>
+            </Link>
           </div>
         </div>
       </div>

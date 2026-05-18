@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getAllPosts, getImportantPosts, getPostBySlug } from "@/lib/posts";
 
 type PostPageProps = {
   params: Promise<{ slug: string }>;
@@ -16,14 +16,11 @@ export async function generateStaticParams() {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const [post, allPosts] = await Promise.all([getPostBySlug(slug), getAllPosts()]);
+  const [post, allPosts, importantPosts] = await Promise.all([getPostBySlug(slug), getAllPosts(), getImportantPosts()]);
 
   if (!post) {
     notFound();
   }
-
-  const tags = [...new Set(allPosts.flatMap((item) => item.tags))];
-  const categories = [...new Set(allPosts.map((item) => item.category))];
 
   return (
     <>
@@ -34,7 +31,10 @@ export default async function PostPage({ params }: PostPageProps) {
             <Link href="/posts" className="text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
               ← Back to posts
             </Link>
-            <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">{post.date}</p>
+            <div className="mt-4 flex items-center justify-between gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+              <span>{post.date}</span>
+              <span>Importance {post.importance}</span>
+            </div>
             <h1 className="mt-1 text-3xl font-bold text-zinc-900 dark:text-zinc-100">{post.title}</h1>
             <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
 
@@ -55,19 +55,14 @@ export default async function PostPage({ params }: PostPageProps) {
           <aside aria-label="Sidebar" className="hidden lg:block">
             <div className="sticky top-6">
               <div className="pr-1">
-                <BlogSidebar
-                  articlesCount={allPosts.length}
-                  tags={tags}
-                  categories={categories}
-                  toc={post.toc}
-                />
+                <BlogSidebar posts={allPosts} importantPosts={importantPosts} toc={post.toc} />
               </div>
             </div>
           </aside>
         </div>
 
         <div className="border-t border-zinc-200 px-4 pb-12 pt-8 dark:border-zinc-800 sm:px-6 lg:hidden">
-          <BlogSidebar articlesCount={allPosts.length} tags={tags} categories={categories} toc={post.toc} />
+          <BlogSidebar posts={allPosts} importantPosts={importantPosts} toc={post.toc} />
         </div>
       </main>
     </>

@@ -1,15 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig, navLinks } from "@/content";
-
-function scrollToSection(href: string) {
-  const id = href.replace("#", "");
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: "smooth" });
-  }
-}
 
 export default function Navbar() {
   const [visible, setVisible] = useState(true);
@@ -43,11 +36,6 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleNavClick = (href: string) => {
-    setDrawerOpen(false);
-    setTimeout(() => scrollToSection(href), 10);
-  };
-
   return (
     <>
       {/* Navbar */}
@@ -57,28 +45,28 @@ export default function Navbar() {
         }`}
       >
         <nav className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            {/* Brand */}
-            <button
-              onClick={() => handleNavClick("#home")}
-              className="font-bold text-lg text-zinc-900 dark:text-zinc-100 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded cursor-pointer"
-            >
-              {siteConfig.brand}
-            </button>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+              {/* Brand */}
+              <Link
+                href="/"
+                className="font-bold text-lg text-zinc-900 dark:text-zinc-100 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded cursor-pointer"
+              >
+                {siteConfig.brand}
+              </Link>
 
-            {/* Desktop nav links */}
-            <ul className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <button
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-1 py-0.5 cursor-pointer"
-                  >
-                    {link.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
+              {/* Desktop nav links */}
+              <ul className="hidden md:flex items-center gap-8">
+                {navLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded px-1 py-0.5 cursor-pointer"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
 
             {/* Mobile hamburger */}
             <button
@@ -129,12 +117,13 @@ export default function Navbar() {
           <ul className="py-4">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <button
-                  onClick={() => handleNavClick(link.href)}
+                <Link
+                  href={link.href}
+                  onClick={() => setDrawerOpen(false)}
                   className="w-full text-left px-6 py-3 text-base font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors focus:outline-none focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-800/50 cursor-pointer"
                 >
                   {link.label}
-                </button>
+                </Link>
               </li>
             ))}
           </ul>

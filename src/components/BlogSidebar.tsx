@@ -1,5 +1,5 @@
 import { contactLinks } from "@/content";
-import type { TocItem } from "@/lib/posts";
+import type { PostSummary, TocItem } from "@/lib/posts";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -54,18 +54,29 @@ function SocialIcon({ icon }: { icon: string }) {
 }
 
 type BlogSidebarProps = {
+  posts?: PostSummary[];
   articlesCount?: number;
   tags?: string[];
   categories?: string[];
+  importantPosts?: PostSummary[];
   toc?: TocItem[];
 };
 
 export default function BlogSidebar({
-  articlesCount = 0,
-  tags = [],
-  categories = [],
-  toc = [],
+  posts,
+  articlesCount,
+  tags,
+  categories,
+  importantPosts,
+  toc,
 }: BlogSidebarProps) {
+  const allPosts = posts ?? [];
+  const resolvedArticlesCount = articlesCount ?? allPosts.length;
+  const resolvedTags = tags ?? [...new Set(allPosts.flatMap((post) => post.tags))].sort((a, b) => a.localeCompare(b));
+  const resolvedCategories = categories ?? [...new Set(allPosts.map((post) => post.category))].sort((a, b) => a.localeCompare(b));
+  const resolvedImportantPosts = importantPosts ?? [];
+  const resolvedToc = toc ?? [];
+
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-2xl border border-zinc-200 bg-white/70 p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
@@ -86,15 +97,15 @@ export default function BlogSidebar({
         </div>
 
         <div className="mt-5 grid grid-cols-2 text-center">
-          <Link
-            href="/posts"
-            className="group rounded-xl px-2 py-2 transition-colors hover:bg-zinc-100/70 dark:hover:bg-white/5"
-          >
-            <div className="text-xs font-medium text-zinc-500 transition-colors group-hover:text-zinc-700 dark:text-zinc-400 dark:group-hover:text-zinc-200">
-              Articles
-            </div>
-            <div className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{articlesCount}</div>
-          </Link>
+            <Link
+              href="/posts"
+              className="group rounded-xl px-2 py-2 transition-colors hover:bg-zinc-100/70 dark:hover:bg-white/5"
+            >
+              <div className="text-xs font-medium text-zinc-500 transition-colors group-hover:text-zinc-700 dark:text-zinc-400 dark:group-hover:text-zinc-200">
+                Articles
+              </div>
+              <div className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{resolvedArticlesCount}</div>
+            </Link>
 
           <div className="rounded-xl px-2 py-2">
             <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Hacker Space</div>
@@ -118,11 +129,35 @@ export default function BlogSidebar({
         </div>
       </div>
 
-      {toc.length > 0 && (
+      <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
+        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Important Articles</h2>
+        {resolvedImportantPosts.length === 0 ? (
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">No important articles yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {resolvedImportantPosts.slice(0, 5).map((post) => (
+              <Link
+                key={post.slug}
+                href={`/posts/${post.slug}`}
+                className="block rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950/40 dark:hover:border-white/20 dark:hover:bg-zinc-950/70"
+              >
+                <div className="flex items-center justify-between gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <span className="truncate">{post.category}</span>
+                  <span className="whitespace-nowrap">Importance {post.importance}</span>
+                </div>
+                <h3 className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{post.title}</h3>
+                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{post.date}</p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {resolvedToc.length > 0 && (
         <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
           <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
           <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
-            {toc.map((item) => (
+            {resolvedToc.map((item) => (
               <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
                 <a href={`#${item.id}`} className="hover:text-zinc-900 dark:hover:text-zinc-100">
                   {item.text}
@@ -135,14 +170,19 @@ export default function BlogSidebar({
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tags</h2>
-        {tags.length === 0 ? (
+        {resolvedTags.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No tags yet.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span key={tag} className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+            {resolvedTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                aria-disabled="true"
+                className="rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+              >
                 #{tag}
-              </span>
+              </button>
             ))}
           </div>
         )}
@@ -150,14 +190,22 @@ export default function BlogSidebar({
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Categories</h2>
-        {categories.length === 0 ? (
+        {resolvedCategories.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No categories yet.</p>
         ) : (
-          <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
-            {categories.map((category) => (
-              <li key={category}>{category}</li>
+          <div className="space-y-2">
+            {resolvedCategories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                aria-disabled="true"
+                className="flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950/40 dark:text-zinc-200"
+              >
+                <span>{category}</span>
+                <span className="text-zinc-400 dark:text-zinc-500">Category</span>
+              </button>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
@@ -166,7 +214,7 @@ export default function BlogSidebar({
         <dl className="space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="flex items-center justify-between">
             <dt>Articles</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{articlesCount}</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{resolvedArticlesCount}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Total Words</dt>
