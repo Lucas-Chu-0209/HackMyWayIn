@@ -117,7 +117,7 @@ function normalizeFrontmatter(frontmatter: ParsedPostFrontmatter, slug: string) 
   };
 }
 
-function sortPostsByImportance(a: PostSummary, b: PostSummary) {
+function sortPostsByImportanceAndDate(a: PostSummary, b: PostSummary) {
   return b.importance - a.importance || b.date.localeCompare(a.date);
 }
 
@@ -273,7 +273,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 export async function getImportantPosts(limit = 5): Promise<PostSummary[]> {
   const posts = await getAllPosts();
-  return posts.filter((post) => post.featured).sort(sortPostsByImportance).slice(0, normalizePositiveInteger(limit, 5));
+  return posts.filter((post) => post.featured).sort(sortPostsByImportanceAndDate).slice(0, normalizePositiveInteger(limit, 5));
 }
 
 export async function getPostsPage(page: number, pageSize: number): Promise<PostSummary[]> {

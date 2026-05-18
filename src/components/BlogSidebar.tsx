@@ -151,8 +151,8 @@ export default function BlogSidebar({
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-amber-500 dark:text-amber-400" title="Featured">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="m11.049 2.927 2.027 6.242h6.564l-5.31 3.858 2.027 6.242-5.308-3.857-5.308 3.857 2.027-6.242-5.31-3.858h6.564z" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="m11.48 3.5-2.162 4.375-4.828.702 3.495 3.407-.825 4.808L11.48 14.52l4.32 2.272-.825-4.808 3.494-3.407-4.827-.702L11.48 3.5Z" />
           </svg>
         </SidebarSectionTitle>
         {resolvedImportantPosts.length === 0 ? (

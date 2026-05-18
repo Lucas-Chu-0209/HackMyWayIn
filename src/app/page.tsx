@@ -91,7 +91,10 @@ export default async function Home() {
                     ))}
 
                     <div className="pt-6 text-center">
-                      <p className="text-lg leading-none text-zinc-400 dark:text-zinc-500">…</p>
+                      <p className="text-lg leading-none text-zinc-400 dark:text-zinc-500">
+                        <span aria-hidden="true">…</span>
+                        <span className="sr-only">More posts available</span>
+                      </p>
                       <Link
                         href="/posts"
                         className="mt-4 inline-flex items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-zinc-400 dark:hover:text-zinc-100"
