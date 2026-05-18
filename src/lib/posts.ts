@@ -29,6 +29,8 @@ export type Post = PostSummary & {
 
 const POSTS_DIR = path.join(process.cwd(), "src", "content", "posts");
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const TOC_MIN_HEADING_LEVEL = 2;
+const TOC_MAX_HEADING_LEVEL = 3;
 
 function assertFrontmatter(frontmatter: PostFrontmatter, slug: string) {
   if (!frontmatter.title || typeof frontmatter.title !== "string") {
@@ -69,16 +71,31 @@ function stripFrontmatter(source: string) {
   return source.slice(closingMarker + 4).trimStart();
 }
 
+function sanitizeHeadingText(text: string) {
+  return text
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`~]/g, "")
+    .replace(/<[^>]*>/g, "")
+    .trim();
+}
+
 function extractHeadings(source: string): TocItem[] {
   const body = stripFrontmatter(source);
   const lines = body.split("\n");
 
   return lines
-    .map((line) => line.match(/^(##|###)\s+(.+)$/))
+    .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
     .filter((match): match is RegExpMatchArray => Boolean(match))
     .map((match) => ({
-      level: match[1] === "##" ? 2 : 3,
-      text: match[2].replace(/[#*_`]/g, "").trim(),
+      level: match[1].length as 2 | 3,
+      text: sanitizeHeadingText(match[2]),
+    }))
+    .filter((item) => item.level >= TOC_MIN_HEADING_LEVEL && item.level <= TOC_MAX_HEADING_LEVEL)
+    .filter((item) => item.text.length > 0)
+    .map((item) => ({
+      level: item.level,
+      text: item.text,
     }));
 }
 
