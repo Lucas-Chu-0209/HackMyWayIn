@@ -115,7 +115,7 @@ function extractHeadings(source: string): TocItem[] {
 
       return {
         ...item,
-        id: count === 0 ? baseId : `${baseId}-${count + 1}`,
+        id: count === 0 ? baseId : `${baseId}-${count}`,
       };
     });
 }
