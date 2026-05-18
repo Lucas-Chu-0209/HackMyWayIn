@@ -26,7 +26,7 @@ export default function PageHeader({ title }: PageHeaderProps) {
      *   things from spilling out if you later add a background image.
      */
     <div
-      className="relative h-[200px] overflow-hidden"
+      className="relative h-70 overflow-hidden"
       style={{
         /**
          * Gradient colors.
@@ -52,11 +52,11 @@ export default function PageHeader({ title }: PageHeaderProps) {
             light  →  `bg-black/20`  (increase for more darkening in light mode)
             dark   →  `dark:bg-black/35`  (increase for more darkening in dark mode)
       ──────────────────────────────────────────────────────────────────────── */}
-      <div className="absolute inset-0 bg-black/20 dark:bg-black/35" />
+      <div className="absolute inset-0 bg-black/15 dark:bg-black/35" />
 
       {/* ─── Centered title ──────────────────────────────────────────────── */}
       <div className="relative z-10 flex h-full items-center justify-center px-4">
-        <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow-md sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-white dark:text-white/85 drop-shadow-md sm:text-4xl">
           {title}
         </h1>
       </div>

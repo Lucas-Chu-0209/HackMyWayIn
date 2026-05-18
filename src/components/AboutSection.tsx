@@ -11,7 +11,7 @@ export default function AboutSection() {
     >
       <div>
         <SectionHeader
-          title="About"
+          title="About Me"
           subtitle="Curious by nature. Learning security by doing."
         />
 

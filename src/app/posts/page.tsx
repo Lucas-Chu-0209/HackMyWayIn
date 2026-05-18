@@ -42,11 +42,11 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
       <main className="bg-zinc-100 dark:bg-zinc-950">
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
           <div className="flex w-full max-w-4xl flex-col gap-6">
-            <header>
+            {/* <header>
               <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
                 MDX notes, build logs, and security-learning writeups.
               </p>
-            </header>
+            </header> */}
 
             {posts.length === 0 ? (
               <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-500 dark:border-white/10 dark:bg-zinc-900/50 dark:text-zinc-400">

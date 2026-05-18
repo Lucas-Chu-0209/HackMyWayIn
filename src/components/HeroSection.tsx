@@ -60,7 +60,7 @@ export default function HeroSection() {
             </Link>
             <Link
               href="/about#projects"
-              className="px-6 py-3 rounded-xl border-2 border-slate-500 text-slate-100 font-semibold hover:border-cyan-400 hover:text-cyan-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+              className="px-6 py-3 rounded-xl border-2 border-slate-500 text-slate-100 font-semibold hover:border-blue-400 hover:text-blue-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
             >
               {siteConfig.ctaSecondary}
             </Link>
