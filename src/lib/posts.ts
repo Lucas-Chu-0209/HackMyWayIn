@@ -100,6 +100,18 @@ function slugifyHeading(text: string) {
     .replace(/\s+/g, "-");
 }
 
+function generateHeadingId(baseId: string, count: number, index: number) {
+  if (count > 0) {
+    return `${baseId}-${count}`;
+  }
+
+  if (baseId === "section") {
+    return `section-${index}`;
+  }
+
+  return baseId;
+}
+
 function extractHeadings(source: string): TocItem[] {
   const body = stripFrontmatter(source);
   const lines = body.split("\n");
@@ -121,7 +133,7 @@ function extractHeadings(source: string): TocItem[] {
 
       return {
         ...item,
-        id: count === 0 ? (baseId === "section" ? `section-${index}` : baseId) : `${baseId}-${count}`,
+        id: generateHeadingId(baseId, count, index),
       };
     });
 }
