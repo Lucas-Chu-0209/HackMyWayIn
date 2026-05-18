@@ -2,6 +2,7 @@ import { contactLinks } from "@/content";
 import type { PostSummary, TocItem } from "@/lib/posts";
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 function SocialIcon({ icon }: { icon: string }) {
   const cls = "h-5 w-5";
@@ -61,6 +62,25 @@ type BlogSidebarProps = {
   importantPosts?: PostSummary[];
   toc?: TocItem[];
 };
+
+function SidebarSectionTitle({
+  iconClassName,
+  title,
+  children,
+}: {
+  iconClassName: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+      <span className={iconClassName} aria-hidden="true">
+        {children}
+      </span>
+      <span>{title}</span>
+    </h2>
+  );
+}
 
 export default function BlogSidebar({
   posts,
@@ -130,9 +150,13 @@ export default function BlogSidebar({
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Important Articles</h2>
+        <SidebarSectionTitle iconClassName="text-amber-500 dark:text-amber-400" title="Featured">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9.049 2.927a1 1 0 011.902 0l1.287 3.964a1 1 0 00.95.69h4.17a1 1 0 01.588 1.81l-3.373 2.45a1 1 0 00-.364 1.118l1.287 3.964a1 1 0 01-1.538 1.118L10 15.347l-3.372 2.454a1 1 0 01-1.539-1.118l1.288-3.964a1 1 0 00-.364-1.118L2.64 9.391a1 1 0 01.588-1.81h4.17a1 1 0 00.95-.69l1.7-3.964z" />
+          </svg>
+        </SidebarSectionTitle>
         {resolvedImportantPosts.length === 0 ? (
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">No important articles yet.</p>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">No featured posts yet.</p>
         ) : (
           <div className="space-y-3">
             {resolvedImportantPosts.slice(0, 5).map((post) => (
@@ -169,48 +193,58 @@ export default function BlogSidebar({
       )}
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tags</h2>
+        <SidebarSectionTitle iconClassName="text-sky-500 dark:text-sky-400" title="Tags">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M3 11l8.59 8.59a2 2 0 002.82 0l6.18-6.18a2 2 0 000-2.82L12 2H5a2 2 0 00-2 2v7z" />
+          </svg>
+        </SidebarSectionTitle>
         {resolvedTags.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No tags yet.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {resolvedTags.map((tag) => (
-              <button
+              <Link
                 key={tag}
-                type="button"
-                aria-disabled="true"
-                className="rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                href={`/tags/${encodeURIComponent(tag)}`}
+                className="rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
               >
                 #{tag}
-              </button>
+              </Link>
             ))}
           </div>
         )}
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Categories</h2>
+        <SidebarSectionTitle iconClassName="text-emerald-500 dark:text-emerald-400" title="Categories">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h5l2 2h7a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+          </svg>
+        </SidebarSectionTitle>
         {resolvedCategories.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No categories yet.</p>
         ) : (
           <div className="space-y-2">
             {resolvedCategories.map((category) => (
-              <button
+              <Link
                 key={category}
-                type="button"
-                aria-disabled="true"
-                className="flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-950/40 dark:text-zinc-200"
+                href={`/categories/${encodeURIComponent(category)}`}
+                className="flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950/40 dark:text-zinc-200 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
               >
                 <span>{category}</span>
                 <span className="text-zinc-400 dark:text-zinc-500">Category</span>
-              </button>
+              </Link>
             ))}
           </div>
         )}
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Site Info</h2>
+        <SidebarSectionTitle iconClassName="text-violet-500 dark:text-violet-400" title="Site Info">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </SidebarSectionTitle>
         <dl className="space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="flex items-center justify-between">
             <dt>Articles</dt>
