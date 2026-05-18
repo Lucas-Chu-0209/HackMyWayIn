@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/" # root dir
+    schedule:
+      interval: "daily" # check and examines every day
+  - package-ecosystem: "pip:
+    directory: "/"
+    schedule:
+      interval: "weekly" # check every week
