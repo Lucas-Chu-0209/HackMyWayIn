@@ -122,8 +122,8 @@ export default function BlogSidebar({
         <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
           <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
           <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
-            {toc.map((item, index) => (
-              <li key={`${item.text}-${index}`} className={item.level === 3 ? "pl-4" : "pl-0"}>
+            {toc.map((item) => (
+              <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
                 {item.text}
               </li>
             ))}

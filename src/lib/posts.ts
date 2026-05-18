@@ -14,6 +14,7 @@ export type PostFrontmatter = {
 };
 
 export type TocItem = {
+  id: string;
   text: string;
   level: 2 | 3;
 };
@@ -38,6 +39,10 @@ function assertFrontmatter(frontmatter: PostFrontmatter, slug: string) {
   }
   if (!DATE_PATTERN.test(frontmatter.date)) {
     throw new Error(`Invalid frontmatter.date in post: ${slug}. Expected YYYY-MM-DD`);
+  }
+  const parsedDate = new Date(frontmatter.date);
+  if (Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== frontmatter.date) {
+    throw new Error(`Invalid frontmatter.date in post: ${slug}. Expected a real calendar date`);
   }
   if (!frontmatter.category || typeof frontmatter.category !== "string") {
     throw new Error(`Invalid frontmatter.category in post: ${slug}`);
@@ -80,9 +85,18 @@ function sanitizeHeadingText(text: string) {
     .trim();
 }
 
+function slugifyHeading(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\\s-]/g, "")
+    .trim()
+    .replace(/\\s+/g, "-");
+}
+
 function extractHeadings(source: string): TocItem[] {
   const body = stripFrontmatter(source);
   const lines = body.split("\n");
+  const idCounts = new Map<string, number>();
 
   return lines
     .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
@@ -92,7 +106,17 @@ function extractHeadings(source: string): TocItem[] {
       text: sanitizeHeadingText(match[2]),
     }))
     .filter((item) => item.level >= TOC_MIN_HEADING_LEVEL && item.level <= TOC_MAX_HEADING_LEVEL)
-    .filter((item) => item.text.length > 0);
+    .filter((item) => item.text.length > 0)
+    .map((item) => {
+      const baseId = slugifyHeading(item.text) || "section";
+      const count = idCounts.get(baseId) ?? 0;
+      idCounts.set(baseId, count + 1);
+
+      return {
+        ...item,
+        id: count === 0 ? baseId : `${baseId}-${count + 1}`,
+      };
+    });
 }
 
 export async function getAllPosts(): Promise<PostSummary[]> {
