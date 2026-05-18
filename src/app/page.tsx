@@ -46,6 +46,7 @@ export default async function Home() {
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                           <Link
                             href={`/posts/${post.slug}`}
+                            aria-label={`Read article: ${post.title}`}
                             className="group relative block w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 sm:w-64"
                           >
                             <div className="relative aspect-[16/9] w-full">
