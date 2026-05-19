@@ -299,6 +299,11 @@ export async function getTotalPages(pageSize: number): Promise<number> {
   return Math.max(1, Math.ceil(posts.length / normalizedPageSize));
 }
 
+export async function getLatestPostDate() {
+  const posts = await getAllPosts();
+  return posts[0]?.date ?? null;
+}
+
 /**
  * Converts taxonomy labels (tags/categories) into stable kebab-case route segments.
  * Uses NFKD normalization to keep accented Unicode input predictable, and then

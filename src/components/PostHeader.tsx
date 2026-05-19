@@ -63,7 +63,6 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
               {post.category}
             </Link>
 
-            {/* Views — wire up a real data source later by passing the views prop */}
             <span className="flex items-center gap-1">
               <svg
                 aria-hidden="true"

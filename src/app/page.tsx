@@ -4,22 +4,26 @@ import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import PostListItem from "@/components/posts/PostListItem";
+import { getSiteAnalyticsTotals } from "@/lib/analytics";
 import {
   getAllPosts,
   getCategorySlugMap,
   getImportantPosts,
+  getLatestPostDate,
   getPostsPage,
   getTagSlugMap,
   POSTS_PAGE_SIZE,
 } from "@/lib/posts";
 
 export default async function Home() {
-  const [latestPosts, allPosts, importantPosts, categorySlugMap, tagSlugMap] = await Promise.all([
+  const [latestPosts, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated] = await Promise.all([
     getPostsPage(1, POSTS_PAGE_SIZE),
     getAllPosts(),
     getImportantPosts(),
     getCategorySlugMap(),
     getTagSlugMap(),
+    getSiteAnalyticsTotals(),
+    getLatestPostDate(),
   ]);
 
   return (
@@ -77,7 +81,13 @@ export default async function Home() {
             <aside aria-label="Sidebar" className="hidden lg:block">
               <div className="sticky top-6">
                 <div className="pr-1">
-                  <BlogSidebar posts={allPosts} importantPosts={importantPosts} />
+                  <BlogSidebar
+                    posts={allPosts}
+                    importantPosts={importantPosts}
+                    totalViews={siteAnalytics.totalViews}
+                    totalVisitors={siteAnalytics.totalVisitors}
+                    lastUpdated={lastUpdated}
+                  />
                 </div>
               </div>
             </aside>
@@ -85,7 +95,13 @@ export default async function Home() {
 
           <div className="border-t border-zinc-200 px-4 pb-12 pt-8 dark:border-zinc-800 sm:px-6 lg:hidden">
             <div className="w-full">
-              <BlogSidebar posts={allPosts} importantPosts={importantPosts} />
+              <BlogSidebar
+                posts={allPosts}
+                importantPosts={importantPosts}
+                totalViews={siteAnalytics.totalViews}
+                totalVisitors={siteAnalytics.totalVisitors}
+                lastUpdated={lastUpdated}
+              />
             </div>
           </div>
         </div>
