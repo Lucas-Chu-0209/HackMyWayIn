@@ -1,4 +1,5 @@
 import { contactLinks } from "@/content";
+import { getCategorySlugMap, getTagSlugMap } from "@/lib/posts";
 import type { PostSummary, TocItem } from "@/lib/posts";
 import Image from "next/image";
 import Link from "next/link";
@@ -82,7 +83,7 @@ function SidebarSectionTitle({
   );
 }
 
-export default function BlogSidebar({
+export default async function BlogSidebar({
   posts,
   articlesCount,
   tags,
@@ -96,6 +97,7 @@ export default function BlogSidebar({
   const resolvedCategories = categories ?? [...new Set(allPosts.map((post) => post.category))].sort((a, b) => a.localeCompare(b));
   const resolvedImportantPosts = importantPosts ?? [];
   const resolvedToc = toc ?? [];
+  const [tagSlugMap, categorySlugMap] = await Promise.all([getTagSlugMap(), getCategorySlugMap()]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -202,15 +204,23 @@ export default function BlogSidebar({
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No tags yet.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {resolvedTags.map((tag) => (
-              <Link
-                key={tag}
-                href={`/tags/${encodeURIComponent(tag)}`}
-                className="rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
-              >
-                #{tag}
-              </Link>
-            ))}
+            {resolvedTags.map((tag) => {
+              const tagSlug = tagSlugMap.get(tag);
+
+              if (!tagSlug) {
+                throw new Error(`Missing tag slug for "${tag}" in tagSlugMap. Verify taxonomy slug map generation.`);
+              }
+
+              return (
+                <Link
+                  key={tag}
+                  href={`/tags/${tagSlug}`}
+                  className="rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
+                >
+                  #{tag}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
@@ -225,16 +235,24 @@ export default function BlogSidebar({
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No categories yet.</p>
         ) : (
           <div className="space-y-2">
-            {resolvedCategories.map((category) => (
-              <Link
-                key={category}
-                href={`/categories/${encodeURIComponent(category)}`}
-                className="flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950/40 dark:text-zinc-200 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
-              >
-                <span>{category}</span>
-                <span className="text-zinc-400 dark:text-zinc-500">Category</span>
-              </Link>
-            ))}
+            {resolvedCategories.map((category) => {
+              const categorySlug = categorySlugMap.get(category);
+
+              if (!categorySlug) {
+                throw new Error(`Missing category slug for "${category}" in categorySlugMap. Verify taxonomy slug map generation.`);
+              }
+
+              return (
+                <Link
+                  key={category}
+                  href={`/categories/${categorySlug}`}
+                  className="flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950/40 dark:text-zinc-200 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
+                >
+                  <span>{category}</span>
+                  <span className="text-zinc-400 dark:text-zinc-500">Category</span>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

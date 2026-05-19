@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { PostSummary } from "@/lib/posts";
 
@@ -6,6 +7,8 @@ type PostHeaderProps = {
   post: PostSummary;
   /** Pass a real view count when available; omit or pass null to show "—". */
   views?: number | null;
+  categorySlugMap: ReadonlyMap<string, string>;
+  tagSlugMap: ReadonlyMap<string, string>;
 };
 
 /**
@@ -19,7 +22,13 @@ type PostHeaderProps = {
  * Text: white, bottom-left-aligned, with a subtle drop shadow for legibility.
  * Content is aligned to the site's max-w-7xl grid.
  */
-export default function PostHeader({ post, views }: PostHeaderProps) {
+export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }: PostHeaderProps) {
+  const categorySlug = categorySlugMap.get(post.category);
+
+  if (!categorySlug) {
+    throw new Error(`Missing category slug for "${post.category}" in categorySlugMap. Verify taxonomy slug map generation.`);
+  }
+
   return (
     <div className="relative h-80 overflow-hidden">
       {/* Cover image — fills the entire container, no border */}
@@ -47,9 +56,12 @@ export default function PostHeader({ post, views }: PostHeaderProps) {
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-white/85 drop-shadow">
             <span>{post.date}</span>
 
-            <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+            <Link
+              href={`/categories/${categorySlug}`}
+              className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+            >
               {post.category}
-            </span>
+            </Link>
 
             {/* Views — wire up a real data source later by passing the views prop */}
             <span className="flex items-center gap-1">
@@ -76,14 +88,23 @@ export default function PostHeader({ post, views }: PostHeaderProps) {
           {/* Tags */}
           {post.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs text-white/80 backdrop-blur-sm drop-shadow"
-                >
-                  #{tag}
-                </span>
-              ))}
+              {post.tags.map((tag) => {
+                const tagSlug = tagSlugMap.get(tag);
+
+                if (!tagSlug) {
+                  throw new Error(`Missing tag slug for "${tag}" in tagSlugMap. Verify taxonomy slug map generation.`);
+                }
+
+                return (
+                  <Link
+                    key={tag}
+                    href={`/tags/${tagSlug}`}
+                    className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs text-white/80 backdrop-blur-sm drop-shadow transition-colors hover:bg-white/25"
+                  >
+                    #{tag}
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

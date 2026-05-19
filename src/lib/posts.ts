@@ -45,11 +45,18 @@ export type Post = PostSummary & {
   toc: TocItem[];
 };
 
+export type TaxonomyItem = {
+  name: string;
+  slug: string;
+  count: number;
+};
+
 const POSTS_DIR = path.join(process.cwd(), "src", "content", "posts");
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TOC_MIN_HEADING_LEVEL = 2;
 const TOC_MAX_HEADING_LEVEL = 3;
 const DEFAULT_IMPORTANCE: PostImportance = 3;
+const DEFAULT_TAXONOMY_SLUG = "item";
 
 export const POSTS_PAGE_SIZE = 9;
 
@@ -290,4 +297,160 @@ export async function getTotalPages(pageSize: number): Promise<number> {
   const normalizedPageSize = normalizePositiveInteger(pageSize, POSTS_PAGE_SIZE);
 
   return Math.max(1, Math.ceil(posts.length / normalizedPageSize));
+}
+
+/**
+ * Converts taxonomy labels (tags/categories) into stable kebab-case route segments.
+ * Uses NFKD normalization to keep accented Unicode input predictable, and then
+ * lowercases output so case differences map consistently. Falls back to
+ * DEFAULT_TAXONOMY_SLUG when input has no slug-safe characters so routing remains valid.
+ */
+function slugifyTaxonomyValue(value: string) {
+  const slug = value
+    .normalize("NFKD")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || DEFAULT_TAXONOMY_SLUG;
+}
+
+function sortTaxonomyNames(names: Iterable<string>) {
+  return [...new Set(names)]
+    .map((name) => name.trim())
+    .filter(Boolean)
+    .sort(
+      // Primary sort ignores case to keep navigation intuitive; tiebreaker preserves
+      // deterministic output when names differ only by casing.
+      (a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" }) || a.localeCompare(b),
+    );
+}
+
+/**
+ * Builds deterministic, collision-safe slug mappings for taxonomy names.
+ * Names are sorted first, then duplicate base slugs are disambiguated by appending
+ * an incrementing numeric suffix (`-1`, `-2`, ...), ensuring stable route output.
+ */
+function buildTaxonomySlugMap(names: Iterable<string>) {
+  const sortedNames = sortTaxonomyNames(names);
+  const slugCounts = new Map<string, number>();
+  const byName = new Map<string, string>();
+  const bySlug = new Map<string, string>();
+
+  for (const name of sortedNames) {
+    const baseSlug = slugifyTaxonomyValue(name);
+    const duplicateCount = slugCounts.get(baseSlug) ?? 0;
+    const slug = duplicateCount === 0 ? baseSlug : `${baseSlug}-${duplicateCount}`;
+
+    slugCounts.set(baseSlug, duplicateCount + 1);
+    byName.set(name, slug);
+    bySlug.set(slug, name);
+  }
+
+  return { byName, bySlug };
+}
+
+function getSlugOrThrow(slugMap: Map<string, string>, name: string) {
+  const slug = slugMap.get(name);
+
+  if (!slug) {
+    throw new Error(`Missing taxonomy slug mapping for "${name}"`);
+  }
+
+  return slug;
+}
+
+function getCountOrThrow(counts: Map<string, number>, name: string) {
+  const count = counts.get(name);
+
+  if (count === undefined) {
+    throw new Error(`Missing taxonomy count for "${name}"`);
+  }
+
+  return count;
+}
+
+export async function getAllTags(): Promise<TaxonomyItem[]> {
+  const posts = await getAllPosts();
+  const counts = new Map<string, number>();
+
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+
+  const { byName } = buildTaxonomySlugMap(counts.keys());
+
+  return sortTaxonomyNames(counts.keys()).map((name) => ({
+    name,
+    slug: getSlugOrThrow(byName, name),
+    count: getCountOrThrow(counts, name),
+  }));
+}
+
+export async function getAllCategories(): Promise<TaxonomyItem[]> {
+  const posts = await getAllPosts();
+  const counts = new Map<string, number>();
+
+  for (const post of posts) {
+    counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
+  }
+
+  const { byName } = buildTaxonomySlugMap(counts.keys());
+
+  return sortTaxonomyNames(counts.keys()).map((name) => ({
+    name,
+    slug: getSlugOrThrow(byName, name),
+    count: getCountOrThrow(counts, name),
+  }));
+}
+
+export async function getPostsByTagSlug(
+  slug: string,
+): Promise<{ tag: TaxonomyItem; posts: PostSummary[]; tagSlugMap: Map<string, string> } | null> {
+  const [tags, posts] = await Promise.all([getAllTags(), getAllPosts()]);
+  const tagSlugMap = new Map(tags.map((tag) => [tag.name, tag.slug]));
+  const tag = tags.find((item) => item.slug === slug);
+
+  if (!tag) {
+    return null;
+  }
+
+  return {
+    tag,
+    posts: posts.filter((post) => post.tags.includes(tag.name)),
+    tagSlugMap,
+  };
+}
+
+export async function getPostsByCategorySlug(
+  slug: string,
+): Promise<{ category: TaxonomyItem; posts: PostSummary[]; categorySlugMap: Map<string, string> } | null> {
+  const [categories, posts] = await Promise.all([getAllCategories(), getAllPosts()]);
+  const categorySlugMap = new Map(categories.map((category) => [category.name, category.slug]));
+  const category = categories.find((item) => item.slug === slug);
+
+  if (!category) {
+    return null;
+  }
+
+  return {
+    category,
+    posts: posts.filter((post) => post.category === category.name),
+    categorySlugMap,
+  };
+}
+
+export async function getTagSlugMap() {
+  const tags = await getAllTags();
+  return new Map(tags.map((tag) => [tag.name, tag.slug]));
+}
+
+export async function getCategorySlugMap() {
+  const categories = await getAllCategories();
+  return new Map(categories.map((category) => [category.name, category.slug]));
 }
