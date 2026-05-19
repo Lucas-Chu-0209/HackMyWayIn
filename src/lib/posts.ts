@@ -159,8 +159,8 @@ function computeWordCount(source: string): number {
   text = text.replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
   // Unwrap markdown links [text](url) → text
   text = text.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
-  // Strip heading markers at line start
-  text = text.replace(/^#{1,6}\s+/gm, "");
+  // Strip heading markers at line start (allows optional trailing space per CommonMark)
+  text = text.replace(/^#{1,6}\s*/gm, "");
   // Strip bold/italic markers
   text = text.replace(/[*_]{1,3}/g, " ");
   // Count non-empty whitespace-separated tokens

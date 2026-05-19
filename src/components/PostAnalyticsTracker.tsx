@@ -6,15 +6,27 @@ type PostAnalyticsTrackerProps = {
   slug: string;
 };
 
-// Module-level guard so React strict mode's double-mount in dev does not
-// send the tracking request twice for the same slug within a single page load.
-const trackedThisPageLoad = new Set<string>();
+// Client-side cooldown matching the server-side rate-limit window (60 s).
+// Stored at module level so React strict mode's unmount/remount cycle (which
+// happens within milliseconds) is treated as within the cooldown and skipped,
+// while a genuine user navigation back to the same post after the window
+// expires will still be tracked.
+const TRACK_COOLDOWN_MS = 60_000;
+const lastTrackedAt = new Map<string, number>();
 
 export default function PostAnalyticsTracker({ slug }: PostAnalyticsTrackerProps) {
   useEffect(() => {
-    // Skip if already tracked this slug in the current JS module lifetime.
-    if (trackedThisPageLoad.has(slug)) return;
-    trackedThisPageLoad.add(slug);
+    const now = Date.now();
+    const prev = lastTrackedAt.get(slug);
+
+    // Skip if within the cooldown window (handles React strict-mode double-mount
+    // and genuine rapid revisits that the server would rate-limit anyway).
+    if (prev !== undefined && now - prev < TRACK_COOLDOWN_MS) {
+      return;
+    }
+
+    // Record the timestamp before the async call to make the guard atomic.
+    lastTrackedAt.set(slug, now);
 
     void fetch("/api/analytics/track", {
       method: "POST",
