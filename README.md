@@ -107,6 +107,23 @@ Deploy to Vercel for free:
 2. Go to [vercel.com](https://vercel.com), import your repo
 3. Deploy — Vercel auto-detects Next.js
 
+### Analytics env vars (Vercel KV)
+
+Analytics uses `@vercel/kv` with these server-side environment variables:
+
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+- `VISITOR_SALT` (required for salted anonymous visitor hashing)
+
+Key schema:
+
+- `views:post:{slug}` → integer per post
+- `views:total` → integer site-wide views
+- `visitors:total:set` → set of salted anonymous visitor hashes
+- `visitors:total` → integer site-wide unique visitors
+
+On Vercel, add a Redis/KV integration first, then set `VISITOR_SALT` in Project Settings → Environment Variables.
+
 ## Roadmap
 
 - [ ] Replace avatar placeholder with real photo or 3D embed
@@ -114,4 +131,3 @@ Deploy to Vercel for free:
 - [ ] Add contact links (LinkedIn, Instagram, Facebook)
 - [ ] Dark mode toggle
 - [ ] Daily challenge / rating system (bonus)
-

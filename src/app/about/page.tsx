@@ -4,10 +4,16 @@ import ContactSection from "@/components/ContactSection";
 import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import ProjectsSection from "@/components/ProjectsSection";
-import { getAllPosts, getImportantPosts } from "@/lib/posts";
+import { getSiteAnalyticsTotals } from "@/lib/analytics";
+import { getAllPosts, getImportantPosts, getLatestPostDate } from "@/lib/posts";
 
 export default async function AboutPage() {
-  const [allPosts, importantPosts] = await Promise.all([getAllPosts(), getImportantPosts()]);
+  const [allPosts, importantPosts, siteAnalytics, lastUpdated] = await Promise.all([
+    getAllPosts(),
+    getImportantPosts(),
+    getSiteAnalyticsTotals(),
+    getLatestPostDate(),
+  ]);
 
   return (
     <>
@@ -32,14 +38,26 @@ export default async function AboutPage() {
           <aside aria-label="Sidebar" className="hidden lg:block">
             <div className="sticky top-6">
               <div className="pr-1">
-                <BlogSidebar posts={allPosts} importantPosts={importantPosts} />
+                <BlogSidebar
+                  posts={allPosts}
+                  importantPosts={importantPosts}
+                  totalViews={siteAnalytics.totalViews}
+                  totalVisitors={siteAnalytics.totalVisitors}
+                  lastUpdated={lastUpdated}
+                />
               </div>
             </div>
           </aside>
         </div>
 
         <div className="border-t border-zinc-200 px-4 pb-12 pt-8 dark:border-zinc-800 sm:px-6 lg:hidden">
-          <BlogSidebar posts={allPosts} importantPosts={importantPosts} />
+          <BlogSidebar
+            posts={allPosts}
+            importantPosts={importantPosts}
+            totalViews={siteAnalytics.totalViews}
+            totalVisitors={siteAnalytics.totalVisitors}
+            lastUpdated={lastUpdated}
+          />
         </div>
       </main>
       <footer className="border-t border-zinc-800 bg-zinc-950 py-12 text-center text-sm text-zinc-500">

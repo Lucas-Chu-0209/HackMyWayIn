@@ -62,6 +62,9 @@ type BlogSidebarProps = {
   categories?: string[];
   importantPosts?: PostSummary[];
   toc?: TocItem[];
+  totalViews?: number;
+  totalVisitors?: number;
+  lastUpdated?: string | null;
 };
 
 function SidebarSectionTitle({
@@ -90,6 +93,9 @@ export default async function BlogSidebar({
   categories,
   importantPosts,
   toc,
+  totalViews = 0,
+  totalVisitors = 0,
+  lastUpdated,
 }: BlogSidebarProps) {
   const allPosts = posts ?? [];
   const resolvedArticlesCount = articlesCount ?? allPosts.length;
@@ -274,15 +280,15 @@ export default async function BlogSidebar({
           </div>
           <div className="flex items-center justify-between">
             <dt>Total Views</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">—</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{totalViews.toLocaleString()}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Visitors</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">—</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{totalVisitors.toLocaleString()}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Last Updated</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">—</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{lastUpdated ?? "—"}</dd>
           </div>
         </dl>
       </div>

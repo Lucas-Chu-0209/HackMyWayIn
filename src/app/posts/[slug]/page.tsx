@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
+import PostAnalyticsTracker from "@/components/PostAnalyticsTracker";
 import PostHeader from "@/components/PostHeader";
-import { getAllPosts, getCategorySlugMap, getImportantPosts, getPostBySlug, getTagSlugMap } from "@/lib/posts";
+import { getPostViews, getSiteAnalyticsTotals } from "@/lib/analytics";
+import { getAllPosts, getCategorySlugMap, getImportantPosts, getLatestPostDate, getPostBySlug, getTagSlugMap } from "@/lib/posts";
 
 type PostPageProps = {
   params: Promise<{ slug: string }>;
@@ -17,25 +19,30 @@ export async function generateStaticParams() {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const [post, allPosts, importantPosts, categorySlugMap, tagSlugMap] = await Promise.all([
+  const [post, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated] = await Promise.all([
     getPostBySlug(slug),
     getAllPosts(),
     getImportantPosts(),
     getCategorySlugMap(),
     getTagSlugMap(),
+    getSiteAnalyticsTotals(),
+    getLatestPostDate(),
   ]);
 
   if (!post) {
     notFound();
   }
 
+  const views = await getPostViews(slug);
+
   return (
     <>
       <Navbar />
+      <PostAnalyticsTracker slug={slug} />
 
       {/* Cover header — full-width, sits directly under the fixed navbar */}
       <div className="pt-16">
-        <PostHeader post={post} categorySlugMap={categorySlugMap} tagSlugMap={tagSlugMap} />
+        <PostHeader post={post} views={views} categorySlugMap={categorySlugMap} tagSlugMap={tagSlugMap} />
       </div>
 
       <main className="bg-zinc-100 dark:bg-zinc-950">
@@ -62,14 +69,28 @@ export default async function PostPage({ params }: PostPageProps) {
           <aside aria-label="Sidebar" className="hidden lg:block">
             <div className="sticky top-6">
               <div className="pr-1">
-                <BlogSidebar posts={allPosts} importantPosts={importantPosts} toc={post.toc} />
+                <BlogSidebar
+                  posts={allPosts}
+                  importantPosts={importantPosts}
+                  toc={post.toc}
+                  totalViews={siteAnalytics.totalViews}
+                  totalVisitors={siteAnalytics.totalVisitors}
+                  lastUpdated={lastUpdated}
+                />
               </div>
             </div>
           </aside>
         </div>
 
         <div className="border-t border-zinc-200 px-4 pb-12 pt-8 dark:border-zinc-800 sm:px-6 lg:hidden">
-          <BlogSidebar posts={allPosts} importantPosts={importantPosts} toc={post.toc} />
+          <BlogSidebar
+            posts={allPosts}
+            importantPosts={importantPosts}
+            toc={post.toc}
+            totalViews={siteAnalytics.totalViews}
+            totalVisitors={siteAnalytics.totalVisitors}
+            lastUpdated={lastUpdated}
+          />
         </div>
       </main>
     </>
