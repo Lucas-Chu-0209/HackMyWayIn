@@ -1,4 +1,5 @@
 import { contactLinks } from "@/content";
+import LiveAnalyticsCount from "@/components/analytics/LiveAnalyticsCount";
 import { getCategorySlugMap, getTagSlugMap } from "@/lib/posts";
 import type { PostSummary, TocItem } from "@/lib/posts";
 import Image from "next/image";
@@ -282,11 +283,15 @@ export default async function BlogSidebar({
           </div>
           <div className="flex items-center justify-between">
             <dt>Total Views</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{totalViews.toLocaleString()}</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">
+              <LiveAnalyticsCount metric="totalViews" initialValue={totalViews} />
+            </dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Visitors</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{totalVisitors.toLocaleString()}</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">
+              <LiveAnalyticsCount metric="totalVisitors" initialValue={totalVisitors} />
+            </dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Last Updated</dt>

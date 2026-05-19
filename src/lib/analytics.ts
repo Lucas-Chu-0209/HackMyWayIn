@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { kv } from "@vercel/kv";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
@@ -89,6 +90,8 @@ function getVisitorHash(headers: HeaderSource, visitorSalt: string) {
 }
 
 export async function getPostViews(slug: string) {
+  noStore();
+
   if (!isKvConfigured()) {
     return 0;
   }
@@ -105,6 +108,8 @@ export async function getPostViews(slug: string) {
 }
 
 export async function getSiteAnalyticsTotals(): Promise<SiteAnalyticsTotals> {
+  noStore();
+
   if (!isKvConfigured()) {
     return {
       totalViews: 0,
@@ -140,11 +145,17 @@ export async function trackPostAnalytics(slug: string, headers: HeaderSource) {
       tracked: false,
       rateLimited: false,
       reason: "kv_not_configured" as const,
+      postViews: null,
+      totalViews: null,
+      totalVisitors: null,
     };
   }
 
+  let postViews: number;
+  let totalViews: number;
+
   try {
-    await Promise.all([
+    [postViews, totalViews] = await Promise.all([
       kv.incr(ANALYTICS_KEYS.postViews(slug)),
       kv.incr(ANALYTICS_KEYS.totalViews),
     ]);
@@ -157,16 +168,32 @@ export async function trackPostAnalytics(slug: string, headers: HeaderSource) {
       tracked: false,
       rateLimited: false,
       reason: "kv_write_failed" as const,
+      postViews: null,
+      totalViews: null,
+      totalVisitors: null,
     };
   }
 
   const visitorSalt = getVisitorSalt();
+  let totalVisitors = 0;
 
   if (!visitorSalt) {
+    try {
+      const storedVisitors = await kv.get<number | string>(ANALYTICS_KEYS.totalVisitors);
+      totalVisitors = toPositiveInteger(storedVisitors);
+    } catch (error) {
+      if (IS_DEV) {
+        console.error("[analytics] Failed to read total visitors from KV.", error);
+      }
+    }
+
     return {
       tracked: true,
       rateLimited: false,
       reason: "visitor_salt_missing" as const,
+      postViews: toPositiveInteger(postViews),
+      totalViews: toPositiveInteger(totalViews),
+      totalVisitors,
     };
   }
 
@@ -176,7 +203,10 @@ export async function trackPostAnalytics(slug: string, headers: HeaderSource) {
     const addedToUniqueSet = await kv.sadd(ANALYTICS_KEYS.totalVisitorsSet, visitorHash);
 
     if (addedToUniqueSet > 0) {
-      await kv.incr(ANALYTICS_KEYS.totalVisitors);
+      totalVisitors = toPositiveInteger(await kv.incr(ANALYTICS_KEYS.totalVisitors));
+    } else {
+      const storedVisitors = await kv.get<number | string>(ANALYTICS_KEYS.totalVisitors);
+      totalVisitors = toPositiveInteger(storedVisitors);
     }
   } catch (error) {
     if (IS_DEV) {
@@ -187,5 +217,8 @@ export async function trackPostAnalytics(slug: string, headers: HeaderSource) {
   return {
     tracked: true,
     rateLimited: false,
+    postViews: toPositiveInteger(postViews),
+    totalViews: toPositiveInteger(totalViews),
+    totalVisitors,
   };
 }

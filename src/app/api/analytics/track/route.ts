@@ -37,8 +37,12 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ok: true,
+    slug,
     tracked: result.tracked,
     rateLimited: result.rateLimited,
     reason: result.reason ?? null,
+    postViews: result.postViews,
+    totalViews: result.totalViews,
+    totalVisitors: result.totalVisitors,
   });
 }

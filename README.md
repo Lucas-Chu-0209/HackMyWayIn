@@ -140,8 +140,8 @@ If `npx vercel` is unavailable, manually create `.env.local` with the three vari
 1. Run `npm run dev`.
 2. Open any post page and check Network for `POST /api/analytics/track`.
 3. Confirm response JSON contains `ok: true` and `tracked: true`.
-4. Refresh the same post page and confirm the post's `Views` increases.
-5. Confirm sidebar `Total Views` also increases.
+4. Navigate from Homepage to a post and confirm the post's `Views` increases immediately (no refresh required).
+5. Confirm the response includes updated `postViews` / `totalViews` counts and the sidebar `Total Views` updates in-place.
 6. Confirm `Visitors` increases when visiting from a new browser/session.
 
 Notes:
