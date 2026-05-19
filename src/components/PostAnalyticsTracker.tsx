@@ -25,7 +25,12 @@ export default function PostAnalyticsTracker({ slug }: PostAnalyticsTrackerProps
       return;
     }
 
-    // Record the timestamp before the async call to make the guard atomic.
+    // Record the timestamp before the async call.  This is intentional: claiming
+    // the slot before the fetch is in-flight prevents a second concurrent render
+    // from also passing the cooldown check while the first fetch is pending.
+    // On a network failure the server also did not increment, so missing the
+    // retry window is acceptable — the next page-load or post-cooldown visit
+    // will trigger fresh tracking.
     lastTrackedAt.set(slug, now);
 
     void fetch("/api/analytics/track", {

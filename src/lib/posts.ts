@@ -159,7 +159,8 @@ function computeWordCount(source: string): number {
   text = text.replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
   // Unwrap markdown links [text](url) → text
   text = text.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
-  // Strip heading markers at line start (allows optional trailing space per CommonMark)
+  // Strip heading markers at line start (allows optional trailing space per CommonMark;
+  // {1,6} covers all six markdown heading levels)
   text = text.replace(/^#{1,6}\s*/gm, "");
   // Strip bold/italic markers
   text = text.replace(/[*_]{1,3}/g, " ");
