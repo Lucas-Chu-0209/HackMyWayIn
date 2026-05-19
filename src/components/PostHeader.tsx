@@ -26,7 +26,7 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
   const categorySlug = categorySlugMap.get(post.category);
 
   if (!categorySlug) {
-    throw new Error(`Missing category slug for "${post.category}"`);
+    throw new Error(`Missing category slug for "${post.category}" in categorySlugMap. Verify taxonomy slug map generation.`);
   }
 
   return (
@@ -92,7 +92,7 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
                 const tagSlug = tagSlugMap.get(tag);
 
                 if (!tagSlug) {
-                  throw new Error(`Missing tag slug for "${tag}"`);
+                  throw new Error(`Missing tag slug for "${tag}" in tagSlugMap. Verify taxonomy slug map generation.`);
                 }
 
                 return (

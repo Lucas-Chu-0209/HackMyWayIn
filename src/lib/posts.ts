@@ -311,9 +311,7 @@ function slugifyTaxonomyValue(value: string) {
     .toLowerCase()
     .trim()
     .replace(/['"]/g, "")
-    .replace(/[^a-z0-9\s-]/g, " ")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
   return slug || DEFAULT_TAXONOMY_SLUG;
@@ -324,6 +322,8 @@ function sortTaxonomyNames(names: Iterable<string>) {
     .map((name) => name.trim())
     .filter(Boolean)
     .sort(
+      // Primary sort ignores case to keep navigation intuitive; tiebreaker preserves
+      // deterministic output when names differ only by casing.
       (a, b) =>
         a.localeCompare(b, undefined, { sensitivity: "base" }) || a.localeCompare(b),
     );
