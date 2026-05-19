@@ -331,7 +331,7 @@ function buildTaxonomySlugMap(names: Iterable<string>) {
   for (const name of sortedNames) {
     const baseSlug = slugifyTaxonomyValue(name);
     const duplicateCount = slugCounts.get(baseSlug) ?? 0;
-    const slug = duplicateCount === 0 ? baseSlug : `${baseSlug}-${duplicateCount + 1}`;
+    const slug = duplicateCount === 0 ? baseSlug : `${baseSlug}-${duplicateCount}`;
 
     slugCounts.set(baseSlug, duplicateCount + 1);
     byName.set(name, slug);
@@ -355,7 +355,7 @@ export async function getAllTags(): Promise<TaxonomyItem[]> {
 
   return sortTaxonomyNames(counts.keys()).map((name) => ({
     name,
-    slug: byName.get(name) ?? slugifyTaxonomyValue(name),
+    slug: byName.get(name)!,
     count: counts.get(name) ?? 0,
   }));
 }
@@ -372,7 +372,7 @@ export async function getAllCategories(): Promise<TaxonomyItem[]> {
 
   return sortTaxonomyNames(counts.keys()).map((name) => ({
     name,
-    slug: byName.get(name) ?? slugifyTaxonomyValue(name),
+    slug: byName.get(name)!,
     count: counts.get(name) ?? 0,
   }));
 }
