@@ -62,6 +62,7 @@ type BlogSidebarProps = {
   categories?: string[];
   importantPosts?: PostSummary[];
   toc?: TocItem[];
+  totalWords?: number;
   totalViews?: number;
   totalVisitors?: number;
   lastUpdated?: string | null;
@@ -93,6 +94,7 @@ export default async function BlogSidebar({
   categories,
   importantPosts,
   toc,
+  totalWords = 0,
   totalViews = 0,
   totalVisitors = 0,
   lastUpdated,
@@ -276,7 +278,7 @@ export default async function BlogSidebar({
           </div>
           <div className="flex items-center justify-between">
             <dt>Total Words</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-300">0</dd>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-300">{totalWords.toLocaleString()}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt>Total Views</dt>

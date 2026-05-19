@@ -8,13 +8,9 @@ export const metadata: Metadata = {
   description: "Personal brand and resume website for Lucas Chu — Creative Programmer, Developer, and Ethical Hacker.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body>
         <ThemeProvider>
           {children}
