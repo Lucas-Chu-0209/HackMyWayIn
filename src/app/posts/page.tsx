@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
+import PostListItem from "@/components/posts/PostListItem";
 import { getAllPosts, getImportantPosts, getPostsPage, getTotalPages, POSTS_PAGE_SIZE } from "@/lib/posts";
 
 type PostsPageProps = {
@@ -57,27 +58,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
                   <ul className="space-y-4">
                     {posts.map((post) => (
                       <li key={post.slug}>
-                        <Link
-                          href={`/posts/${post.slug}`}
-                          className="block rounded-2xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20"
-                        >
-                          <div className="flex items-center justify-between gap-3 text-xs text-zinc-500 dark:text-zinc-400">
-                            <span>{post.date}</span>
-                            <span>Importance {post.importance}</span>
-                          </div>
-                          <h2 className="mt-1 text-xl font-semibold text-zinc-900 dark:text-zinc-100">{post.title}</h2>
-                          <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            <span className="rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-                              {post.category}
-                            </span>
-                            {post.tags.map((tag) => (
-                              <span key={tag} className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                        </Link>
+                        <PostListItem post={post} />
                       </li>
                     ))}
                   </ul>
