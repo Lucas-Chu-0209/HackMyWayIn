@@ -45,7 +45,9 @@ export default async function PostPage({ params }: PostPageProps) {
 
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
           <article className="w-full max-w-4xl rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-900/50">
-            {/* Article body — title/meta are shown in PostHeader above; content starts here */}
+            {/* Article body — title/meta are shown in PostHeader above; content starts here.
+                post.content is a React element compiled from trusted local MDX files in
+                src/content/posts/ via next-mdx-remote/rsc — not from user/external input. */}
             <div className="prose prose-neutral dark:prose-invert max-w-none">
               {post.content}
             </div>

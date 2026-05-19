@@ -25,7 +25,7 @@ export default function PostHeader({ post, views }: PostHeaderProps) {
       {/* Cover image — fills the entire container, no border */}
       <Image
         src={post.cover}
-        alt=""
+        alt={`Cover image for ${post.title}`}
         fill
         priority
         sizes="100vw"
