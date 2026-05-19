@@ -301,9 +301,9 @@ export async function getTotalPages(pageSize: number): Promise<number> {
 
 /**
  * Converts taxonomy labels (tags/categories) into stable kebab-case route segments.
- * Uses NFKD normalization to keep slug output predictable across mixed-case and
- * accented input. Falls back to DEFAULT_TAXONOMY_SLUG when input has no slug-safe
- * characters so routing remains valid.
+ * Uses NFKD normalization to keep accented Unicode input predictable, and then
+ * lowercases output so case differences map consistently. Falls back to
+ * DEFAULT_TAXONOMY_SLUG when input has no slug-safe characters so routing remains valid.
  */
 function slugifyTaxonomyValue(value: string) {
   const slug = value
@@ -409,8 +409,11 @@ export async function getAllCategories(): Promise<TaxonomyItem[]> {
   }));
 }
 
-export async function getPostsByTagSlug(slug: string): Promise<{ tag: TaxonomyItem; posts: PostSummary[] } | null> {
+export async function getPostsByTagSlug(
+  slug: string,
+): Promise<{ tag: TaxonomyItem; posts: PostSummary[]; tagSlugMap: Map<string, string> } | null> {
   const [tags, posts] = await Promise.all([getAllTags(), getAllPosts()]);
+  const tagSlugMap = new Map(tags.map((tag) => [tag.name, tag.slug]));
   const tag = tags.find((item) => item.slug === slug);
 
   if (!tag) {
@@ -420,13 +423,15 @@ export async function getPostsByTagSlug(slug: string): Promise<{ tag: TaxonomyIt
   return {
     tag,
     posts: posts.filter((post) => post.tags.includes(tag.name)),
+    tagSlugMap,
   };
 }
 
 export async function getPostsByCategorySlug(
   slug: string,
-): Promise<{ category: TaxonomyItem; posts: PostSummary[] } | null> {
+): Promise<{ category: TaxonomyItem; posts: PostSummary[]; categorySlugMap: Map<string, string> } | null> {
   const [categories, posts] = await Promise.all([getAllCategories(), getAllPosts()]);
+  const categorySlugMap = new Map(categories.map((category) => [category.name, category.slug]));
   const category = categories.find((item) => item.slug === slug);
 
   if (!category) {
@@ -436,6 +441,7 @@ export async function getPostsByCategorySlug(
   return {
     category,
     posts: posts.filter((post) => post.category === category.name),
+    categorySlugMap,
   };
 }
 

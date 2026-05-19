@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import PostListItem from "@/components/posts/PostListItem";
-import { getAllCategories, getCategorySlugMap, getPostsByCategorySlug, getTagSlugMap } from "@/lib/posts";
+import { getAllCategories, getPostsByCategorySlug, getTagSlugMap } from "@/lib/posts";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -16,9 +16,8 @@ export async function generateStaticParams() {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
-  const [result, categorySlugMap, tagSlugMap] = await Promise.all([
+  const [result, tagSlugMap] = await Promise.all([
     getPostsByCategorySlug(slug),
-    getCategorySlugMap(),
     getTagSlugMap(),
   ]);
 
@@ -42,7 +41,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <ul className="space-y-4">
               {result.posts.map((post) => (
                 <li key={post.slug}>
-                  <PostListItem post={post} categorySlugMap={categorySlugMap} tagSlugMap={tagSlugMap} />
+                  <PostListItem post={post} categorySlugMap={result.categorySlugMap} tagSlugMap={tagSlugMap} />
                 </li>
               ))}
             </ul>
