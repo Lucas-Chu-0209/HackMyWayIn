@@ -5,9 +5,12 @@ import type { PostSummary } from "@/lib/posts";
 
 type PostListItemProps = {
   post: PostSummary;
+  headingTag?: "h2" | "h3";
 };
 
-export default function PostListItem({ post }: PostListItemProps) {
+export default function PostListItem({ post, headingTag = "h2" }: PostListItemProps) {
+  const HeadingTag = headingTag;
+
   return (
     <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -33,11 +36,11 @@ export default function PostListItem({ post }: PostListItemProps) {
             <span aria-hidden="true">•</span>
             <span>{post.date}</span>
           </div>
-          <h2 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+          <HeadingTag className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             <Link href={`/posts/${post.slug}`} className="transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
               {post.title}
             </Link>
-          </h2>
+          </HeadingTag>
           <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {post.tags.map((tag) => (

@@ -39,7 +39,7 @@ export default async function Home() {
                 ) : (
                   <div className="mt-6 space-y-4">
                     {latestPosts.map((post) => (
-                      <PostListItem key={post.slug} post={post} />
+                      <PostListItem key={post.slug} post={post} headingTag="h3" />
                     ))}
 
                     <div className="pt-6 text-center">
