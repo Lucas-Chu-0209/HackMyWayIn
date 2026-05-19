@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import LiveAnalyticsCount from "@/components/analytics/LiveAnalyticsCount";
 import type { PostSummary } from "@/lib/posts";
 
 type PostHeaderProps = {
@@ -89,7 +90,7 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
                   />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                {viewsLabel}
+                {views != null ? <LiveAnalyticsCount metric="postViews" initialValue={views} slug={post.slug} /> : viewsLabel}
               </span>
             </>
           </div>
