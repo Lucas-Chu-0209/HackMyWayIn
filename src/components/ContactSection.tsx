@@ -4,18 +4,21 @@ import SocialLinkButton from "./SocialLinkButton";
 
 export default function ContactSection() {
   return (
-    <section id="contact" className="py-24 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="contact"
+      className="rounded-3xl border border-zinc-200 bg-zinc-50 px-6 py-14 shadow-sm transition-[background-color,border-color,box-shadow] duration-200 hover:bg-zinc-100 hover:border-zinc-300 hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:bg-zinc-900/50 dark:hover:border-white/15 dark:hover:shadow-2xl dark:hover:shadow-black/20 sm:px-8 lg:px-10"
+    >
+      <div>
         <SectionHeader
           title="Contact Me!"
           subtitle="Feel free to reach out for collaborations, questions, or even just want to say hi!"
         />
         <div className="max-w-xl">
-          <p className="text-gray-600 mb-8 leading-relaxed">
+          <p className="text-zinc-600 dark:text-zinc-300 mb-8 leading-relaxed">
             Have a project in mind, want to collaborate, or just want to say hello?
             Feel free to reach out through any of these channels.
           </p>
-          <p className="text-gray-600 mb-8 leading-relaxed">
+          <p className="text-zinc-600 dark:text-zinc-300 mb-8 leading-relaxed">
             Residence: Taipei, Taiwan<br></br>
             Email: lucasauriant0209@gmail.com<br></br>
             Phone: +886 966837966<br></br>
