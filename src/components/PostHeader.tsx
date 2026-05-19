@@ -98,9 +98,19 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
           <div className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1.5">
             <Link
               href={`/categories/${categorySlug}`}
-              className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-white/90 transition-colors hover:text-white hover:underline underline-offset-4"
             >
-              {post.category}
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="h-3.5 w-3.5 text-white/85"
+              >
+                <path
+                  fill="currentColor"
+                  d="M10 4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h6z"
+                />
+              </svg>
+              <span>{post.category}</span>
             </Link>
 
             {post.tags.length > 0 && (

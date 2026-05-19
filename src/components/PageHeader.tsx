@@ -26,7 +26,7 @@ export default function PageHeader({ title }: PageHeaderProps) {
      *   things from spilling out if you later add a background image.
      */
     <div
-      className="relative h-70 overflow-hidden"
+      className="relative h-80 overflow-hidden"
       style={{
         /**
          * Gradient colors.
