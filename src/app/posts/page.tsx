@@ -5,7 +5,15 @@ import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import PostListItem from "@/components/posts/PostListItem";
-import { getAllPosts, getImportantPosts, getPostsPage, getTotalPages, POSTS_PAGE_SIZE } from "@/lib/posts";
+import {
+  getAllPosts,
+  getCategorySlugMap,
+  getImportantPosts,
+  getPostsPage,
+  getTagSlugMap,
+  getTotalPages,
+  POSTS_PAGE_SIZE,
+} from "@/lib/posts";
 
 type PostsPageProps = {
   searchParams: Promise<{ page?: string }>;
@@ -22,11 +30,13 @@ function getPaginationHref(page: number) {
 
 export default async function PostsPage({ searchParams }: PostsPageProps) {
   const currentPage = parsePageParam((await searchParams).page);
-  const [allPosts, importantPosts, totalPages, posts] = await Promise.all([
+  const [allPosts, importantPosts, totalPages, posts, categorySlugMap, tagSlugMap] = await Promise.all([
     getAllPosts(),
     getImportantPosts(),
     getTotalPages(POSTS_PAGE_SIZE),
     getPostsPage(currentPage, POSTS_PAGE_SIZE),
+    getCategorySlugMap(),
+    getTagSlugMap(),
   ]);
 
   if (currentPage > totalPages) {
@@ -58,7 +68,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
                   <ul className="space-y-4">
                     {posts.map((post) => (
                       <li key={post.slug}>
-                        <PostListItem post={post} />
+                        <PostListItem post={post} categorySlugMap={categorySlugMap} tagSlugMap={tagSlugMap} />
                       </li>
                     ))}
                   </ul>

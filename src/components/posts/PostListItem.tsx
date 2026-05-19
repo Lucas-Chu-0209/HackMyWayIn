@@ -6,10 +6,13 @@ import type { PostSummary } from "@/lib/posts";
 type PostListItemProps = {
   post: PostSummary;
   headingTag?: "h2" | "h3";
+  categorySlugMap?: ReadonlyMap<string, string>;
+  tagSlugMap?: ReadonlyMap<string, string>;
 };
 
-export default function PostListItem({ post, headingTag = "h2" }: PostListItemProps) {
+export default function PostListItem({ post, headingTag = "h2", categorySlugMap, tagSlugMap }: PostListItemProps) {
   const HeadingTag = headingTag;
+  const categorySlug = categorySlugMap?.get(post.category);
 
   return (
     <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20">
@@ -32,7 +35,12 @@ export default function PostListItem({ post, headingTag = "h2" }: PostListItemPr
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <span>{post.category}</span>
+            <Link
+              href={categorySlug ? `/categories/${categorySlug}` : `/categories/${encodeURIComponent(post.category)}`}
+              className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
+            >
+              {post.category}
+            </Link>
             <span aria-hidden="true">•</span>
             <span>{post.date}</span>
           </div>
@@ -43,11 +51,19 @@ export default function PostListItem({ post, headingTag = "h2" }: PostListItemPr
           </HeadingTag>
           <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <span key={tag} className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                #{tag}
-              </span>
-            ))}
+            {post.tags.map((tag) => {
+              const tagSlug = tagSlugMap?.get(tag);
+
+              return (
+                <Link
+                  key={tag}
+                  href={tagSlug ? `/tags/${tagSlug}` : `/tags/${encodeURIComponent(tag)}`}
+                  className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
+                >
+                  #{tag}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

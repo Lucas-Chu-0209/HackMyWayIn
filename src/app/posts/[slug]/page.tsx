@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
 import PostHeader from "@/components/PostHeader";
-import { getAllPosts, getImportantPosts, getPostBySlug } from "@/lib/posts";
+import { getAllPosts, getCategorySlugMap, getImportantPosts, getPostBySlug, getTagSlugMap } from "@/lib/posts";
 
 type PostPageProps = {
   params: Promise<{ slug: string }>;
@@ -17,7 +17,13 @@ export async function generateStaticParams() {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const [post, allPosts, importantPosts] = await Promise.all([getPostBySlug(slug), getAllPosts(), getImportantPosts()]);
+  const [post, allPosts, importantPosts, categorySlugMap, tagSlugMap] = await Promise.all([
+    getPostBySlug(slug),
+    getAllPosts(),
+    getImportantPosts(),
+    getCategorySlugMap(),
+    getTagSlugMap(),
+  ]);
 
   if (!post) {
     notFound();
@@ -29,7 +35,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
       {/* Cover header — full-width, sits directly under the fixed navbar */}
       <div className="pt-16">
-        <PostHeader post={post} />
+        <PostHeader post={post} categorySlugMap={categorySlugMap} tagSlugMap={tagSlugMap} />
       </div>
 
       <main className="bg-zinc-100 dark:bg-zinc-950">

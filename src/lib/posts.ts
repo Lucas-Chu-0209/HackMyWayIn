@@ -45,6 +45,12 @@ export type Post = PostSummary & {
   toc: TocItem[];
 };
 
+export type TaxonomyItem = {
+  name: string;
+  slug: string;
+  count: number;
+};
+
 const POSTS_DIR = path.join(process.cwd(), "src", "content", "posts");
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TOC_MIN_HEADING_LEVEL = 2;
@@ -290,4 +296,123 @@ export async function getTotalPages(pageSize: number): Promise<number> {
   const normalizedPageSize = normalizePositiveInteger(pageSize, POSTS_PAGE_SIZE);
 
   return Math.max(1, Math.ceil(posts.length / normalizedPageSize));
+}
+
+function slugifyTaxonomyValue(value: string) {
+  const slug = value
+    .normalize("NFKD")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || "item";
+}
+
+function sortTaxonomyNames(names: Iterable<string>) {
+  return [...new Set(names)]
+    .map((name) => name.trim())
+    .filter(Boolean)
+    .sort(
+      (a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" }) || a.localeCompare(b),
+    );
+}
+
+function buildTaxonomySlugMap(names: Iterable<string>) {
+  const sortedNames = sortTaxonomyNames(names);
+  const slugCounts = new Map<string, number>();
+  const byName = new Map<string, string>();
+  const bySlug = new Map<string, string>();
+
+  for (const name of sortedNames) {
+    const baseSlug = slugifyTaxonomyValue(name);
+    const duplicateCount = slugCounts.get(baseSlug) ?? 0;
+    const slug = duplicateCount === 0 ? baseSlug : `${baseSlug}-${duplicateCount + 1}`;
+
+    slugCounts.set(baseSlug, duplicateCount + 1);
+    byName.set(name, slug);
+    bySlug.set(slug, name);
+  }
+
+  return { byName, bySlug };
+}
+
+export async function getAllTags(): Promise<TaxonomyItem[]> {
+  const posts = await getAllPosts();
+  const counts = new Map<string, number>();
+
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+
+  const { byName } = buildTaxonomySlugMap(counts.keys());
+
+  return sortTaxonomyNames(counts.keys()).map((name) => ({
+    name,
+    slug: byName.get(name) ?? slugifyTaxonomyValue(name),
+    count: counts.get(name) ?? 0,
+  }));
+}
+
+export async function getAllCategories(): Promise<TaxonomyItem[]> {
+  const posts = await getAllPosts();
+  const counts = new Map<string, number>();
+
+  for (const post of posts) {
+    counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
+  }
+
+  const { byName } = buildTaxonomySlugMap(counts.keys());
+
+  return sortTaxonomyNames(counts.keys()).map((name) => ({
+    name,
+    slug: byName.get(name) ?? slugifyTaxonomyValue(name),
+    count: counts.get(name) ?? 0,
+  }));
+}
+
+export async function getPostsByTagSlug(slug: string): Promise<{ tag: TaxonomyItem; posts: PostSummary[] } | null> {
+  const [tags, posts] = await Promise.all([getAllTags(), getAllPosts()]);
+  const tag = tags.find((item) => item.slug === slug);
+
+  if (!tag) {
+    return null;
+  }
+
+  return {
+    tag,
+    posts: posts.filter((post) => post.tags.includes(tag.name)),
+  };
+}
+
+export async function getPostsByCategorySlug(
+  slug: string,
+): Promise<{ category: TaxonomyItem; posts: PostSummary[] } | null> {
+  const [categories, posts] = await Promise.all([getAllCategories(), getAllPosts()]);
+  const category = categories.find((item) => item.slug === slug);
+
+  if (!category) {
+    return null;
+  }
+
+  return {
+    category,
+    posts: posts.filter((post) => post.category === category.name),
+  };
+}
+
+export async function getTagSlugMap() {
+  const tags = await getAllTags();
+  return new Map(tags.map((tag) => [tag.name, tag.slug]));
+}
+
+export async function getCategorySlugMap() {
+  const categories = await getAllCategories();
+  return new Map(categories.map((category) => [category.name, category.slug]));
 }
