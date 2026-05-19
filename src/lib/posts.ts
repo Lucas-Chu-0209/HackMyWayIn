@@ -56,6 +56,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TOC_MIN_HEADING_LEVEL = 2;
 const TOC_MAX_HEADING_LEVEL = 3;
 const DEFAULT_IMPORTANCE: PostImportance = 3;
+const DEFAULT_TAXONOMY_SLUG = "item";
 
 export const POSTS_PAGE_SIZE = 9;
 
@@ -309,7 +310,7 @@ function slugifyTaxonomyValue(value: string) {
     .replace(/-+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-  return slug || "item";
+  return slug || DEFAULT_TAXONOMY_SLUG;
 }
 
 function sortTaxonomyNames(names: Iterable<string>) {
@@ -351,6 +352,16 @@ function getSlugOrThrow(slugMap: Map<string, string>, name: string) {
   return slug;
 }
 
+function getCountOrThrow(counts: Map<string, number>, name: string) {
+  const count = counts.get(name);
+
+  if (count === undefined) {
+    throw new Error(`Missing taxonomy count for "${name}"`);
+  }
+
+  return count;
+}
+
 export async function getAllTags(): Promise<TaxonomyItem[]> {
   const posts = await getAllPosts();
   const counts = new Map<string, number>();
@@ -366,7 +377,7 @@ export async function getAllTags(): Promise<TaxonomyItem[]> {
   return sortTaxonomyNames(counts.keys()).map((name) => ({
     name,
     slug: getSlugOrThrow(byName, name),
-    count: counts.get(name) ?? 0,
+    count: getCountOrThrow(counts, name),
   }));
 }
 
@@ -383,7 +394,7 @@ export async function getAllCategories(): Promise<TaxonomyItem[]> {
   return sortTaxonomyNames(counts.keys()).map((name) => ({
     name,
     slug: getSlugOrThrow(byName, name),
-    count: counts.get(name) ?? 0,
+    count: getCountOrThrow(counts, name),
   }));
 }
 
