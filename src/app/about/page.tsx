@@ -1,3 +1,5 @@
+import { unstable_noStore as noStore } from "next/cache";
+
 import AboutSection from "@/components/AboutSection";
 import BlogSidebar from "@/components/BlogSidebar";
 import ContactSection from "@/components/ContactSection";
@@ -8,6 +10,8 @@ import { getSiteAnalyticsTotals } from "@/lib/analytics";
 import { getAllPosts, getImportantPosts, getLatestPostDate, getTotalWordCount } from "@/lib/posts";
 
 export default async function AboutPage() {
+  noStore();
+
   const [allPosts, importantPosts, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getAllPosts(),
     getImportantPosts(),

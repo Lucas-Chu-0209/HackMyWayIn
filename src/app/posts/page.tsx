@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
@@ -32,6 +33,8 @@ function getPaginationHref(page: number) {
 }
 
 export default async function PostsPage({ searchParams }: PostsPageProps) {
+  noStore();
+
   const currentPage = parsePageParam((await searchParams).page);
   const [allPosts, importantPosts, totalPages, posts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getAllPosts(),

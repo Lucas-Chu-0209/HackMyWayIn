@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
@@ -17,6 +18,8 @@ import {
 } from "@/lib/posts";
 
 export default async function Home() {
+  noStore();
+
   const [latestPosts, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getPostsPage(1, POSTS_PAGE_SIZE),
     getAllPosts(),
