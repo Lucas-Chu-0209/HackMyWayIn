@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
+import PostHeader from "@/components/PostHeader";
 import { getAllPosts, getImportantPosts, getPostBySlug } from "@/lib/posts";
 
 type PostPageProps = {
@@ -25,31 +26,29 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <>
       <Navbar />
-      <main className="bg-zinc-100 pt-24 dark:bg-zinc-950">
-        <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
+
+      {/* Cover header — full-width, sits directly under the fixed navbar */}
+      <div className="pt-16">
+        <PostHeader post={post} />
+      </div>
+
+      <main className="bg-zinc-100 dark:bg-zinc-950">
+        {/* "Back to posts" link — just above the article grid */}
+        <div className="mx-auto w-full max-w-7xl px-4 pt-5 sm:px-6 lg:px-8 xl:px-10">
+          <Link
+            href="/posts"
+            className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
+          >
+            ← Back to posts
+          </Link>
+        </div>
+
+        <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
           <article className="w-full max-w-4xl rounded-2xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-zinc-900/50">
-            <Link href="/posts" className="text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
-              ← Back to posts
-            </Link>
-            <div className="mt-4 flex items-center justify-between gap-3 text-xs text-zinc-500 dark:text-zinc-400">
-              <span>{post.date}</span>
-              <span>Importance {post.importance}</span>
+            {/* Article body — title/meta are shown in PostHeader above; content starts here */}
+            <div className="prose prose-neutral dark:prose-invert max-w-none">
+              {post.content}
             </div>
-            <h1 className="mt-1 text-3xl font-bold text-zinc-900 dark:text-zinc-100">{post.title}</h1>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-                {post.category}
-              </span>
-              {post.tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-8 space-y-4 text-zinc-700 dark:text-zinc-200">{post.content}</div>
           </article>
 
           <aside aria-label="Sidebar" className="hidden lg:block">
