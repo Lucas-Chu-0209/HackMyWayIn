@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import PostAnalyticsTracker from "@/components/PostAnalyticsTracker";
 import PostHeader from "@/components/PostHeader";
 import { getPostViews, getSiteAnalyticsTotals } from "@/lib/analytics";
-import { getAllPosts, getCategorySlugMap, getImportantPosts, getLatestPostDate, getPostBySlug, getTagSlugMap } from "@/lib/posts";
+import { getAllPosts, getCategorySlugMap, getImportantPosts, getLatestPostDate, getPostBySlug, getTagSlugMap, getTotalWordCount } from "@/lib/posts";
 
 type PostPageProps = {
   params: Promise<{ slug: string }>;
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const [post, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated] = await Promise.all([
+  const [post, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getPostBySlug(slug),
     getAllPosts(),
     getImportantPosts(),
@@ -27,6 +27,7 @@ export default async function PostPage({ params }: PostPageProps) {
     getTagSlugMap(),
     getSiteAnalyticsTotals(),
     getLatestPostDate(),
+    getTotalWordCount(),
   ]);
 
   if (!post) {
@@ -73,6 +74,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   posts={allPosts}
                   importantPosts={importantPosts}
                   toc={post.toc}
+                  totalWords={totalWords}
                   totalViews={siteAnalytics.totalViews}
                   totalVisitors={siteAnalytics.totalVisitors}
                   lastUpdated={lastUpdated}
@@ -87,6 +89,7 @@ export default async function PostPage({ params }: PostPageProps) {
             posts={allPosts}
             importantPosts={importantPosts}
             toc={post.toc}
+            totalWords={totalWords}
             totalViews={siteAnalytics.totalViews}
             totalVisitors={siteAnalytics.totalVisitors}
             lastUpdated={lastUpdated}

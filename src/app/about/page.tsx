@@ -5,14 +5,15 @@ import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import ProjectsSection from "@/components/ProjectsSection";
 import { getSiteAnalyticsTotals } from "@/lib/analytics";
-import { getAllPosts, getImportantPosts, getLatestPostDate } from "@/lib/posts";
+import { getAllPosts, getImportantPosts, getLatestPostDate, getTotalWordCount } from "@/lib/posts";
 
 export default async function AboutPage() {
-  const [allPosts, importantPosts, siteAnalytics, lastUpdated] = await Promise.all([
+  const [allPosts, importantPosts, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getAllPosts(),
     getImportantPosts(),
     getSiteAnalyticsTotals(),
     getLatestPostDate(),
+    getTotalWordCount(),
   ]);
 
   return (
@@ -41,6 +42,7 @@ export default async function AboutPage() {
                 <BlogSidebar
                   posts={allPosts}
                   importantPosts={importantPosts}
+                  totalWords={totalWords}
                   totalViews={siteAnalytics.totalViews}
                   totalVisitors={siteAnalytics.totalVisitors}
                   lastUpdated={lastUpdated}
@@ -54,6 +56,7 @@ export default async function AboutPage() {
           <BlogSidebar
             posts={allPosts}
             importantPosts={importantPosts}
+            totalWords={totalWords}
             totalViews={siteAnalytics.totalViews}
             totalVisitors={siteAnalytics.totalVisitors}
             lastUpdated={lastUpdated}

@@ -21,6 +21,10 @@ type PostHeaderProps = {
  * Overlay: black/50 overlay so white text stays readable in all lighting.
  * Text: white, bottom-left-aligned, with a subtle drop shadow for legibility.
  * Content is aligned to the site's max-w-7xl grid.
+ *
+ * Meta layout (two lines):
+ *   Line 1: date ｜ N words ｜ 👁 views
+ *   Line 2: Category pill ｜ Tag pills
  */
 export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }: PostHeaderProps) {
   const categorySlug = categorySlugMap.get(post.category);
@@ -28,6 +32,9 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
   if (!categorySlug) {
     throw new Error(`Missing category slug for "${post.category}" in categorySlugMap. Verify taxonomy slug map generation.`);
   }
+
+  const wordsLabel = post.wordCount != null ? `${post.wordCount.toLocaleString()} words` : null;
+  const viewsLabel = views != null ? views.toLocaleString() : "—";
 
   return (
     <div className="relative h-80 overflow-hidden">
@@ -52,10 +59,43 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
             {post.title}
           </h1>
 
-          {/* Meta row: date · category · views */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-white/85 drop-shadow">
+          {/* Meta line 1: date ｜ words ｜ views */}
+          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-white/85 drop-shadow">
             <span>{post.date}</span>
 
+            {wordsLabel && (
+              <>
+                <span aria-hidden="true" className="opacity-50">｜</span>
+                <span>{wordsLabel}</span>
+              </>
+            )}
+
+            <>
+              <span aria-hidden="true" className="opacity-50">｜</span>
+              <span className="flex items-center gap-1">
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"
+                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {viewsLabel}
+              </span>
+            </>
+          </div>
+
+          {/* Meta line 2: category pill ｜ tag pills */}
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1.5">
             <Link
               href={`/categories/${categorySlug}`}
               className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
@@ -63,49 +103,29 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
               {post.category}
             </Link>
 
-            <span className="flex items-center gap-1">
-              <svg
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"
-                />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {views ?? "—"}
-            </span>
+            {post.tags.length > 0 && (
+              <>
+                <span aria-hidden="true" className="text-xs text-white/50">｜</span>
+                {post.tags.map((tag) => {
+                  const tagSlug = tagSlugMap.get(tag);
+
+                  if (!tagSlug) {
+                    throw new Error(`Missing tag slug for "${tag}" in tagSlugMap. Verify taxonomy slug map generation.`);
+                  }
+
+                  return (
+                    <Link
+                      key={tag}
+                      href={`/tags/${tagSlug}`}
+                      className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs text-white/80 backdrop-blur-sm drop-shadow transition-colors hover:bg-white/25"
+                    >
+                      #{tag}
+                    </Link>
+                  );
+                })}
+              </>
+            )}
           </div>
-
-          {/* Tags */}
-          {post.tags.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {post.tags.map((tag) => {
-                const tagSlug = tagSlugMap.get(tag);
-
-                if (!tagSlug) {
-                  throw new Error(`Missing tag slug for "${tag}" in tagSlugMap. Verify taxonomy slug map generation.`);
-                }
-
-                return (
-                  <Link
-                    key={tag}
-                    href={`/tags/${tagSlug}`}
-                    className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs text-white/80 backdrop-blur-sm drop-shadow transition-colors hover:bg-white/25"
-                  >
-                    #{tag}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
         </div>
       </div>
     </div>

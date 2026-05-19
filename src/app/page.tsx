@@ -12,11 +12,12 @@ import {
   getLatestPostDate,
   getPostsPage,
   getTagSlugMap,
+  getTotalWordCount,
   POSTS_PAGE_SIZE,
 } from "@/lib/posts";
 
 export default async function Home() {
-  const [latestPosts, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated] = await Promise.all([
+  const [latestPosts, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getPostsPage(1, POSTS_PAGE_SIZE),
     getAllPosts(),
     getImportantPosts(),
@@ -24,6 +25,7 @@ export default async function Home() {
     getTagSlugMap(),
     getSiteAnalyticsTotals(),
     getLatestPostDate(),
+    getTotalWordCount(),
   ]);
 
   return (
@@ -84,6 +86,7 @@ export default async function Home() {
                   <BlogSidebar
                     posts={allPosts}
                     importantPosts={importantPosts}
+                    totalWords={totalWords}
                     totalViews={siteAnalytics.totalViews}
                     totalVisitors={siteAnalytics.totalVisitors}
                     lastUpdated={lastUpdated}
@@ -98,6 +101,7 @@ export default async function Home() {
               <BlogSidebar
                 posts={allPosts}
                 importantPosts={importantPosts}
+                totalWords={totalWords}
                 totalViews={siteAnalytics.totalViews}
                 totalVisitors={siteAnalytics.totalVisitors}
                 lastUpdated={lastUpdated}

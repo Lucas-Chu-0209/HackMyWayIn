@@ -38,6 +38,7 @@ export type TocItem = {
 
 export type PostSummary = PostFrontmatter & {
   slug: string;
+  wordCount: number;
 };
 
 export type Post = PostSummary & {
@@ -146,6 +147,26 @@ function stripFrontmatter(source: string) {
   return source.slice(closingMarker + 4).trimStart();
 }
 
+function computeWordCount(source: string): number {
+  let text = stripFrontmatter(source);
+  // Strip fenced code blocks (``` ... ```)
+  text = text.replace(/```[\s\S]*?```/g, " ");
+  // Strip inline code (`...`)
+  text = text.replace(/`[^`\n]*`/g, " ");
+  // Strip HTML/JSX tags (<...>)
+  text = text.replace(/<[^>]+>/g, " ");
+  // Strip images ![alt](url) before link handling
+  text = text.replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
+  // Unwrap markdown links [text](url) → text
+  text = text.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
+  // Strip heading markers at line start
+  text = text.replace(/^#{1,6}\s+/gm, "");
+  // Strip bold/italic markers
+  text = text.replace(/[*_]{1,3}/g, " ");
+  // Count non-empty whitespace-separated tokens
+  return text.split(/\s+/).filter((w) => w.length > 0).length;
+}
+
 function sanitizeHeadingText(text: string) {
   return text
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
@@ -230,6 +251,7 @@ export async function getAllPosts(): Promise<PostSummary[]> {
 
       return {
         slug,
+        wordCount: computeWordCount(source),
         ...normalized.frontmatter,
       };
     }),
@@ -269,6 +291,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
     return {
       slug,
+      wordCount: computeWordCount(source),
       ...normalized.frontmatter,
       content,
       toc,
@@ -458,4 +481,9 @@ export async function getTagSlugMap() {
 export async function getCategorySlugMap() {
   const categories = await getAllCategories();
   return new Map(categories.map((category) => [category.name, category.slug]));
+}
+
+export async function getTotalWordCount(): Promise<number> {
+  const posts = await getAllPosts();
+  return posts.reduce((sum, post) => sum + post.wordCount, 0);
 }

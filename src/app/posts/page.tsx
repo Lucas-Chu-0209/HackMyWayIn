@@ -13,6 +13,7 @@ import {
   getLatestPostDate,
   getPostsPage,
   getTagSlugMap,
+  getTotalWordCount,
   getTotalPages,
   POSTS_PAGE_SIZE,
 } from "@/lib/posts";
@@ -32,7 +33,7 @@ function getPaginationHref(page: number) {
 
 export default async function PostsPage({ searchParams }: PostsPageProps) {
   const currentPage = parsePageParam((await searchParams).page);
-  const [allPosts, importantPosts, totalPages, posts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated] = await Promise.all([
+  const [allPosts, importantPosts, totalPages, posts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getAllPosts(),
     getImportantPosts(),
     getTotalPages(POSTS_PAGE_SIZE),
@@ -41,6 +42,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
     getTagSlugMap(),
     getSiteAnalyticsTotals(),
     getLatestPostDate(),
+    getTotalWordCount(),
   ]);
 
   if (currentPage > totalPages) {
@@ -109,6 +111,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
                 <BlogSidebar
                   posts={allPosts}
                   importantPosts={importantPosts}
+                  totalWords={totalWords}
                   totalViews={siteAnalytics.totalViews}
                   totalVisitors={siteAnalytics.totalVisitors}
                   lastUpdated={lastUpdated}
@@ -122,6 +125,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
           <BlogSidebar
             posts={allPosts}
             importantPosts={importantPosts}
+            totalWords={totalWords}
             totalViews={siteAnalytics.totalViews}
             totalVisitors={siteAnalytics.totalVisitors}
             lastUpdated={lastUpdated}
