@@ -299,6 +299,12 @@ export async function getTotalPages(pageSize: number): Promise<number> {
   return Math.max(1, Math.ceil(posts.length / normalizedPageSize));
 }
 
+/**
+ * Converts taxonomy labels (tags/categories) into stable kebab-case route segments.
+ * Uses NFKD normalization to keep slug output predictable across mixed-case and
+ * accented input. Falls back to DEFAULT_TAXONOMY_SLUG when input has no slug-safe
+ * characters so routing remains valid.
+ */
 function slugifyTaxonomyValue(value: string) {
   const slug = value
     .normalize("NFKD")
@@ -323,6 +329,11 @@ function sortTaxonomyNames(names: Iterable<string>) {
     );
 }
 
+/**
+ * Builds deterministic, collision-safe slug mappings for taxonomy names.
+ * Names are sorted first, then duplicate base slugs are disambiguated by appending
+ * an incrementing numeric suffix (`-1`, `-2`, ...), ensuring stable route output.
+ */
 function buildTaxonomySlugMap(names: Iterable<string>) {
   const sortedNames = sortTaxonomyNames(names);
   const slugCounts = new Map<string, number>();
