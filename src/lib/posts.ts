@@ -341,6 +341,16 @@ function buildTaxonomySlugMap(names: Iterable<string>) {
   return { byName, bySlug };
 }
 
+function getSlugOrThrow(slugMap: Map<string, string>, name: string) {
+  const slug = slugMap.get(name);
+
+  if (!slug) {
+    throw new Error(`Missing taxonomy slug mapping for "${name}"`);
+  }
+
+  return slug;
+}
+
 export async function getAllTags(): Promise<TaxonomyItem[]> {
   const posts = await getAllPosts();
   const counts = new Map<string, number>();
@@ -355,7 +365,7 @@ export async function getAllTags(): Promise<TaxonomyItem[]> {
 
   return sortTaxonomyNames(counts.keys()).map((name) => ({
     name,
-    slug: byName.get(name)!,
+    slug: getSlugOrThrow(byName, name),
     count: counts.get(name) ?? 0,
   }));
 }
@@ -372,7 +382,7 @@ export async function getAllCategories(): Promise<TaxonomyItem[]> {
 
   return sortTaxonomyNames(counts.keys()).map((name) => ({
     name,
-    slug: byName.get(name)!,
+    slug: getSlugOrThrow(byName, name),
     count: counts.get(name) ?? 0,
   }));
 }

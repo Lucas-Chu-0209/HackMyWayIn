@@ -4,13 +4,22 @@ import BlogSidebar from "@/components/BlogSidebar";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import PostListItem from "@/components/posts/PostListItem";
-import { getAllPosts, getImportantPosts, getPostsPage, POSTS_PAGE_SIZE } from "@/lib/posts";
+import {
+  getAllPosts,
+  getCategorySlugMap,
+  getImportantPosts,
+  getPostsPage,
+  getTagSlugMap,
+  POSTS_PAGE_SIZE,
+} from "@/lib/posts";
 
 export default async function Home() {
-  const [latestPosts, allPosts, importantPosts] = await Promise.all([
+  const [latestPosts, allPosts, importantPosts, categorySlugMap, tagSlugMap] = await Promise.all([
     getPostsPage(1, POSTS_PAGE_SIZE),
     getAllPosts(),
     getImportantPosts(),
+    getCategorySlugMap(),
+    getTagSlugMap(),
   ]);
 
   return (
@@ -39,7 +48,13 @@ export default async function Home() {
                 ) : (
                   <div className="mt-6 space-y-4">
                     {latestPosts.map((post) => (
-                      <PostListItem key={post.slug} post={post} headingTag="h3" />
+                      <PostListItem
+                        key={post.slug}
+                        post={post}
+                        headingTag="h3"
+                        categorySlugMap={categorySlugMap}
+                        tagSlugMap={tagSlugMap}
+                      />
                     ))}
 
                     <div className="pt-6 text-center">

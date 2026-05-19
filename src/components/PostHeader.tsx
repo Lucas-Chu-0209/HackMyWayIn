@@ -7,8 +7,8 @@ type PostHeaderProps = {
   post: PostSummary;
   /** Pass a real view count when available; omit or pass null to show "—". */
   views?: number | null;
-  categorySlugMap?: ReadonlyMap<string, string>;
-  tagSlugMap?: ReadonlyMap<string, string>;
+  categorySlugMap: ReadonlyMap<string, string>;
+  tagSlugMap: ReadonlyMap<string, string>;
 };
 
 /**
@@ -23,7 +23,11 @@ type PostHeaderProps = {
  * Content is aligned to the site's max-w-7xl grid.
  */
 export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }: PostHeaderProps) {
-  const categorySlug = categorySlugMap?.get(post.category);
+  const categorySlug = categorySlugMap.get(post.category);
+
+  if (!categorySlug) {
+    throw new Error(`Missing category slug for "${post.category}"`);
+  }
 
   return (
     <div className="relative h-80 overflow-hidden">
@@ -53,7 +57,7 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
             <span>{post.date}</span>
 
             <Link
-              href={categorySlug ? `/categories/${categorySlug}` : `/categories/${encodeURIComponent(post.category)}`}
+              href={`/categories/${categorySlug}`}
               className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
             >
               {post.category}
@@ -85,12 +89,16 @@ export default function PostHeader({ post, views, categorySlugMap, tagSlugMap }:
           {post.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {post.tags.map((tag) => {
-                const tagSlug = tagSlugMap?.get(tag);
+                const tagSlug = tagSlugMap.get(tag);
+
+                if (!tagSlug) {
+                  throw new Error(`Missing tag slug for "${tag}"`);
+                }
 
                 return (
                   <Link
                     key={tag}
-                    href={tagSlug ? `/tags/${tagSlug}` : `/tags/${encodeURIComponent(tag)}`}
+                    href={`/tags/${tagSlug}`}
                     className="rounded-full bg-white/15 px-2.5 py-0.5 text-xs text-white/80 backdrop-blur-sm drop-shadow transition-colors hover:bg-white/25"
                   >
                     #{tag}
