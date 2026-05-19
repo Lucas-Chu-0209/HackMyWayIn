@@ -2,19 +2,15 @@ import { createHash } from "node:crypto";
 
 import { kv } from "@vercel/kv";
 
-const KV_REST_API_URL = process.env.KV_REST_API_URL;
-const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
-const VISITOR_SALT = process.env.VISITOR_SALT ?? "";
+const IS_DEV = process.env.NODE_ENV !== "production";
+const warnedMessages = new Set<string>();
 
 const ANALYTICS_KEYS = {
   totalViews: "views:total",
   totalVisitorsSet: "visitors:total:set",
   totalVisitors: "visitors:total",
   postViews: (slug: string) => `views:post:${slug}`,
-  rateLimit: (slug: string, bucket: string) => `ratelimit:track:${slug}:${bucket}`,
 } as const;
-
-const TRACK_WINDOW_SECONDS = 60;
 
 type HeaderSource = {
   get(name: string): string | null;
@@ -25,8 +21,37 @@ export type SiteAnalyticsTotals = {
   totalVisitors: number;
 };
 
+function warnOnce(message: string) {
+  if (!warnedMessages.has(message)) {
+    warnedMessages.add(message);
+    console.warn(message);
+  }
+}
+
 function isKvConfigured() {
-  return Boolean(KV_REST_API_URL && KV_REST_API_TOKEN);
+  const configured = Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+
+  if (!configured && IS_DEV) {
+    warnOnce("[analytics] KV is not configured. Set KV_REST_API_URL and KV_REST_API_TOKEN to enable analytics counters.");
+  }
+
+  return configured;
+}
+
+function getVisitorSalt() {
+  const configuredSalt = process.env.VISITOR_SALT?.trim();
+
+  if (configuredSalt) {
+    return configuredSalt;
+  }
+
+  if (IS_DEV) {
+    warnOnce("[analytics] VISITOR_SALT is not configured. Falling back to a local development salt.");
+    return "dev-visitor-salt";
+  }
+
+  warnOnce("[analytics] VISITOR_SALT is not configured. Unique visitor tracking is disabled.");
+  return null;
 }
 
 function sha256(value: string) {
@@ -56,16 +81,11 @@ function getClientIp(headers: HeaderSource) {
   return headers.get("x-real-ip") ?? headers.get("cf-connecting-ip") ?? "unknown-ip";
 }
 
-function getVisitorHash(headers: HeaderSource) {
+function getVisitorHash(headers: HeaderSource, visitorSalt: string) {
   const ip = getClientIp(headers);
   const userAgent = headers.get("user-agent") ?? "unknown-ua";
 
-  return sha256(`${VISITOR_SALT}:${ip}:${userAgent}`);
-}
-
-function getRateLimitBucket(headers: HeaderSource, slug: string) {
-  const ip = getClientIp(headers);
-  return sha256(`${VISITOR_SALT}:${slug}:${ip}`);
+  return sha256(`${visitorSalt}:${ip}:${userAgent}`);
 }
 
 export async function getPostViews(slug: string) {
@@ -76,7 +96,10 @@ export async function getPostViews(slug: string) {
   try {
     const value = await kv.get<number | string>(ANALYTICS_KEYS.postViews(slug));
     return toPositiveInteger(value);
-  } catch {
+  } catch (error) {
+    if (IS_DEV) {
+      console.error("[analytics] Failed to read post views from KV.", error);
+    }
     return 0;
   }
 }
@@ -99,27 +122,15 @@ export async function getSiteAnalyticsTotals(): Promise<SiteAnalyticsTotals> {
       totalViews: toPositiveInteger(totalViews),
       totalVisitors: toPositiveInteger(totalVisitors),
     };
-  } catch {
+  } catch (error) {
+    if (IS_DEV) {
+      console.error("[analytics] Failed to read site analytics totals from KV.", error);
+    }
+
     return {
       totalViews: 0,
       totalVisitors: 0,
     };
-  }
-}
-
-async function acquireTrackRateLimit(slug: string, headers: HeaderSource) {
-  const bucket = getRateLimitBucket(headers, slug);
-  const key = ANALYTICS_KEYS.rateLimit(slug, bucket);
-
-  try {
-    const result = await kv.set(key, "1", {
-      ex: TRACK_WINDOW_SECONDS,
-      nx: true,
-    });
-
-    return result === "OK";
-  } catch {
-    return true;
   }
 }
 
@@ -128,29 +139,49 @@ export async function trackPostAnalytics(slug: string, headers: HeaderSource) {
     return {
       tracked: false,
       rateLimited: false,
+      reason: "kv_not_configured" as const,
     };
   }
 
-  const canTrack = await acquireTrackRateLimit(slug, headers);
+  try {
+    await Promise.all([
+      kv.incr(ANALYTICS_KEYS.postViews(slug)),
+      kv.incr(ANALYTICS_KEYS.totalViews),
+    ]);
+  } catch (error) {
+    if (IS_DEV) {
+      console.error("[analytics] Failed to increment page view counters.", error);
+    }
 
-  if (!canTrack) {
     return {
       tracked: false,
-      rateLimited: true,
+      rateLimited: false,
+      reason: "kv_write_failed" as const,
     };
   }
 
-  const visitorHash = getVisitorHash(headers);
+  const visitorSalt = getVisitorSalt();
 
-  await Promise.all([
-    kv.incr(ANALYTICS_KEYS.postViews(slug)),
-    kv.incr(ANALYTICS_KEYS.totalViews),
-  ]);
+  if (!visitorSalt) {
+    return {
+      tracked: true,
+      rateLimited: false,
+      reason: "visitor_salt_missing" as const,
+    };
+  }
 
-  const addedToUniqueSet = await kv.sadd(ANALYTICS_KEYS.totalVisitorsSet, visitorHash);
+  const visitorHash = getVisitorHash(headers, visitorSalt);
 
-  if (addedToUniqueSet > 0) {
-    await kv.incr(ANALYTICS_KEYS.totalVisitors);
+  try {
+    const addedToUniqueSet = await kv.sadd(ANALYTICS_KEYS.totalVisitorsSet, visitorHash);
+
+    if (addedToUniqueSet > 0) {
+      await kv.incr(ANALYTICS_KEYS.totalVisitors);
+    }
+  } catch (error) {
+    if (IS_DEV) {
+      console.error("[analytics] Failed to update unique visitor counters.", error);
+    }
   }
 
   return {

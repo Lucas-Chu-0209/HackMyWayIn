@@ -39,5 +39,6 @@ export async function POST(request: Request) {
     ok: true,
     tracked: result.tracked,
     rateLimited: result.rateLimited,
+    reason: result.reason ?? null,
   });
 }

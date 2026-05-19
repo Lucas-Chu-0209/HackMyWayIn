@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
@@ -18,6 +19,8 @@ export async function generateStaticParams() {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
+  noStore();
+
   const { slug } = await params;
   const [post, allPosts, importantPosts, categorySlugMap, tagSlugMap, siteAnalytics, lastUpdated, totalWords] = await Promise.all([
     getPostBySlug(slug),

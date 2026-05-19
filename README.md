@@ -113,7 +113,7 @@ Analytics uses `@vercel/kv` with these server-side environment variables:
 
 - `KV_REST_API_URL`
 - `KV_REST_API_TOKEN`
-- `VISITOR_SALT` (required for salted anonymous visitor hashing)
+- `VISITOR_SALT` (required in production for salted anonymous visitor hashing)
 
 Key schema:
 
@@ -123,6 +123,30 @@ Key schema:
 - `visitors:total` → integer site-wide unique visitors
 
 On Vercel, add a Redis/KV integration first, then set `VISITOR_SALT` in Project Settings → Environment Variables.
+
+### Local analytics setup
+
+You can pull Vercel env vars without a global install:
+
+```bash
+npx vercel link
+npx vercel env pull .env.local
+```
+
+If `npx vercel` is unavailable, manually create `.env.local` with the three variables above.
+
+### Verify tracking works
+
+1. Run `npm run dev`.
+2. Open any post page and check Network for `POST /api/analytics/track`.
+3. Confirm response JSON contains `ok: true` and `tracked: true`.
+4. Refresh the same post page and confirm the post's `Views` increases.
+5. Confirm sidebar `Total Views` also increases.
+6. Confirm `Visitors` increases when visiting from a new browser/session.
+
+Notes:
+- If KV env vars are missing, analytics intentionally returns `tracked: false` and logs a warning in development.
+- If `VISITOR_SALT` is missing in production, view counters still increase but unique visitor counting is disabled.
 
 ## Roadmap
 
