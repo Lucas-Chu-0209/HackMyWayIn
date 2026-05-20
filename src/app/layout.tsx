@@ -7,7 +7,7 @@ import TransitionProvider from "@/components/TransitionProvider";
 
 export const metadata: Metadata = {
   title: "Hack My Way In · Lucas Chu",
-  description: "Personal brand and resume website for Lucas Chu — Creative Programmer, Developer, and Ethical Hacker.",
+  description: "Lucas Chu's personal site — projects, writing, and notes on web development, creative coding, and security.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
