@@ -21,8 +21,6 @@ export default function ContactSection() {
           <p className="text-zinc-600 dark:text-zinc-300 mb-8 leading-relaxed">
             Residence: Taipei, Taiwan<br></br>
             Email: lucasauriant0209@gmail.com<br></br>
-            Phone: +886 966837966<br></br>
-            Line ID: 86318732 (no spam allowed)
           </p>
           <div className="flex flex-wrap gap-3">
             {contactLinks.map((link) => (
