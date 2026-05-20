@@ -19,7 +19,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
   }
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20">
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:shadow-white/10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
         <Link
           href={`/posts/${post.slug}`}
