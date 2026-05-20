@@ -84,13 +84,9 @@ function computeTocNumbering(items: TocItem[]): { item: TocItem; prefix: string 
       h3Index = 0;
       return { item, prefix: `${h2Index}.` };
     }
-    // level === 3
-    if (h2Index === 0) {
-      // H3 before any H2 — treat as belonging to section 1
-      h2Index = 1;
-    }
+    // level === 3: default parent to virtual section 1 when no H2 has been seen
     h3Index += 1;
-    return { item, prefix: `${h2Index}.${h3Index}` };
+    return { item, prefix: `${h2Index === 0 ? 1 : h2Index}.${h3Index}` };
   });
 }
 
