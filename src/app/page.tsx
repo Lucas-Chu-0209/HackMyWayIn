@@ -2,7 +2,6 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 
 import BlogSidebar from "@/components/BlogSidebar";
-import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import PostListItem from "@/components/posts/PostListItem";
 import { getSiteAnalyticsTotals } from "@/lib/analytics";
@@ -33,7 +32,6 @@ export default async function Home() {
 
   return (
     <>
-      <Navbar />
       <main>
         <HeroSection />
         <div className="bg-zinc-100 dark:bg-zinc-950">

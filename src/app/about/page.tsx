@@ -3,7 +3,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import AboutSection from "@/components/AboutSection";
 import BlogSidebar from "@/components/BlogSidebar";
 import ContactSection from "@/components/ContactSection";
-import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import ProjectsSection from "@/components/ProjectsSection";
 import { getSiteAnalyticsTotals } from "@/lib/analytics";
@@ -22,7 +21,6 @@ export default async function AboutPage() {
 
   return (
     <>
-      <Navbar />
       {/* Page-level cover banner */}
       <div className="pt-16">
         <PageHeader title="About" />

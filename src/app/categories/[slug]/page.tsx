@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 
-import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import PostListItem from "@/components/posts/PostListItem";
 import { getAllCategories, getPostsByCategorySlug, getTagSlugMap } from "@/lib/posts";
@@ -27,7 +26,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <>
-      <Navbar />
       <div className="pt-16">
         <PageHeader title={result.category.name} />
       </div>
