@@ -36,24 +36,26 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
           />
         </Link>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <Link
-              href={`/categories/${categorySlug}`}
-              className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
-            >
-              {post.category}
-            </Link>
-            <span aria-hidden="true">•</span>
-            <span>{post.date}</span>
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+              <Link
+                href={`/categories/${categorySlug}`}
+                className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
+              >
+                {post.category}
+              </Link>
+              <span aria-hidden="true">•</span>
+              <span>{post.date}</span>
+            </div>
+            <HeadingTag className="mt-2 h-14 overflow-hidden text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
+              <Link href={`/posts/${post.slug}`} className="line-clamp-2 block transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
+                {post.title}
+              </Link>
+            </HeadingTag>
+            <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
           </div>
-          <HeadingTag className="mt-2 line-clamp-2 min-h-[3.5rem] text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
-            <Link href={`/posts/${post.slug}`} className="transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
-              {post.title}
-            </Link>
-          </HeadingTag>
-          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-          <div className="mt-3 flex flex-wrap gap-2 sm:mt-auto">
+          <div className="flex flex-wrap gap-2">
             {post.tags.map((tag) => {
               const tagSlug = tagSlugMap.get(tag);
 
