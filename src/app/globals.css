@@ -147,6 +147,14 @@ html.dark {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .route-transition--slide-from-right::before,
+  .route-transition--slide-from-left::before,
+  .route-transition--reveal::before {
+    animation: none;
+    opacity: 0;
+    transform: scale(0);
+  }
+
   .route-transition--slide-from-right,
   .route-transition--slide-from-left,
   .route-transition--reveal,
