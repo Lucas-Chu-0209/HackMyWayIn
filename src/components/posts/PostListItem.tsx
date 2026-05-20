@@ -19,8 +19,8 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
   }
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:shadow-white/10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:shadow-white/10 h-54">
+      <div className="flex h-full flex-col gap-4 sm:flex-row sm:items-stretch">
         <Link
           href={`/posts/${post.slug}`}
           aria-label={`Read article: ${post.title}`}
@@ -39,22 +39,25 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <Link
-              href={`/categories/${categorySlug}`}
-              className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
-            >
+            <Link href={`/categories/${categorySlug}`} className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100">
               {post.category}
             </Link>
             <span aria-hidden="true">•</span>
             <span>{post.date}</span>
           </div>
+
           <HeadingTag className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-            <Link href={`/posts/${post.slug}`} className="line-clamp-2 transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
+            <Link
+              href={`/posts/${post.slug}`}
+              className="line-clamp-2 transition-colors hover:text-zinc-700 dark:hover:text-zinc-300"
+            >
               {post.title}
             </Link>
           </HeadingTag>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
+
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{post.excerpt}</p>
+
+          <div className="mt-3 flex flex-nowrap gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {post.tags.map((tag) => {
               const tagSlug = tagSlugMap.get(tag);
 
@@ -66,7 +69,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
                 <Link
                   key={tag}
                   href={`/tags/${tagSlug}`}
-                  className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
+                  className="shrink-0 rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
                 >
                   #{tag}
                 </Link>
