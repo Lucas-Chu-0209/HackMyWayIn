@@ -23,6 +23,8 @@ type PostsPageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
+type PaginationItem = number | "ellipsis-left" | "ellipsis-right";
+
 function parsePageParam(page: string | undefined) {
   const parsedPage = Number(page);
   return Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -30,6 +32,22 @@ function parsePageParam(page: string | undefined) {
 
 function getPaginationHref(page: number) {
   return page === 1 ? "/posts" : `/posts?page=${page}`;
+}
+
+function getPaginationItems(currentPage: number, totalPages: number): PaginationItem[] {
+  if (totalPages <= 4) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  if (currentPage <= 2) {
+    return [1, 2, 3, "ellipsis-right", totalPages];
+  }
+
+  if (currentPage >= totalPages - 1) {
+    return [1, "ellipsis-left", totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, "ellipsis-left", currentPage - 1, currentPage, currentPage + 1, "ellipsis-right", totalPages];
 }
 
 export default async function PostsPage({ searchParams }: PostsPageProps) {
@@ -83,14 +101,42 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
                 </ul>
 
                 {totalPages > 1 && (
-                  <nav aria-label="Posts pagination" className="flex flex-wrap gap-2 pt-2">
-                    {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => {
-                      const isActive = page === currentPage;
+                  <nav aria-label="Posts pagination" className="flex flex-wrap items-center justify-center gap-2 pt-2">
+                    {currentPage > 1 ? (
+                      <Link
+                        href={getPaginationHref(currentPage - 1)}
+                        aria-label="Go to previous page"
+                        className="inline-flex h-10 items-center justify-center gap-1 rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-200 dark:hover:border-zinc-400 dark:hover:text-zinc-100"
+                      >
+                        <span aria-hidden="true">←</span>
+                        <span>Previous</span>
+                      </Link>
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="invisible inline-flex h-10 items-center justify-center gap-1 rounded-xl border px-3 text-sm font-medium"
+                      >
+                        <span>←</span>
+                        <span>Previous</span>
+                      </span>
+                    )}
+
+                    {getPaginationItems(currentPage, totalPages).map((item) => {
+                      if (typeof item !== "number") {
+                        return (
+                          <span key={item} aria-hidden="true" className="inline-flex h-10 min-w-10 items-center justify-center text-zinc-500 dark:text-zinc-400">
+                            …
+                          </span>
+                        );
+                      }
+
+                      const isActive = item === currentPage;
 
                       return (
                         <Link
-                          key={page}
-                          href={getPaginationHref(page)}
+                          key={item}
+                          href={getPaginationHref(item)}
+                          aria-label={`Go to page ${item}`}
                           aria-current={isActive ? "page" : undefined}
                           className={`inline-flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-medium transition-colors ${
                             isActive
@@ -98,10 +144,29 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
                               : "border-zinc-300 bg-white text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-200 dark:hover:border-zinc-400 dark:hover:text-zinc-100"
                           }`}
                         >
-                          {page}
+                          {item}
                         </Link>
                       );
                     })}
+
+                    {currentPage < totalPages ? (
+                      <Link
+                        href={getPaginationHref(currentPage + 1)}
+                        aria-label="Go to next page"
+                        className="inline-flex h-10 items-center justify-center gap-1 rounded-xl border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-200 dark:hover:border-zinc-400 dark:hover:text-zinc-100"
+                      >
+                        <span>Next</span>
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="invisible inline-flex h-10 items-center justify-center gap-1 rounded-xl border px-3 text-sm font-medium"
+                      >
+                        <span>Next</span>
+                        <span>→</span>
+                      </span>
+                    )}
                   </nav>
                 )}
               </>

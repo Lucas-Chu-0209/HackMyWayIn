@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import ThemeToggleFab from "@/components/ThemeToggleFab";
+import TransitionProvider from "@/components/TransitionProvider";
 
 export const metadata: Metadata = {
   title: "Hack My Way In · Lucas Chu",
@@ -13,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body>
         <ThemeProvider>
-          {children}
+          <TransitionProvider>{children}</TransitionProvider>
           <ThemeToggleFab />
         </ThemeProvider>
       </body>
