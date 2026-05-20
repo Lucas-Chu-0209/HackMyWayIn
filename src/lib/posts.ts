@@ -58,6 +58,9 @@ const TOC_MIN_HEADING_LEVEL = 2;
 const TOC_MAX_HEADING_LEVEL = 3;
 const DEFAULT_IMPORTANCE: PostImportance = 3;
 const DEFAULT_TAXONOMY_SLUG = "item";
+const CJK_CHARACTER_PATTERN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu;
+// Includes both straight apostrophe (') and curly apostrophe (\u2019).
+const LATIN_WORD_PATTERN = /[A-Za-z0-9]+(?:['\u2019][A-Za-z0-9]+)*/g;
 
 export const POSTS_PAGE_SIZE = 9;
 
@@ -164,8 +167,19 @@ function computeWordCount(source: string): number {
   text = text.replace(/^#{1,6}\s*/gm, "");
   // Strip bold/italic markers
   text = text.replace(/[*_]{1,3}/g, " ");
-  // Count non-empty whitespace-separated tokens
-  return text.split(/\s+/).filter((w) => w.length > 0).length;
+
+  // Mixed-language counting examples:
+  // - "資安 ABC 123" => 2 (CJK chars) + 2 (Latin words) = 4
+  // - "今天學習 AI security" => 4 (CJK chars) + 2 (Latin words) = 6
+  const cjkCharacterMatches = text.match(CJK_CHARACTER_PATTERN);
+  const cjkCharCount = cjkCharacterMatches?.length ?? 0;
+
+  // Remove CJK chars first so mixed strings are not double-counted by Latin word matching.
+  const textWithoutCjk = text.replace(CJK_CHARACTER_PATTERN, " ");
+  const latinWordMatches = textWithoutCjk.match(LATIN_WORD_PATTERN);
+  const latinWordCount = latinWordMatches?.length ?? 0;
+
+  return cjkCharCount + latinWordCount;
 }
 
 function sanitizeHeadingText(text: string) {
