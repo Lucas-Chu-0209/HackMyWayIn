@@ -11,7 +11,7 @@ export default async function CategoriesPage() {
       <div className="col-span-full pt-16">
         <PageHeader title="Categories" />
       </div>
-      <div className="min-w-0 w-full max-w-4xl py-16">
+      <div className="min-w-0 max-w-4xl py-16">
         {categories.length === 0 ? (
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-500 dark:border-white/10 dark:bg-zinc-900/50 dark:text-zinc-400">
             No categories yet.
