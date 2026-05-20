@@ -26,7 +26,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
           aria-label={`Read article: ${post.title}`}
           className="group relative block w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:h-36 sm:w-64 sm:flex-none"
         >
-          <div className="relative aspect-video h-full w-full">
+          <div className="relative aspect-video w-full sm:h-full sm:aspect-auto">
             <Image
               src={post.cover}
               alt={post.title}
@@ -48,7 +48,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
             <span aria-hidden="true">•</span>
             <span>{post.date}</span>
           </div>
-          <HeadingTag className="mt-2 line-clamp-2 min-h-[3.5rem] text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+          <HeadingTag className="mt-2 line-clamp-2 min-h-[calc(2*1.75rem)] text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
             <Link href={`/posts/${post.slug}`} className="transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
               {post.title}
             </Link>
