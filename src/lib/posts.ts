@@ -153,6 +153,7 @@ function stripFrontmatter(source: string) {
 
 function computeWordCount(source: string): number {
   let text = stripFrontmatter(source);
+
   // Strip fenced code blocks (``` ... ```)
   text = text.replace(/```[\s\S]*?```/g, " ");
   // Strip inline code (`...`)
@@ -163,20 +164,21 @@ function computeWordCount(source: string): number {
   text = text.replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
   // Unwrap markdown links [text](url) → text
   text = text.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
-  // Strip heading markers at line start (allows optional trailing space per CommonMark;
-  // {1,6} covers all six markdown heading levels)
+  // Strip heading markers at line start
   text = text.replace(/^#{1,6}\s*/gm, "");
-  // Strip bold/italic markers
+  // Strip common markdown emphasis markers
   text = text.replace(/[*_]{1,3}/g, " ");
+  // Strip blockquote markers
+  text = text.replace(/^>\s?/gm, "");
+  // Strip horizontal rules / list markers (basic)
+  text = text.replace(/^\s*([-*+]|\d+\.)\s+/gm, "");
 
-  const cjkCharacterMatches = text.match(CJK_CHARACTER_PATTERN);
-  const cjkCharCount = cjkCharacterMatches?.length ?? 0;
-
-  const textWithoutCjk = text.replace(CJK_CHARACTER_PATTERN, " ");
-  const latinWordMatches = textWithoutCjk.match(LATIN_WORD_PATTERN);
-  const latinWordCount = latinWordMatches?.length ?? 0;
-
-  return cjkCharCount + latinWordCount;
+  // Count visible characters:
+  // - Remove all whitespace
+  // - Remove punctuation/symbols so "字數" feels closer to iThome-style counts
+  //   Keep letters/numbers and CJK characters.
+  const chars = Array.from(text).filter((ch) => !/\s/u.test(ch));
+  return chars.length;
 }
 
 function sanitizeHeadingText(text: string) {

@@ -30,7 +30,7 @@ function getTransitionKind(previousPathname: string, nextPathname: string): Tran
   const nextIndex = getNavIndex(nextPathname);
 
   if (previousIndex !== null && nextIndex !== null && previousIndex !== nextIndex) {
-    return nextIndex > previousIndex ? "slide-from-right" : "slide-from-left";
+    return nextIndex > previousIndex ? "slide-from-left" : "slide-from-right";
   }
 
   return "fade";

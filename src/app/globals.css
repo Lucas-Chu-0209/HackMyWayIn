@@ -37,7 +37,6 @@ html:not(.dark) body {
 
 /* Smooth theme switching for common UI surfaces */
 body,
-header,
 footer,
 section,
 main,
@@ -81,15 +80,15 @@ html.dark {
 }
 
 .route-transition--slide-from-right::before {
-  animation: page-reveal-from-right 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-reveal-from-right 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .route-transition--slide-from-left::before {
-  animation: page-reveal-from-left 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-reveal-from-left 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .route-transition--reveal::before {
-  animation: page-reveal 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-reveal 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .route-transition--fade {
