@@ -41,10 +41,10 @@ export default async function Home() {
                 <div>
                   <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">Latest Posts</p>
                   <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                    Fresh notes from the lab
+                    Security notes & Personal blog
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-                    The newest write-ups, build logs, and learning notes live here. Browse the latest nine entries or jump to the full archive.
+                  <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                    The latest posts, learning notes, and personal write-ups are shared here. This space documents my ongoing journey through cybersecurity, programming, life experiences, and occasional travel reflections — capturing both what I learn and how I grow along the way.
                   </p>
                 </div>
 
