@@ -13,7 +13,8 @@ html {
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
   /* Default dark appearance before the theme class is applied (prevents flash). */
   background-color: #09090b;
   color: #e4e4e7;
@@ -49,50 +50,72 @@ div {
 .route-transition {
   width: 100%;
   min-height: 100%;
+
+  /* Prevent horizontal scrollbar during slide/reveal */
+  overflow-x: hidden;
+
+  /*
+    Give the "uncovered" area a neutral surface so it doesn't look like black.
+    This is the color you see while clip-path is still hiding part of the page.
+  */
+  background-color: #868789; /* gray-200 */
 }
 
+/* Match the neutral uncovered color in dark mode too (slightly darker gray). */
+html.dark .route-transition {
+  background-color: #9f9b9bac; /* zinc-900 */
+}
+
+/* Use a “reveal/uncover” style for nav transitions (more obvious than 20px slide). */
 .route-transition--slide-from-right {
-  animation: page-slide-from-right 220ms ease-out both;
+  animation: page-reveal-from-right 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .route-transition--slide-from-left {
-  animation: page-slide-from-left 220ms ease-out both;
+  animation: page-reveal-from-left 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Keep post detail entry as a distinct reveal (slightly slower for drama). */
 .route-transition--reveal {
-  animation: page-reveal 260ms ease-out both;
+  animation: page-reveal 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .route-transition--fade {
-  animation: page-fade 140ms ease-out both;
+  animation: page-fade 280ms ease-out both;
 }
 
-@keyframes page-slide-from-right {
+/* Nav reveal: “uncover” from the edge + a tiny nudge */
+@keyframes page-reveal-from-right {
   from {
-    opacity: 0.85;
-    transform: translateX(20px);
+    opacity: 1;
+    transform: translateX(12px);
+    clip-path: inset(0 0 0 100%);
   }
   to {
     opacity: 1;
     transform: translateX(0);
+    clip-path: inset(0 0 0 0);
   }
 }
 
-@keyframes page-slide-from-left {
+@keyframes page-reveal-from-left {
   from {
-    opacity: 0.85;
-    transform: translateX(-20px);
+    opacity: 1;
+    transform: translateX(-12px);
+    clip-path: inset(0 100% 0 0);
   }
   to {
     opacity: 1;
     transform: translateX(0);
+    clip-path: inset(0 0 0 0);
   }
 }
 
+/* Post detail reveal */
 @keyframes page-reveal {
   from {
-    opacity: 0.8;
-    transform: translateY(10px) scale(0.99);
+    opacity: 0.85;
+    transform: translateY(14px) scale(0.99);
     clip-path: inset(0 0 100% 0);
   }
   to {

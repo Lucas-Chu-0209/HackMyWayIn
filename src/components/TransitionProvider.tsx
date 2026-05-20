@@ -51,5 +51,12 @@ export default function TransitionProvider({ children }: { children: React.React
     previousPathname.current = pathname;
   }, [pathname]);
 
-  return <div className={`route-transition route-transition--${transitionKind}`}>{children}</div>;
+  return (
+    <div
+      key={pathname}
+      className={`route-transition route-transition--${transitionKind}`}
+    >
+      {children}
+    </div>
+  );
 }
