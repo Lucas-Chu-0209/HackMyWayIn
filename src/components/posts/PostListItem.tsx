@@ -15,12 +15,14 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
   const categorySlug = categorySlugMap.get(post.category);
 
   if (!categorySlug) {
-    throw new Error(`Missing category slug for "${post.category}" in categorySlugMap. Verify taxonomy slug map generation.`);
+    throw new Error(
+      `Missing category slug for "${post.category}" in categorySlugMap. Verify taxonomy slug map generation.`
+    );
   }
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:shadow-white/10 h-54">
-      <div className="flex h-full flex-col gap-4 sm:flex-row sm:items-stretch">
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:shadow-white/10 sm:h-56">
+      <div className="flex flex-col gap-4 sm:h-full sm:flex-row sm:items-stretch">
         <Link
           href={`/posts/${post.slug}`}
           aria-label={`Read article: ${post.title}`}
@@ -39,7 +41,10 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <Link href={`/categories/${categorySlug}`} className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100">
+            <Link
+              href={`/categories/${categorySlug}`}
+              className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
+            >
               {post.category}
             </Link>
             <span aria-hidden="true">•</span>
