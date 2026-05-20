@@ -222,7 +222,7 @@ export default async function BlogSidebar({
                 <a
                   href={`#${item.id}`}
                   aria-label={`${prefix} ${item.text}`}
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100"
+                  className="text-zinc-900 hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-500"
                 >
                   <span className="mr-1 font-medium text-zinc-400 dark:text-zinc-500">{prefix}</span>
                   {item.text}

@@ -1,35 +1,104 @@
 ---
-title: "Welcome to Blog v2"
-date: "2026-05-18"
+title: "Day 2｜以「學習者視角」分享從 CIA 到資安實務：日常生活中的資安技術 + 加密的簡單原理與實作"
+date: "2025-09-02"
 category: "Engineering"
 tags:
-  - "Next.js"
-  - "MDX"
+  - "Cybersec"
+  - "Competition"
   - "Blog"
-excerpt: "Blog v2 now supports MDX posts, metadata frontmatter, and a generated TOC in the sidebar."
+  - "Python"
+  - "Encryption"
+excerpt: "今天，我希望從「理論」走向「實務」，和大家一起探討這三要素在日常生活和工作中是如何被落實的，以及我們實際運用的資安技術背後，與 CIA Triad 的連結。"
 cover: "/projects/HMWI_rmbg.png"
 importance: 4
 ---
 
-## Why Blog v2
+## 前言
+既昨天跟大家分享完現代社會資安為何重要以及資安核心三大人物———`CIA Triad` 之後，希望大家已經有一點基礎的小小概念，這三個要素不僅是每個資安人必須掌握的理論基礎，更直接影響到我們每天接觸的各種資訊系統和技術，而一下資安的本質就是「**在不妨礙使用者體驗的前提下，確保資訊系統安全、可靠並能持續運作**」。
 
-This milestone introduces a proper MDX post structure so each post can carry rich metadata and render markdown-first content.
+今天，我希望從「理論」走向「實務」，和大家一起探討這三要素在日常生活和工作中是如何被落實的，以及我們實際運用的資安技術背後，與 CIA Triad 的連結。而由於篇幅的問題，今天主要會深入探討 CIA Triad 當中的「Confidentiality」——資料機密性在日常生活中如何落實、面臨哪些攻擊威脅，以及資安人員應如何防禦。
 
-## What changed
+---
 
-### Post format
+## Breif Recap —— Confidentiality 機密性🤫
+Confidentiality 是指「**保護資訊不被未授權的人士取得或窺探**」。這是所有資安設計的首要原則之一。無論是個人隱私、企業機密、甚至是政府敏感資料，都需要確保只有授權的人才能存取。
 
-Every post is now an `.mdx` file with YAML frontmatter.
+以防你有這個疑問，「授權、授權、授權」一詞一直聽到，而這個我們在講到「Identity 身分」的時候（不久了！敬請期待喲😉），會仔細跟大家分享授權在做什麼，以及背後的技術！現在大家只要知道「授權」就是給予——對的「**人**」在對的「**時間**」、對的「**地點**」取用資料的權利。
 
-### Routes
+## CIA Triad 如何走進日常
+### 1. 資料加密
 
-- `/posts` lists all posts
-- `/posts/[slug]` renders each post detail page
+- **端對端加密（End-to-End Encryption, 簡稱 E2EE）**：像是 WhatsApp、Signal、iMessgage 訊息傳輸都是用這類的加密技術！
+- **磁碟/檔案加密**：Windows BitLocker、Apple FileVault
+- **瀏覽器 HTTPS 傳輸加密**：防止中間人竊聽
 
-### Sidebar integration
+### 2. 身份認證與存取控管
 
-The existing right sidebar now receives post stats and a basic table of contents.
+- **多/雙因子認證（MFA/2FA）**：Google Authenticator、SMS 驗證，而常見驗證的方法有分 OTP/TOTP 一次性密碼、硬體金鑰、生物辨識（指紋、人臉）等等
+- **權限管理**：Google Drive、Dropbox 檔案分享權限設定
 
-## What's next
+### 3. 資料遮蔽與去識別化
 
-Future milestones can add richer syntax highlighting, reading metrics, and cross-post recommendations.
+- **敏感資料遮蔽**：銀行 App 中部分隱藏卡號
+- **去識別化（De-identification）**：醫療資料保護
+
+## 魯卡實作小天地
+講了一些基礎的理論之後，當然也需要技術面的東西才夠看吧？不然都是空講（被嘴只會講沒有技術🥲）。所以這裡針對 Confidentiality 當中的「Encryption 加密」來簡單為大家展示，加密的背景原理、過程（先不聊解密）。
+
+以下為資訊傳遞的簡要過程，經歷加密和解密：
+![資訊傳遞的過程：加密與解密](https://ithelp.ithome.com.tw/upload/images/20250902/201759573uLbqwmvry.png)
+*網路截圖來自WikiPedia Encryption”
+
+接下來我們用 Python 的 cryptography 套件（Fernet） 來示範「Confidentiality → Encryption」的概念。
+
+📥 套件下載：下載 Fernet 套件到適合的虛擬環境中
+```bash
+pip install cryptography
+```
+
+🔨 Python 技術實作（這邊是對稱加密Symmetric Encryption）
+```python
+from cryptography.fernet import Fernet
+
+# 1. 生成一組金鑰（Key）
+key = Fernet.generate_key()
+cipher = Fernet(key)
+
+# 可以看看金鑰大概長怎樣😁
+print("產生的金鑰:", key.decode())
+
+# 2. 原始訊息，通常我們這邊稱為 PlainText -> 我們看得懂的訊息。
+message = "客戶的帳號密碼：user123 / pass456"
+print("\n原始訊息:", message)
+
+# 3. 使用金鑰加密，加密後的訊息為 CipherText -> 我們看不懂的訊息，看得懂算你厲害。
+encrypted_message = cipher.encrypt(message.encode())
+print("\n加密後的訊息:", encrypted_message.decode())
+
+# 4. 使用同一金鑰解密
+decrypted_message = cipher.decrypt(encrypted_message).decode()
+print("\n解密後的訊息:", decrypted_message)
+```
+
+Output 結果如下：
+![Output](https://ithelp.ithome.com.tw/upload/images/20250902/20175957mINTxoLv4R.png)
+
+### 加密流程（對稱加密 Symmetric Encryption）
+1. 數據的明文(PlainText)會通過一個加密演算法(Encryption)和事先生成的對稱金鑰進行運算。
+2. 演算法根據密鑰將明文轉換為不可讀的密文(CipherText)。
+
+> 對稱加密的重點 -> 使用**單一**的金鑰進行加密和解密，因此加/解密雙方必須**共用相同的Key**
+
+詳細的 Fernet 套件加密技術（AES），可以參照以下網站：
+1. [Fernet加密解密技术详解](https://blog.csdn.net/Allocator/article/details/128928862)
+2. [Encryption and Decryption with Fernet in Python](https://medium.com/@rahulgosavi.94/fernet-encryption-and-decryption-2101f0e3097a)
+
+# 最後給大家的小情書
+今天就到這邊告一段落拉！！！然後我還有一些話想跟大家說：雖然我目前還只是資安領域的小白，沒有太多深入的研究或工作經驗，但這次的鐵人賽我主要就是想以「新手學習者」的視角，誠實分享自己在實習、比賽、自學過程中遇到的技術挑戰和收穫。希望這一系列文章不僅僅能充實自己的知識，也希望能給有志進入資安領域的朋友一些具體參考。或許你現在和我一樣，對資安充滿好奇但又有點陌生，這 30 篇文章會以技術為主軸，搭配我不論在比賽實習、還是自學中實際接觸到的經驗，一起探索資安世界的門檻與可能性。希望我的學習分享，能成為你資安路上的一個小小里程碑，也歡迎你一起交流、成長！💌
+
+明日預告：Confidentiality 攻防實務——釣魚攻擊剖析與防禦。我們明天見！
+
+## References
+1. [Fernet加密解密技术详解](https://blog.csdn.net/Allocator/article/details/128928862)
+2. [Encryption and Decryption with Fernet in Python](https://medium.com/@rahulgosavi.94/fernet-encryption-and-decryption-2101f0e3097atp://)
+3. [About Encryption 關於加密機制](https://ithelp.ithome.com.tw/articles/10358458)
