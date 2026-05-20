@@ -25,7 +25,7 @@ export default async function BlogSidebarPageLayout({ children }: BlogSidebarPag
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 xl:px-10">
           {children}
 
-          <aside aria-label="Sidebar" className="hidden lg:block lg:py-16">
+          <aside aria-label="Sidebar" role="complementary" className="hidden lg:block lg:py-16">
             <div className="sticky top-6">
               <div className="pr-1">
                 <BlogSidebar
