@@ -156,13 +156,13 @@ export default function Navbar() {
           </button>
         </div>
         <nav>
-          <ul className="py-4">
+          <ul className="py-4 space-y-2">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   onClick={() => setDrawerOpen(false)}
-                  className="w-full text-left px-6 py-3 text-base font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors focus:outline-none focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-800/50 cursor-pointer"
+                  className="block w-full rounded-md px-6 py-3.5 text-[15px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors focus:outline-none focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-800/50 cursor-pointer"
                 >
                   {link.label}
                 </Link>
