@@ -185,6 +185,26 @@ export default async function BlogSidebar({
         </div>
       </div>
 
+      {resolvedToc.length > 0 && (
+        <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
+          <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
+            {computeTocNumbering(resolvedToc).map(({ item, prefix }) => (
+              <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
+                <a
+                  href={`#${item.id}`}
+                  aria-label={`${prefix} ${item.text}`}
+                  className="text-zinc-900 hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-500"
+                >
+                  <span className="mr-1 font-medium text-zinc-400 dark:text-zinc-500">{prefix}</span>
+                  {item.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-amber-500 dark:text-amber-400" title="Featured">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -212,27 +232,7 @@ export default async function BlogSidebar({
           </div>
         )}
       </div>
-
-      {resolvedToc.length > 0 && (
-        <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
-          <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
-            {computeTocNumbering(resolvedToc).map(({ item, prefix }) => (
-              <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
-                <a
-                  href={`#${item.id}`}
-                  aria-label={`${prefix} ${item.text}`}
-                  className="text-zinc-900 hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-500"
-                >
-                  <span className="mr-1 font-medium text-zinc-400 dark:text-zinc-500">{prefix}</span>
-                  {item.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
+      
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-sky-500 dark:text-sky-400" title="Tags">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

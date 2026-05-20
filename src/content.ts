@@ -93,8 +93,8 @@ export const contactLinks = [
 
 export const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
   { label: "Posts", href: "/posts" },
   { label: "Tags", href: "/tags" },
   { label: "Categories", href: "/categories" },
+  { label: "About", href: "/about" },
 ];

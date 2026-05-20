@@ -19,14 +19,14 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
   }
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:hover:shadow-white/10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
         <Link
           href={`/posts/${post.slug}`}
           aria-label={`Read article: ${post.title}`}
-          className="group relative block w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:w-64 sm:flex-none"
+          className="group relative block w-full shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:w-64 sm:flex-none"
         >
-          <div className="relative aspect-video w-full">
+          <div className="relative aspect-video w-full sm:aspect-auto sm:h-full">
             <Image
               src={post.cover}
               alt={post.title}
@@ -49,7 +49,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
             <span>{post.date}</span>
           </div>
           <HeadingTag className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-            <Link href={`/posts/${post.slug}`} className="transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
+            <Link href={`/posts/${post.slug}`} className="line-clamp-2 transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
               {post.title}
             </Link>
           </HeadingTag>

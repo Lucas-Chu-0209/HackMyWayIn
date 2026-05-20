@@ -1,7 +1,7 @@
 ---
 title: "Day 2｜以「學習者視角」分享從 CIA 到資安實務：日常生活中的資安技術 + 加密的簡單原理與實作"
 date: "2025-09-02"
-category: "Engineering"
+category: "資安系列文"
 tags:
   - "Cybersec"
   - "Competition"
@@ -26,18 +26,18 @@ Confidentiality 是指「**保護資訊不被未授權的人士取得或窺探**
 以防你有這個疑問，「授權、授權、授權」一詞一直聽到，而這個我們在講到「Identity 身分」的時候（不久了！敬請期待喲😉），會仔細跟大家分享授權在做什麼，以及背後的技術！現在大家只要知道「授權」就是給予——對的「**人**」在對的「**時間**」、對的「**地點**」取用資料的權利。
 
 ## CIA Triad 如何走進日常
-### 1. 資料加密
+### a. 資料加密
 
 - **端對端加密（End-to-End Encryption, 簡稱 E2EE）**：像是 WhatsApp、Signal、iMessgage 訊息傳輸都是用這類的加密技術！
 - **磁碟/檔案加密**：Windows BitLocker、Apple FileVault
 - **瀏覽器 HTTPS 傳輸加密**：防止中間人竊聽
 
-### 2. 身份認證與存取控管
+### b. 身份認證與存取控管
 
 - **多/雙因子認證（MFA/2FA）**：Google Authenticator、SMS 驗證，而常見驗證的方法有分 OTP/TOTP 一次性密碼、硬體金鑰、生物辨識（指紋、人臉）等等
 - **權限管理**：Google Drive、Dropbox 檔案分享權限設定
 
-### 3. 資料遮蔽與去識別化
+### c. 資料遮蔽與去識別化
 
 - **敏感資料遮蔽**：銀行 App 中部分隱藏卡號
 - **去識別化（De-identification）**：醫療資料保護
@@ -93,7 +93,7 @@ Output 結果如下：
 1. [Fernet加密解密技术详解](https://blog.csdn.net/Allocator/article/details/128928862)
 2. [Encryption and Decryption with Fernet in Python](https://medium.com/@rahulgosavi.94/fernet-encryption-and-decryption-2101f0e3097a)
 
-# 最後給大家的小情書
+## 最後給大家的小情書
 今天就到這邊告一段落拉！！！然後我還有一些話想跟大家說：雖然我目前還只是資安領域的小白，沒有太多深入的研究或工作經驗，但這次的鐵人賽我主要就是想以「新手學習者」的視角，誠實分享自己在實習、比賽、自學過程中遇到的技術挑戰和收穫。希望這一系列文章不僅僅能充實自己的知識，也希望能給有志進入資安領域的朋友一些具體參考。或許你現在和我一樣，對資安充滿好奇但又有點陌生，這 30 篇文章會以技術為主軸，搭配我不論在比賽實習、還是自學中實際接觸到的經驗，一起探索資安世界的門檻與可能性。希望我的學習分享，能成為你資安路上的一個小小里程碑，也歡迎你一起交流、成長！💌
 
 明日預告：Confidentiality 攻防實務——釣魚攻擊剖析與防禦。我們明天見！
