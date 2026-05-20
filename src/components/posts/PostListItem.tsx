@@ -19,22 +19,21 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
   }
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20">
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 dark:border-white/10 dark:bg-zinc-900/50 dark:hover:border-white/20 sm:min-h-[9rem]">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+        {/* Thumbnail — fixed size at sm+ so a long title never shrinks it */}
         <Link
           href={`/posts/${post.slug}`}
           aria-label={`Read article: ${post.title}`}
-          className="group relative block w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:w-64 sm:flex-none"
+          className="group relative block h-40 w-full shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:h-24 sm:w-40"
         >
-          <div className="relative aspect-video w-full">
-            <Image
-              src={post.cover}
-              alt={post.title}
-              fill
-              sizes="(max-width: 640px) 100vw, 256px"
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-            />
-          </div>
+          <Image
+            src={post.cover}
+            alt={post.title}
+            fill
+            sizes="(max-width: 640px) 100vw, 160px"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
         </Link>
 
         <div className="min-w-0 flex-1">
@@ -48,7 +47,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
             <span aria-hidden="true">•</span>
             <span>{post.date}</span>
           </div>
-          <HeadingTag className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+          <HeadingTag className="mt-2 line-clamp-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             <Link href={`/posts/${post.slug}`} className="transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
               {post.title}
             </Link>
