@@ -1,0 +1,128 @@
+---
+title: "Day 26｜《資安一點通：去識別化技術探討 ep.3 — De-identification 範例流程實作》"
+date: "2025-09-26"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "De-identification"
+excerpt: "上回跟大家分享了為何我會分享 Log analysis 作為資安的第一系列文章，知道 Log file 跟有實際操作過分析過還是有很大的差別的～當然現在越來越多線上工具、應用程式提供給我們做分析，根本就不用大費周章自己手動花費大量時間分析，"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+今天就接續上回的內容，來講講我們常用的 LLM 跟去識別化技術的實作過程～
+
+## 🔥 Most Common LLMs
+
+### OpenAI 系列（我們熟知的 ChatGPT）
+
+1. GPT-3/ GPT-3.5：最早廣泛普及的商用 LLM
+2. PT-4/ GPT-4o：強化推理、多模態（文字 + 圖片 + 語音等等）
+    - Mini/Mini-High 這種則適合處理程式編碼等等作業
+3. GPT-5：最新一代的模型，重點在更強推理與多模組的支援
+
+### Anthropic
+
+1. Claude 系列（Claude 1 → 2 → 3）：強調「安全性」與「對話品質」，在法律、長文部分的閱讀總結非常受歡迎
+
+### Google DeepMind/ Google AI
+
+1. PaLM 2：支撐 Bard（後來整合為 Gemini）的大模型 → 這個個人比較沒用過，不確定實用性為何，大家可以自己去試用看看 >\<
+2. Gemini 1.5：最新的旗艦模型，多模態 + 超長上下文（可處理百萬 token）
+
+### Meta (Facebook)
+
+1. LLaMA 系列（LLaMA 2, LLaMA 3）：開源模型，研究和商業應用都很流行。雖然我覺得 Llama 的某個模型自己用起來不是特別順利 lol 👻
+2. 社群常用來 fine-tune 做客製化應用
+
+### Mistral AI
+
+1. Mistral 7B：高效能、小型開源模型
+2. Mixtral 8x7B：採用 Mixture of Experts（MoE）架構，性能與效率兼顧
+
+### Cohere
+
+1. Command R 系列：專注在 RAG（Retrieval-Augmented Generation），適合知識檢索 + 問答
+
+### 其他
+
+除了以上幾種 LLM 以外，還有一些各自領域常用的模型：
+
+1. Jurassic-2（AI21 Labs）：擅長多語言和長文本生成
+2. Falcon（TII 阿布達比）：開源高效能模型
+3. ERNIE（百度）：中文相關的強大 LLM
+4. Yi（零一萬物）：中國新創，模型在多語言基準測試中表現優秀 → 個人一樣沒有使用過，不確定到底效能、精準度好不好
+
+## 📝 小小 LLM 總結
+
+- 商用領域：ChatGPT、Anthropic Claude、Google Gemini。
+- 研究與開源：Meta LLaMA、Mistral、Falcon。
+- 中文優勢：ChatGPT、百度 ERNIE、零一萬物 Yi。
+
+---
+
+那麼去識別化的過程簡單來說就是，分為以下幾點：
+
+1. 選擇文字處理模組 Parser Model
+2. PII Detection（個資偵測）
+3. Tokenised（將資料標籤化）
+4. De-identification（完成去識別化！）
+
+而第一步的模組選擇部分，是依照需求去選擇自己適合的模組，在 Hugging face 的公開平台裡面有非常豐富的開源模型；而當中就有許多 Transformer 函式庫，可以提供我們去免費取用或者 finetune（微調）。
+
+## 盧卡程式小天地（套件篇）
+
+接下來會選擇 **[Microsoft Presidio](https://microsoft.github.io/presidio/)** 這個 SDK 以及簡單的 Faker package 來測試，來搭配程式簡單跟大家演示去識別化的完成過程。（由於完整程式會比較複雜，所以只會呈現部分程式碼內容、搭配圖片）至於搭配 LLM ai 的部分，後續有機會也會一併分享給大家！
+
+### 第一步：先選擇自己的模組、工具 → Import
+
+![https://ithelp.ithome.com.tw/upload/images/20250926/20175957kFyPrkFBKM.png](https://ithelp.ithome.com.tw/upload/images/20250926/20175957kFyPrkFBKM.png)
+
+- 可以去 **[Microsoft Presidio](https://microsoft.github.io/presidio/) 官網**參考如何安裝以及使用
+
+![https://ithelp.ithome.com.tw/upload/images/20250926/20175957codgWExioA.png](https://ithelp.ithome.com.tw/upload/images/20250926/20175957codgWExioA.png)
+
+- 以上是 Presidio 一開始初始化的建置部分，可以根據自己的需求去 Finetune。
+- 注意一下第四點（註冊自訂實體）的部分 → 這個是提供使用者根據自己想要偵測的 Entities 實體，可以去自行新增的地方，也就是客製化的內容！
+    - 像是在台灣的我們，可能原本的 kit 沒有辦法偵測台灣手機或者特定台灣獨有的數字或者號碼，但就可以透過自定義規則（Regext）的方式，加進去。
+
+### 第二步：PII Detection
+
+可以去看看 Presidio 有哪些 supported entities 是他們內部支援的 → [**PII entities supported by Presidio**](https://microsoft.github.io/presidio/supported_entities/)
+
+![https://ithelp.ithome.com.tw/upload/images/20250926/201759572mh241TUO2.png](https://ithelp.ithome.com.tw/upload/images/20250926/201759572mh241TUO2.png)
+
+- 這裡的 text 就是想要偵測的文字段落
+- entities 就是 Presidio supported entities（官方支援的）+ custom entities（自定義的）
+
+### 第三步：Tokenised 標籤化資料
+
+- 假設今天的文字段落是：
+
+“John’s email is [johnpacker@](mailto:johnpacker@gmail.com)test.com”
+
+- 經過 tokenised 的處理就會變成：
+
+“`<PERSON>`’s email is `<EMAIL_ADDRESS>`” 而這就是資料的標籤化（也可以算是 → Masking 遮蔽）
+
+### 第四步：去識別化完成
+
+每個文字段落重複以上的動作，基本上就完成了去識別化的動作。當然如果還要假名化、資料一般化、假資料替代的話，就是更進階的步驟（簡單來說就是針對每個 entities 去生成、修改成對應 entities 的資料，像是 John → Peter；45 years old → 40-50 years old 等等）。
+
+![https://ithelp.ithome.com.tw/upload/images/20250926/20175957gWfkvCDlhM.png](https://ithelp.ithome.com.tw/upload/images/20250926/20175957gWfkvCDlhM.png)
+
+- 圖中可看到：0912345678 這個部分，就會被成功識別成 TW_PHONE_NUMBER（我們自定義的）。還有其他像是統編的部分 UNIFIED_BUSINESS_NO。
+- 當然有些部分，可能在偵測上不是那麼精準，所以會有需要調整、精進偵測的準度以及效度。
+- 改善方式就包含：better code、better tools、better test_data 等等
+
+這樣我們就完成去識別化啦！讚 👍
+
+---
+
+## 結語
+
+今天主要專注在去識別化技術的簡單程式範例實作上，雖然沒有 exposed 太多程式碼，因為重點是希望能分享去識別化執行的過程，而不是如何從頭到尾很繁瑣的講述給大家～希望大家理解 >\< 那我們下回再見 byebye！👋
+

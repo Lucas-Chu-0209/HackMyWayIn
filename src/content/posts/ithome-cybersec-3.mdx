@@ -1,0 +1,92 @@
+---
+title: "Day 3｜釣魚釣到什麼魚？你是別人眼中的魚嗎？基礎識別以及預防方法"
+date: "2025-09-03"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Social Engineering"
+  - "Phishing"
+excerpt: "上回分享完 Confidentiality 其中的「Encryption 加密」後，如果大家對密碼學有興趣的，可以點進密碼學基礎去看看，我覺得這個作者寫的內容整理地蠻完整，裡面"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+上回分享完 Confidentiality 其中的「Encryption 加密」後，如果大家對密碼學有興趣的，可以點進[密碼學基礎](https://hackmd.io/@starPt/ByUf1sdRr#%E5%AF%86%E7%A2%BC%E5%AD%B8%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5)去看看，我覺得這個作者寫的內容整理地蠻完整，裡面有提到很多加密、解密技術，還有一些背景基礎知識。而今天我要給大家分享的是一個日常生活中很常見的攻擊手法：**釣魚攻擊（Phishing）**
+
+---
+
+## 🎣 Phishing 釣魚是什麼？跟機密性有什麼關聯？
+Confidentiality（機密性）在資安三要素中，指的是「**資訊不被未授權者取得或窺探**」。而 Phishing（釣魚攻擊）正是一種[社交工程（Social Engineering）](https://blog.trendmicro.com.tw/?p=101)攻擊手法，攻擊者透過**偽裝、欺騙**的方式，誘使受害者主動洩漏帳號密碼、信用卡卡號、個資等等「機密資訊」。因此，一旦受害者中招，Confidentiality 就會在這邊先跟大家「say goodbye👋」——機敏資料落入攻擊者手中👻，不該看的東西都被看光光了🫣。
+
+> 所以，phishing 是現在日常生活中破壞 Confidentiality 最常見、最有效的手段之一。
+
+## 🎣 Phishing 釣魚種類
+以下跟大家分享六種常見的釣魚種類：
+(1) Email Phishing（電子郵件釣魚）
+最常見。偽裝成銀行、公司、知名品牌寄送郵件，誘使用戶點擊惡意連結或下載附件。
+目標：竊取帳密、安裝惡意程式。
+
+(2) Spear Phishing（標槍式釣魚，又稱[魚叉式網路釣魚](https://blog.trendmicro.com.tw/?p=15888)）
+針對「**特定目標（如公司高層、特定員工）**」量身打造攻擊內容，通常資料更精準。
+因此作案的成功率較高，危害更大！☠️
+
+(3) Whaling（[捕鯨攻擊](https://www.checkpoint.com/tw/cyber-hub/threat-prevention/what-is-spear-phishing/what-is-a-whaling-attack/)，為魚叉式網路攻擊的一種。似商業電子郵件詐騙(BEC)攻擊）
+鯨🐳在認知中是很大的魚種對吧，不是一般小蝦小魚可以媲美的（代表要撈個大的！），就是特別指專門針對「**企業高階主管（CEO/CFO）**」發動的釣魚攻擊。
+攻擊內容通常涉及「公司機密」、「財務」等等敏感資料。
+
+(4) SMS Phishing（Smishing，簡訊釣魚）
+透過手機簡訊誘使點擊惡意連結或回覆敏感資訊。
+
+(5) Voice Phishing（Vishing，語音釣魚）
+假冒銀行、技術支援等客服打電話，誘導受害者說出機密資訊。
+語音釣魚[近年來對資安的威脅逐漸擴大](https://www.ithome.com.tw/news/170394)，像是[山形鐵道公司釣魚資安事件](https://www.ithome.com.tw/news/169980)被騙近億日圓？？？😱💸
+
+(6) Social Media Phishing（社群釣魚）
+透過 Facebook、LINE、Instagram 等社群平台發送偽造訊息或連結。
+
+## 🎣 Phishing 攻擊原理與手法
+1. 偽裝可信來源：冒充銀行、公司、朋友、主管等。
+2. 利用恐嚇或利誘：如「你的帳號即將被停權，請立即驗證」、「恭喜你抽中 iPhone，請點擊領獎」。`"欸你真別說，這種看似從天降下的白吃午餐也是有人會手癢去相信，特別是長者以及某部分年輕一輩。"`
+3. 引導受害者點擊連結或下載附件：連結通常導向偽造登入頁面，或安裝惡意軟體。像是 [Paypal 詐騙網站手法](https://www.akamai.com/zh/blog/security-research/paypal-phishing-scam-mimics-known-security-measures)，會把網站做得非常精美、專業，先騙取使用者的信任，然後再一系列的詐取想要的機敏資訊（帳號、信用卡號等等）。
+4. 收集受害者資料：一旦受害者輸入帳密、個資，攻擊者即可非法存取敏感系統或進行後續攻擊。
+
+![SpongeBob](https://ithelp.ithome.com.tw/upload/images/20250903/2017595789NhUoHgKh.jpg)
+###### *喔～可憐的醜海綿🧽*
+
+## 有效的預防策略
+### 技術層面
+- Email 安全閘道/防垃圾郵件系統：過濾釣魚郵件、惡意附件、可疑的連結。
+- 多因子認證（MFA/2FA）：即使帳密被竊，也需要第二層驗證。還沒啟動 [Google 兩步驟驗證](https://support.google.com/accounts/answer/185839?hl=zh-Hant&co=GENIE.Platform%3DDesktop) 的，趕快手刀點選啟用！
+- 端點防護（EDR）：偵測、阻擋惡意程式。
+- URL 檢查、黑名單機制：阻擋可疑網站連結。
+- DNS/網路防護：封鎖已知惡意網站。
+
+### 實用小工具
+- [Virustotal](https://www.virustotal.com/gui/) -> 非常好用，可以檢查檔案、網站等等
+- [此連結是否安全？](https://nordvpn.com/zh-tw/link-checker/?srsltid=AfmBOoov5N48tEsbkgNB2giDifVluTMx35s9zGsJIHzQ4KvdjBcUB6iD)
+
+### 管理與教育層面
+- 定期資安教育、釣魚演練：讓員工、學生熟悉釣魚手法，提升警覺。
+- 資訊通報與回報機制：發現釣魚郵件/訊息時快速通報，降低損害。
+- 最小權限原則：敏感資料只有必要人員才能存取。（ZN/ZNTA，[趨勢科技帶你了解 ZeroTrust 零信任原則](https://www.trendmicro.com/zh_tw/what-is/what-is-zero-trust.html)）
+
+![想要像純純萌萌的可愛派大星一樣被釣走嗎？](https://ithelp.ithome.com.tw/upload/images/20250903/20175957shOyakleij.jpg)
+###### *還是你想要像蠢蠢萌萌的可愛派大星一樣自願被釣走呢？>\<*
+
+## 身為資安人的我們可以做到更多
+（雖然我還是個資安小白>\<！🐶）
+- 時時監控最新攻擊趨勢：攻擊手法會一直隨著時間、科技的進步不斷推陳出新，多變且難以捉摸。因此「**追蹤新型手法**」、「**更新防禦策略**」是非常重要的行動。
+- 協助部署多層次防禦工具：從郵件、網路到端點，全面防護。由於資安次領域實在太多，不可能每一項都非常專精，因此推薦對「藍隊」（防禦方）、資安運維、資安工程師、SOC（Security Operations Center）等等有興趣的，可以著重訓練、加深這一塊的技術。（我自己也在慢慢摸索中！我們一起努力💪💪💪）
+- 建立快速回報和應變流程：受害時能即時封鎖帳號、通知同仁、降低損失。搭配 Log Analysis 分析日誌，找出可疑的 IP 行為，並及時做出處置（暫停訪問、封鎖、列入黑名單等等）以及通報。
+- 分析 Log、協助鑑識：善用 Log Analysis 追蹤攻擊路徑，提升事後調查能力。`針對 Log 分析的部分，之後幾個章節會特別撰寫相關的技術文章，分享我實習、自學期間分析 Log 的經驗，大家敬請期待😚`
+- 推廣資安文化與流程：維續 CIA 成為每個資安人的日常習慣！透過參加國內外資安大會、研討會、論壇等等，互相交流以及學習，並將資訊分享至公開平台、社群媒體，增加大眾的資安意識！
+
+---
+
+## 總結
+相信看完今天的 Phishing 釣魚攻擊手法的各式介紹，大家都對其手法有一些基礎的理解了～也希望大家可以減少今後的被釣走的可能性哈（感情除外？）也算是變相為大家守財了！那今天就先到這邊告一段落啦～草稿的部分，我下次一定會提醒自己記得先儲存的，每寫一點點就按一下儲存草稿，不然像今天一樣 3-4000 字整宗不見，我真的是會原地哭死>< 💀 哈哈哈，我們下次見！
+
+> 下回預告：Log 怎麼數學跑出來了? Log Analysis 是啥？如何協助偵測機密性威脅？

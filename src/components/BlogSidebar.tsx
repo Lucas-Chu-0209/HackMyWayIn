@@ -77,20 +77,34 @@ type BlogSidebarProps = {
  * @param items - The array of TOC items to number
  * @returns Array of objects containing the original item and its hierarchical number prefix
  */
-function computeTocNumbering(items: TocItem[]): { item: TocItem; prefix: string }[] {
+function computeTocNumbering(items: TocItem[]) {
   let h2Index = 0;
   let h3Index = 0;
+  let h4Index = 0;
 
   return items.map((item) => {
+    let prefix = "";
+
     if (item.level === 2) {
       h2Index += 1;
       h3Index = 0;
-      return { item, prefix: `${h2Index}.` };
+      h4Index = 0;
+      prefix = `${h2Index}.`;
+    } else if (item.level === 3) {
+      // If an H3 appears before any H2, treat it as belonging to section 1.
+      const parent = h2Index === 0 ? 1 : h2Index;
+      h3Index += 1;
+      h4Index = 0;
+      prefix = `${parent}.${h3Index}`;
+    } else {
+      // level === 4
+      const parent2 = h2Index === 0 ? 1 : h2Index;
+      const parent3 = h3Index === 0 ? 1 : h3Index;
+      h4Index += 1;
+      prefix = `${parent2}.${parent3}.${h4Index}`;
     }
-    // level === 3: default parent to virtual section 1 when no H2 has been seen
-    const parentSection = h2Index === 0 ? 1 : h2Index;
-    h3Index += 1;
-    return { item, prefix: `${parentSection}.${h3Index}` };
+
+    return { item, prefix };
   });
 }
 
@@ -190,7 +204,10 @@ export default async function BlogSidebar({
           <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
           <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
             {computeTocNumbering(resolvedToc).map(({ item, prefix }) => (
-              <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
+              <li
+                key={item.id}
+                className={item.level === 4 ? "pl-8" : item.level === 3 ? "pl-4" : "pl-0"}
+              >
                 <a
                   href={`#${item.id}`}
                   aria-label={`${prefix} ${item.text}`}

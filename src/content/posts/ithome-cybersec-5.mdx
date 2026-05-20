@@ -1,0 +1,86 @@
+---
+title: "Day 5｜《資安新手也能玩 Log？揭開系統日誌的真面目 Ep.2》"
+date: "2025-09-05"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Log Analysis"
+excerpt: "上回跟大家分享了什麼是 Log？以及 Log file 的大致種類，以及各自的用途等等。想必大家對於 Log 已經有一定程度的理解了，今天我會特別針對 Log 分析、管理在自學的過程、以及實務上的運用，來說明 Log Analysis 的優點以及重要性"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+昨天跟大家分享了什麼是 Log？以及 Log file 的大致種類，以及各自的用途等等。想必大家對於 Log 已經有一定程度的理解了，今天我會特別針對 Log 分析、管理在自學的過程、以及實務上的運用，來說明 Log Analysis 的優點以及重要性，也會教大家怎麼去分析 Log！讓你跨出成為資安人的第一步！Cut the crap，那我們就開始吧！
+
+---
+
+## Log Analysis 日誌分析
+
+**日誌分析**就是透過「查看」和「解讀」電腦系統留下的「**活動紀錄**」，來了解整個 IT 系統是不是正常運作、其效能為何。而這些 Log 紀錄可能來自網路設備、作業系統、應用程式或伺服器等等不同資訊系統來源，可以想像成是系統的「**健康日記**」。
+
+日誌裡通常會記錄「時間序列（time-series）」資料，例如什麼時間誰做了什麼動作。這些資料的好處就是能夠做到「即時監控」的功能（e.g., client 每次與 server 端互動都會馬上更新、記錄），有時候會先存起來等到需要的時候再看。
+
+而透過 Log Analysis 可以幫助我們去分析以下幾點：
+
+- 系統效能是不是有變慢
+- 哪裡可能快要出問題
+- 有沒有可疑駭客、第三方試圖入侵
+- 硬體是不是快壞掉了
+
+接下來，就要讓大家知道 Log 真實的長相啦！因為昨天只有用海綿寶寶 🧽 為例，可能大家還無法直接想像～ 所以現在就來跟大家介紹以及揭露 Log file 的神秘面紗！👻（抱歉，其實昨天就應該讓大家先看 Log 長怎樣了，只是不知不覺寫了太多就沒分享到，怕篇幅太多>\<！🙏）
+
+![你是臭騙子！](https://ithelp.ithome.com.tw/upload/images/20250905/20175957hVtMUTAC3A.jpg)
+
+Zzz～OK！我們繼續！哈哈哈
+## Log 日誌記錄
+以下是 macOS / iOS 系統內建的 log 指令（Apple 的 Unified Logging system），用來查詢系統統一日誌。大家如果使用 mac 的可以在 terminal 自己試著輸出看看！
+
+```pythoon
+log show --last 5s
+```
+
+- `log show` → 顯示系統日誌
+- `-last 5s` → 顯示最近 **5 秒內**的日誌
+
+👉 也就是說，這個指令會讓你看到電腦在過去 5 秒內所有被記錄的事件。
+
+範例如下：
+```yaml
+2025-09-05 19:27:21.517958+0800 0xdaf894   Default     0x0   25140  0    Siri: [com.apple.siri:Client] -[SiriUXAppDelegate _handleLegacySiriEvent:type:] #HotKey: event modifiers 100 type: 10
+2025-09-05 19:27:21.517958+0800 0x12345   Default     0x0     123   0    kernel: (apfs) spaceman_scan_free_blocks:3155: disk1 scan took 0.002s
+2025-09-05 19:27:22.019283+0800 0x67890   Info        0x0     567   0    sharingd: [com.apple.sharing:Discovery] Browser start scan
+2025-09-05 19:27:22.523456+0800 0xabcde   Fault       0x0     890   0    WindowServer: CGXDisplayDidReconfigure : Display 69733248
+```
+
+那我們現在立馬來拆分以上這些 Log 到底輸出了什麼，以及各自欄位的意義吧！
+### Log 欄位解析
+| 欄位 | 範例內容 | 意義 |
+| --- | --- | --- |
+| **Timestamp** | `2025-09-05 19:27:21.517958+0800` | 發生事件的時間，含時區（+0800 → 台灣時間）。 |
+| **Thread/Log ID** | `0xdaf894` | log 來源的 thread ID 或 log entry 的唯一編號，用來追蹤同一 thread 的事件。 |
+| **Log Level** | `Default` | 訊息嚴重程度（Debug / Info / Default / Error / Fault），Default 屬於一般重要資訊。 |
+| **Activity ID** | `0x0` | 系統 activity 的識別碼，幫助把一連串相關 log 串起來（例如一個 API call 會產生多筆 log）。`0x0` 代表沒有綁定 activity。 |
+| **PID (Process ID)** | `25140` | 產生 log 的程式進程代號，用來辨識是哪個程式丟的訊息。 |
+| **TTL 或 EUID** | `0` | 在某些輸出模式下顯示 TTL（Time To Live，存活時間，0 代表只在記憶體，不會長期儲存），在另一些輸出模式下會顯示 EUID（有效使用者 ID）。 |
+| **Process / Subsystem** | `Siri:` | 產生 log 的程式名稱或子系統（這裡是 Siri）。 |
+| **Subsystem & Category** | `[com.apple.siri:Client]` | Apple log API 提供的「子系統與分類」，方便開發者/工程師過濾特定功能區塊。 |
+| **Message / Payload** | `-[SiriUXAppDelegate _handleLegacySiriEvent:type:] #HotKey: event modifiers 100 type: 10` | 真正的 log 訊息，描述發生的事件，這裡是 Siri 收到「快捷鍵事件」，modifiers=100, type（事件類型代碼）=10。 |
+
+### 📍 補充說明
+
+- **Log Level** 很重要！，Debug/Info 是一般訊息，Error/Fault 則需要特別注意。
+
+- Activity ID 在追蹤某個功能失敗（例如打開 App 出錯）時特別好用，因為能串起一整串動作。
+
+- TTL=0 不代表沒紀錄，只是這筆不會被長期存到磁碟，除非你用 log show 在 TTL 到期前把它撈出來。
+
+- Subsystem/Category 幫助過濾，例如 --predicate 'subsystem == "com.apple.siri"'。
+
+---
+
+## 結語
+今天跟大家簡單分享一下 Log 的真實樣貌，以及 Log 大概的結構以及各自欄位的意義，明天我們會繼續這個單元，分享一下工具或者套件去更好地幫助我們管理、分析 Log file。我們明天見！🤩
+

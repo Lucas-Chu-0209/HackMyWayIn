@@ -1,0 +1,129 @@
+---
+title: "Day 6｜《資安新手也能玩 Log？揭開系統日誌的真面目 Ep.3》"
+date: "2025-09-06"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Log Analysis"
+excerpt: "介紹完 Log analysis 以及讓大家簡單看了 Log 的輸出 records 後，相信大家對 Log 的各個欄位有一定的理解了～ 今天我們會特別針對 Log 資訊來讓大家進一步體驗資安分析的實作吧！"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 📍 前言
+
+介紹完 Log analysis 以及讓大家簡單看了 Log 的輸出 records 後，相信大家對 Log 的各個欄位有一定的理解了～ 今天我們會特別針對 Log 資訊來讓大家進一步體驗資安分析的實作吧！
+
+---
+
+## 📍 如何快速搜尋/篩選 Log 資訊？
+
+上回已經分享過如何快速抓取最近的 Log records，就是用 `log show --last 5s` 或者 `log show -- last 5m` 看自己想要顯示至今多久前的 Log 訊息。而我們現在要做的就是，如果想要對特定的資訊（e.g., error msg）去抓取 Log，就需要先認識一個 Log 常用的 CLI 指令 → `--predicate`。
+
+### 🔹 到底啥是 Predicate？基本 CLI 指令與概念！
+作為 Log 分析常用的 CLI 指令，它有兩個特質：
+1. 它是 macOS Unified Log 的「篩選條件」，語法類似 Apple 的 NSPredicate。
+2. 它可以讓你在 CLI 下，只抓到你想看的 log，而不是整個 log 資料庫（超大超多超雜，根本看不完）。
+
+所以簡單地來說：
+    > predicate = 「我想要抓哪些 log 的規則」
+
+### 🔹 程式範例
+
+```bash
+log show --predicate 'process == "loginwindow" && composedMessage CONTAINS[c] "failed"' --last 5m
+```
+
+- `process == "loginwindow"` → 只抓 loginwindow 的 log
+- `composedMessage CONTAINS[c] "failed"` → 文字訊息包含 failed，不分大小寫
+- `&&` → 兩個條件都要成立
+
+### 🔹 為什麼要使用 Predicate？
+
+1. 節省時間 / 節省資源
+    - Unified Log 很龐大，如果不過濾，一次抓全部 log 可能要幾分鐘甚至更久。
+    - Predicate 只抓我們關心的事件，速度快，CLI 也好用。
+2. 精準分析
+    - 你只關心「登入失敗」、「sudo 認證失敗」、「TCC 拒絕」，用 predicate 可以直接抓到，避免被大量無關 log 干擾。
+3. 搭配自動化
+    - 你可以把 predicate 直接寫進腳本或 cron job，做「日常監控」或「資安事件警告」！
+
+### 🔹 小限制
+
+在 CLI 也就是 terminal 裡面，我們無法針對 Log level（debug/info/default/error/fault）去抓取特定的值顯示，只能先使用 `log show -—debug`、`log show —-info` 再針對裡面的訊息進一步去抓取！如果還不懂的話沒關係，這個等等我們下面就會提到！
+
+- Error / Fault → 最少訊息，通常嚴重事件
+- Default → 常見系統訊息，CLI 預設就會抓
+- Info / Debug → 額外資訊，方便排錯或做詳細分析（Debug 顯示包含全部 Log level 的訊息！）
+    - `-info` → 抓 Info + Default + Error + Fault
+    - `-debug` → 抓 Debug + Info + Default + Error + Fault
+- CLI 無法直接 predicate log level，所以實務抓 Error/Fault 都靠文字關鍵字
+
+---
+
+## 📍 其他可過濾屬性
+
+1. 時間範圍
+
+```bash
+log show --last 5h # 過去 5 小時
+log show --last 5m # 過去 5 分鐘
+log show --start <time> --end <time>  # 指定時間區間（絕對時間 -> YYYY-MM-DD HH:MM:SS｜年-月-日 時:分:秒）
+```
+
+2. 輸出格式
+
+```bash
+log show --style syslog # 傳統的 system log 樣式（只顯示時間、process、訊息文字），比較陽春，但也較直觀 -> 方便 grep/awk
+log show --style json # JSON 輸出，方便用程式解析
+```
+
+3. 限制輸出筆數
+
+```bash
+log show --info      # Info 與以上級別（Info + Default + Error + Fault）
+log show --debug     # Debug 與以上級別（Debug + Info + Default + Error + Fault）
+# 不指定就是只抓（Default + Error + Fault）
+```
+
+log show 的一些需要注意的性質：
+1. Default Settings：
+    - `log show` 沒有指定 `-info` / `-debug` → 就只會抓 Default、Error、Fault 級別！
+    - 也就是說，即使 predicate 符合，如果 log 是 Info 或 Debug 級別的訊息，**不會被 CLI 顯示**
+2. 實務上：
+    - Predicate 只作用於「log 底層訊息」，但 CLI 本身會先過濾掉 Info/Debug 級別訊息
+    - 所以你抓到的通常是 Default、Error、Fault，這些是 **比較重要或「系統級」的訊息**
+
+---
+
+## 📍 實用指令範例
+
+大致介紹完 predicate 後，我們就來針對幾個比較常用的指令來針對 Log 訊息輸出吧！
+
+只抓取 ComposedMessgae 裡面有 failed 且跟「登入、認證」相關的 Log 訊息
+
+- 登入失敗（loginwindow）
+
+```bash
+log show --predicate 'process == "loginwindow" && composedMessage CONTAINS[c] "failed"' --last 1h
+```
+
+- SSH 登入嘗試
+
+```bash
+log show --predicate 'process == "sshd" && composedMessage CONTAINS[c] "failed"' --last 1h
+```
+
+大家可以試試看輸出有沒有跑出 Log，如果沒有出現訊息也沒關係！代表你近一個小時內，都沒有出現 failed 的情況，讚讚 👍！如果想要看到輸出的話，也可以透過調整時間範圍（1h → 5h 或者 10h 去看 5 小時前或 10 小時前的相關 Log 訊息）來試試看。此外，這邊出現的 Log level 應該都會是 Error 的情況，因為一般登入、連線錯誤等等只要一出現，通常系統都會將這些訊息的標記為 Error，所以也可能會有「**false positive**」的問題，像如果是 pasteboard 這種的錯誤事件，對資安來說可能不是特別重要，但就會被一起算進來！😱😱 
+
+通通抓 😈
+![邪惡派大星>\<](https://ithelp.ithome.com.tw/upload/images/20250906/20175957xwrZ0bC7jV.jpg)
+*網路截取自 https://home.gamer.com.tw/artwork.php?sn=5044747*
+
+---
+
+## 📍 結語
+
+今天我們就先介紹分享到這邊啦，明天會繼續針對更複雜的「**進階抓取分析**」技巧來做介紹！如果對今天的內容有任何問題都歡迎在下方提問，或者任何有錯的地方都歡迎指教！✋
+

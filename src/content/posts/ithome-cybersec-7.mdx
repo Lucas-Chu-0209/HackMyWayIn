@@ -1,0 +1,161 @@
+---
+title: "Day 7｜《資安新手也能玩 Log？揭開系統日誌的真面目 Ep.4》"
+date: "2025-09-07"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Log Analysis"
+excerpt: "大家好！今天想先分享一些學習 Log 的網站給大家（可以自行決定觀看與否，不會影響今天的內容唷！），主要是以防我講的可能有疏漏的地方，所以為了避免上路情形，在這邊分享幾個不錯的學習 Log 學習資源跟大家分享"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+大家好！今天想先分享一些學習 Log 的網站給大家（可以自行決定觀看與否，不會影響今天的內容唷！），主要是以防我講的可能有疏漏的地方，所以為了避免上路情形，在這邊分享幾個不錯的學習 Log 學習資源跟大家分享：
+1. [Mac Logging system](https://www.kandji.io/blog/mac-logging-and-the-log-command-a-guide-for-apple-admins) -> 提供給使用 macOS/ios 的各位～ 裡面有簡單教大家如果輸出 Log 以外，也會教大家如何收集（collect）logs 記錄。
+2. [Linux Log file 分析](http://cn.linux.vbird.org/linux_basic/Mandrake9.0/0570syslog.php) -> 給 Linux 系統，個人覺得是寫得滿詳細的，大家有時間可以去看看！👀
+
+那今天我們就繼續開始做更進階的抓取 Log Message 方法！後半部分也會跟大家分享 `grep` 搭配 regex 正則表達式，去抓取特定資訊的 Log records！那我們 Go Go Go 咯～ 
+
+---
+
+## 系統權限 / 設定變更
+
+### 使用者帳號變更
+
+特別注意！我這邊做抓取的時候，都會只抓最近 1 個小時的資料，避免程式跑太久而阻礙觀察
+
+```bash
+log show --predicate 'subsystem == "com.apple.opendirectory" && composedMessage CONTAINS[c] "created"' --last 1h # 用途：抓新增帳號事件
+```
+
+### 隱私權權限存取（TCC）
+
+```bash
+log show --predicate 'subsystem == "com.apple.TCC" && composedMessage CONTAINS[c] "denied"' --last 1h # 用途：抓程式嘗試存取隱私資料被拒的事件
+```
+
+---
+
+## 網路活動
+
+### 防火牆事件（ALF）
+
+```bash
+log show --predicate 'subsystem == "com.apple.alf" && composedMessage CONTAINS[c] "allow"' --last 1h # 用途：監控哪些連線被允許或阻擋
+```
+
+### VPN / NetworkExtension 事件
+
+```bash
+log show --predicate 'subsystem == "com.apple.networkextension" && composedMessage CONTAINS[c] "connected"' --last 1h # 用途：抓 VPN 或 network extension 連線事件
+```
+
+---
+
+## Crash / Fault / Error事件（實務抓法）
+
+昨天的內容有提到 → 因為 CLI 下無法靠 log level，通常抓 Log 訊息後面的 Message 文字，來抓到 log level 為 'Error' 的部分：
+
+```bash
+log show --predicate 'composedMessage CONTAINS[c] "crash"' --last 1d # 檢查程式或系統崩潰
+```
+
+---
+
+## grep/awk 進階小技巧
+
+- `grep` 是用來在檔案或輸出內容中「搜尋特定文字」的工具。你可以把它想像成在一大堆資料裡面找特定關鍵字的放大鏡。
+
+```bash
+log show --predicate 'process == "loginwindow"' --last 1h | grep -i "failed"
+```
+- `grep -i` 抓出現 "failed" 文字的訊息！
+- `-i` 👉 忽略大小寫 (case-insensitive) 來搜尋文字。
+
+### 只顯示包含「某關鍵字」的 log 行
+
+```bash
+log show --style syslog --last 1h | grep "network"
+```
+
+### 計算關鍵字「出現次數」
+
+```bash
+log show --style syslog --last 1h | grep "error" | wc -l
+```
+
+### 用 awk 取出特定欄位（如時間與訊息）
+
+```bash
+log show --style syslog --last 5m | awk '{print $1, $2, $0}'
+```
+
+> 根據 log 格式不同，欄位序號可能需調整。
+
+---
+
+## 總結
+
+1. 不依賴 eventType / log level，因為 CLI 下抓不到
+2. 以 `composedMessage` 關鍵字篩選是實務可用的方法
+3. 搭配 `process`、`subsystem`、時間範圍精準抓取
+4. 後續可匯出 JSON，再做進階分析或結合 SIEM
+
+---
+
+![搞笑派大星！](https://ithelp.ithome.com.tw/upload/images/20250907/20175957cljPkVW0e1.jpg)
+*網路截取自 https://tw.news.yahoo.com/%E7%82%BA%E4%BB%80%E9%BA%BC%E6%B4%BE%E5%A4%A7%E6%98%9F%E5%BE%88%E5%8F%97%E6%AD%A1%E8%BF%8E-%E7%B6%B2%E5%88%86%E6%9E%90%E6%8F%AD%E5%AF%86-072528828.html?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAMvUmUioHFHKxBXtnb_b6dbx5cSkq-V35_KjFByHVD8kvR1AuQBL7vh5pKj5YgeYXj3vXQGKpVqG9q7kzdDR-zQmGoRl_JPrZcO8Hh0VWZkYw08Vb1Rw_bEdDqoj_im6FibnMQqpJhKEqMoTRxzt0JhFcq-wApesq_9hr7MOeqv-*
+
+## 今日反思：為什麼新手資安人要學 Log Analysis？
+
+在資訊安全的世界裡，有無數的次領域可以深入探索：有滲透測試、惡意程式分析、資安監控、威脅情報… 等等；而對初學者來說，這些領域往往充滿陌生的名詞與龐大的工具鏈，很容易讓一開始進入資安領域的小白們（例如我>\<）不知從何下手。
+
+我選擇先從 **Log Analysis（日誌分析）** 來帶大家入門作為開荒，原因有以下幾點：
+
+### 日誌是所有系統的「黑盒子紀錄」
+
+> 因為無論是伺服器、網站、防火牆，還是應用程式，幾乎所有系統都會產生日誌。
+
+而對資安人員來說，**懂得讀日誌 = 懂得如何追蹤線索**。這就像偵探辦案那樣，第一步就是蒐集現場證據。是不是很有偵探的感覺啊～！
+
+### 技術門檻低，成本低
+
+Log analysis 我們不需要先會太多高深的工具（要知道在資安界實務工具實在是太多太多！！！😱）：
+
+- 你只要有一份 log 檔案 → 就可以直接練習！
+- 搭配簡單的指令（如 `grep`、`awk`）或程式語言（如 Python）
+
+新手可以從 log 學到：
+
+1. 觀察模式：什麼是正常？什麼是異常？
+2. 過濾訊息：從大量資料中篩選出關鍵。
+3. 歸納攻擊行為：學會把技術訊息轉化成「發生了什麼事」。
+
+這些能力，正是日後做滲透測試、事件調查、SOC 分析的基礎。
+
+### 最貼近「真實攻防」的學習場域**
+
+許多資安領域對新手來說很抽象，但日誌不同：
+
+- 可以「**真實看到駭客掃描 IP 的痕跡**」
+- 可以「**觀察第三方嘗試登入的紀錄**」
+- 你可以「**找出錯誤設定導致的漏洞**」
+
+這些都是「實際在你的電腦或伺服器」上就會發生的事情，不需要高成本實驗環境 >\<！
+
+### 對未來的好處
+
+學會「日誌分析」，對資安人有三個直接的好處：
+
+1. 增強問題解決力：遇到任何錯誤或攻擊，都能先用 log 追根究柢。
+2. 累積基礎工具能力：學 grep、正則表達式、Python log parser 等，這些未來都用得到。
+3. 打好進階學習基礎：事件調查、數位鑑識、SOC 分析、SIEM 工具（如 Splunk, ELK），都需要日誌分析能力。
+
+> 透過 Log analysis 可以理解「不同資訊系統」在什麼的「情境」出現什麼「錯誤以及可疑行為」。
+
+## 最後小總結
+今天就介紹到這邊啦！下回會跟大家分享在「實務上有哪些常用的分析工具」，以及「發現異常行為時通常應該如何處理」，而不是僅停留在發現問題的表面！！！
+

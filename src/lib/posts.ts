@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 
@@ -33,7 +34,7 @@ export type PostFrontmatter = {
 export type TocItem = {
   id: string;
   text: string;
-  level: 2 | 3;
+  level: 2 | 3 | 4;
 };
 
 export type PostSummary = PostFrontmatter & {
@@ -55,7 +56,7 @@ export type TaxonomyItem = {
 const POSTS_DIR = path.join(process.cwd(), "src", "content", "posts");
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TOC_MIN_HEADING_LEVEL = 2;
-const TOC_MAX_HEADING_LEVEL = 3;
+const TOC_MAX_HEADING_LEVEL = 4;
 const DEFAULT_IMPORTANCE: PostImportance = 3;
 const DEFAULT_TAXONOMY_SLUG = "item";
 const CJK_CHARACTER_PATTERN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu;
@@ -168,13 +169,9 @@ function computeWordCount(source: string): number {
   // Strip bold/italic markers
   text = text.replace(/[*_]{1,3}/g, " ");
 
-  // Mixed-language counting examples:
-  // - "資安 ABC 123" => 2 (CJK chars) + 2 (Latin words) = 4
-  // - "今天學習 AI security" => 4 (CJK chars) + 2 (Latin words) = 6
   const cjkCharacterMatches = text.match(CJK_CHARACTER_PATTERN);
   const cjkCharCount = cjkCharacterMatches?.length ?? 0;
 
-  // Remove CJK chars first so mixed strings are not double-counted by Latin word matching.
   const textWithoutCjk = text.replace(CJK_CHARACTER_PATTERN, " ");
   const latinWordMatches = textWithoutCjk.match(LATIN_WORD_PATTERN);
   const latinWordCount = latinWordMatches?.length ?? 0;
@@ -217,10 +214,10 @@ function extractHeadings(source: string): TocItem[] {
   const idCounts = new Map<string, number>();
 
   return lines
-    .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
+    .map((line) => line.match(/^(#{2,4})\s+(.+)$/))
     .filter((match): match is RegExpMatchArray => Boolean(match))
     .map((match) => ({
-      level: match[1].length as 2 | 3,
+      level: match[1].length as 2 | 3 | 4,
       text: sanitizeHeadingText(match[2]),
     }))
     .filter((item) => item.level >= TOC_MIN_HEADING_LEVEL && item.level <= TOC_MAX_HEADING_LEVEL)
@@ -255,6 +252,9 @@ export async function getAllPosts(): Promise<PostSummary[]> {
         source,
         options: {
           parseFrontmatter: true,
+          mdxOptions: {
+            remarkPlugins: [remarkGfm],
+          },
         },
       });
 
@@ -291,10 +291,22 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       source,
       options: {
         parseFrontmatter: true,
+        mdxOptions: {
+          remarkPlugins: [remarkGfm],
+        },
       },
       components: {
         h2: ({ children }: { children: ReactNode }) => createElement("h2", { id: nextHeadingId() }, children),
         h3: ({ children }: { children: ReactNode }) => createElement("h3", { id: nextHeadingId() }, children),
+        h4: ({ children }: { children: ReactNode }) => createElement("h4", { id: nextHeadingId() }, children),
+
+        // Make only tables horizontally scrollable on small screens (prevents layout clipping).
+        table: ({ children }: { children: ReactNode }) =>
+          createElement(
+            "div",
+            { className: "w-full overflow-x-auto" },
+            createElement("table", null, children),
+          ),
       },
     });
 
@@ -318,7 +330,10 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 export async function getImportantPosts(limit = 5): Promise<PostSummary[]> {
   const posts = await getAllPosts();
-  return posts.filter((post) => post.featured).sort(sortPostsByImportanceAndDate).slice(0, normalizePositiveInteger(limit, 5));
+  return posts
+    .filter((post) => post.featured)
+    .sort(sortPostsByImportanceAndDate)
+    .slice(0, normalizePositiveInteger(limit, 5));
 }
 
 export async function getPostsPage(page: number, pageSize: number): Promise<PostSummary[]> {
@@ -364,19 +379,9 @@ function sortTaxonomyNames(names: Iterable<string>) {
   return [...new Set(names)]
     .map((name) => name.trim())
     .filter(Boolean)
-    .sort(
-      // Primary sort ignores case to keep navigation intuitive; tiebreaker preserves
-      // deterministic output when names differ only by casing.
-      (a, b) =>
-        a.localeCompare(b, undefined, { sensitivity: "base" }) || a.localeCompare(b),
-    );
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }) || a.localeCompare(b));
 }
 
-/**
- * Builds deterministic, collision-safe slug mappings for taxonomy names.
- * Names are sorted first, then duplicate base slugs are disambiguated by appending
- * an incrementing numeric suffix (`-1`, `-2`, ...), ensuring stable route output.
- */
 function buildTaxonomySlugMap(names: Iterable<string>) {
   const sortedNames = sortTaxonomyNames(names);
   const slugCounts = new Map<string, number>();
