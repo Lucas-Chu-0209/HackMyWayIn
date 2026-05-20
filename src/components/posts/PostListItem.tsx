@@ -24,14 +24,15 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
         <Link
           href={`/posts/${post.slug}`}
           aria-label={`Read article: ${post.title}`}
-          className="group relative block aspect-video w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:h-36 sm:w-64 sm:flex-none sm:aspect-auto"
+          className="group block overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:w-64 sm:flex-none"
         >
           <Image
             src={post.cover}
             alt={post.title}
-            fill
+            width={256}
+            height={144}
             sizes="(max-width: 640px) 100vw, 256px"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] sm:h-36 sm:w-64"
           />
         </Link>
 
@@ -46,7 +47,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
             <span aria-hidden="true">•</span>
             <span>{post.date}</span>
           </div>
-          <HeadingTag className="mt-2 line-clamp-2 min-h-[2lh] text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
+          <HeadingTag className="mt-2 line-clamp-2 min-h-14 text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
             <Link href={`/posts/${post.slug}`} className="transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
               {post.title}
             </Link>
