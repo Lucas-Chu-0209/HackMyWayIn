@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig, navLinks } from "@/content";
 
+const NAV_SURFACE_CLASSES =
+  "border-b border-zinc-300/90 bg-zinc-100/90 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-zinc-100/75 dark:border-zinc-800/90 dark:bg-zinc-950/90 dark:supports-[backdrop-filter]:bg-zinc-950/75";
+
 export default function Navbar() {
   const [visible, setVisible] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -44,7 +47,7 @@ export default function Navbar() {
           visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <nav className="border-b border-zinc-300/90 bg-zinc-100/90 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-zinc-100/75 dark:border-zinc-800/90 dark:bg-zinc-950/90 dark:supports-[backdrop-filter]:bg-zinc-950/75">
+        <nav className={NAV_SURFACE_CLASSES}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               {/* Brand */}
               <Link
