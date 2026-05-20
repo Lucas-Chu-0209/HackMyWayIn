@@ -3,7 +3,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
-import Navbar from "@/components/Navbar";
 import PostAnalyticsTracker from "@/components/PostAnalyticsTracker";
 import PostHeader from "@/components/PostHeader";
 import { getPostViews, getSiteAnalyticsTotals } from "@/lib/analytics";
@@ -50,7 +49,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <>
-      <Navbar />
       <PostAnalyticsTracker slug={slug} />
 
       <div className="pt-16">

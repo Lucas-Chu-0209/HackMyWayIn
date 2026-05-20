@@ -40,11 +40,11 @@ export default function Navbar() {
     <>
       {/* Navbar */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transform-gpu transition-transform duration-300 ease-out will-change-transform ${
           visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <nav className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <nav className="border-b border-zinc-300/90 bg-zinc-100/90 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-zinc-100/75 dark:border-zinc-800/90 dark:bg-zinc-950/90 dark:supports-[backdrop-filter]:bg-zinc-950/75">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               {/* Brand */}
               <Link

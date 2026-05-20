@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import { getAllCategories } from "@/lib/posts";
 
@@ -9,7 +8,6 @@ export default async function CategoriesPage() {
 
   return (
     <>
-      <Navbar />
       {/* Page-level cover banner */}
       <div className="pt-16">
         <PageHeader title="Categories" />

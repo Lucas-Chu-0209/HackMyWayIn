@@ -3,7 +3,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 
 import BlogSidebar from "@/components/BlogSidebar";
-import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import PostListItem from "@/components/posts/PostListItem";
 import { getSiteAnalyticsTotals } from "@/lib/analytics";
@@ -74,7 +73,6 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
 
   return (
     <>
-      <Navbar />
       {/* Page-level cover banner */}
       <div className="pt-16">
         <PageHeader title="Posts" />

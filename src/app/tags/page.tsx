@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import { getAllTags } from "@/lib/posts";
 
@@ -9,7 +8,6 @@ export default async function TagsPage() {
 
   return (
     <>
-      <Navbar />
       {/* Page-level cover banner */}
       <div className="pt-16">
         <PageHeader title="Tags" />

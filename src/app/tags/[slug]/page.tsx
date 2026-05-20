@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 
-import Navbar from "@/components/Navbar";
 import PageHeader from "@/components/PageHeader";
 import PostListItem from "@/components/posts/PostListItem";
 import { getAllTags, getCategorySlugMap, getPostsByTagSlug } from "@/lib/posts";
@@ -27,7 +26,6 @@ export default async function TagPage({ params }: TagPageProps) {
 
   return (
     <>
-      <Navbar />
       <div className="pt-16">
         <PageHeader title={`#${result.tag.name}`} />
       </div>
