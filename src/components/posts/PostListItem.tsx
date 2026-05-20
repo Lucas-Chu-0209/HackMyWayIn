@@ -32,7 +32,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
             width={256}
             height={144}
             sizes="(max-width: 640px) 100vw, 256px"
-            className="aspect-video h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] sm:h-36 sm:w-64"
+            className="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] sm:h-36 sm:w-64"
           />
         </Link>
 
@@ -48,7 +48,7 @@ export default function PostListItem({ post, headingTag = "h2", categorySlugMap,
               <span aria-hidden="true">•</span>
               <span>{post.date}</span>
             </div>
-            <HeadingTag className="mt-2 h-14 overflow-hidden text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
+            <HeadingTag className="mt-2 min-h-14 text-lg font-semibold leading-7 text-zinc-900 dark:text-zinc-100">
               <Link href={`/posts/${post.slug}`} className="line-clamp-2 block transition-colors hover:text-zinc-700 dark:hover:text-zinc-300">
                 {post.title}
               </Link>
