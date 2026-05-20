@@ -73,6 +73,9 @@ type BlogSidebarProps = {
  * Computes hierarchical number prefixes for TOC items.
  * H2 items get "1.", "2.", … and H3 items get "1.1", "1.2", … relative to
  * their parent H2. A leading H3 with no H2 parent is treated as "1.x".
+ *
+ * @param items - The array of TOC items to number
+ * @returns Array of objects containing the original item and its hierarchical number prefix
  */
 function computeTocNumbering(items: TocItem[]): { item: TocItem; prefix: string }[] {
   let h2Index = 0;
@@ -85,8 +88,9 @@ function computeTocNumbering(items: TocItem[]): { item: TocItem; prefix: string 
       return { item, prefix: `${h2Index}.` };
     }
     // level === 3: default parent to virtual section 1 when no H2 has been seen
+    const parentSection = h2Index === 0 ? 1 : h2Index;
     h3Index += 1;
-    return { item, prefix: `${h2Index === 0 ? 1 : h2Index}.${h3Index}` };
+    return { item, prefix: `${parentSection}.${h3Index}` };
   });
 }
 
