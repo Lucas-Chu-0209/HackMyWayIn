@@ -69,6 +69,31 @@ type BlogSidebarProps = {
   lastUpdated?: string | null;
 };
 
+/**
+ * Computes hierarchical number prefixes for TOC items.
+ * H2 items get "1.", "2.", … and H3 items get "1.1", "1.2", … relative to
+ * their parent H2. A leading H3 with no H2 parent is treated as "1.x".
+ */
+function computeTocNumbering(items: TocItem[]): { item: TocItem; prefix: string }[] {
+  let h2Index = 0;
+  let h3Index = 0;
+
+  return items.map((item) => {
+    if (item.level === 2) {
+      h2Index += 1;
+      h3Index = 0;
+      return { item, prefix: `${h2Index}.` };
+    }
+    // level === 3
+    if (h2Index === 0) {
+      // H3 before any H2 — treat as belonging to section 1
+      h2Index = 1;
+    }
+    h3Index += 1;
+    return { item, prefix: `${h2Index}.${h3Index}` };
+  });
+}
+
 function SidebarSectionTitle({
   iconClassName,
   title,
@@ -192,9 +217,14 @@ export default async function BlogSidebar({
         <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
           <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Table of Contents</h2>
           <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
-            {resolvedToc.map((item) => (
+            {computeTocNumbering(resolvedToc).map(({ item, prefix }) => (
               <li key={item.id} className={item.level === 3 ? "pl-4" : "pl-0"}>
-                <a href={`#${item.id}`} className="hover:text-zinc-900 dark:hover:text-zinc-100">
+                <a
+                  href={`#${item.id}`}
+                  aria-label={`${prefix} ${item.text}`}
+                  className="hover:text-zinc-900 dark:hover:text-zinc-100"
+                >
+                  <span className="mr-1 font-medium text-zinc-400 dark:text-zinc-500">{prefix}</span>
                   {item.text}
                 </a>
               </li>
