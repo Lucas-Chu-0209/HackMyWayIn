@@ -23,7 +23,9 @@ type PostsPageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-type PaginationItem = number | "ellipsis-left" | "ellipsis-right";
+type PaginationDisplayItem = number | "ellipsis-left" | "ellipsis-right";
+// Keep compact pagination only when page count is small enough to avoid truncation.
+const MAX_PAGES_WITHOUT_ELLIPSIS = 4;
 
 function parsePageParam(page: string | undefined) {
   const parsedPage = Number(page);
@@ -34,8 +36,8 @@ function getPaginationHref(page: number) {
   return page === 1 ? "/posts" : `/posts?page=${page}`;
 }
 
-function getPaginationItems(currentPage: number, totalPages: number): PaginationItem[] {
-  if (totalPages <= 4) {
+function getPaginationItems(currentPage: number, totalPages: number): PaginationDisplayItem[] {
+  if (totalPages <= MAX_PAGES_WITHOUT_ELLIPSIS) {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
