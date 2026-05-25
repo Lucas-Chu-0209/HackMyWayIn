@@ -44,7 +44,8 @@ export default async function Home() {
                     Security notes & Personal blog
                   </h2>
                   <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-                    The latest posts, learning notes, and personal write-ups are shared here. This space documents my ongoing journey through cybersecurity, programming, life experiences, and occasional travel reflections — capturing both what I learn and how I grow along the way.
+                    📍 The latest posts, learning notes, and personal write-ups are shared here! ⬇️
+                    <br />⚠️ Notes: Still in the early stages, not much content yet, but stay tuned for more updates! If you have any questions or suggestions, feel free to reach out through the contact links below ~ ❤️
                   </p>
                 </div>
 
