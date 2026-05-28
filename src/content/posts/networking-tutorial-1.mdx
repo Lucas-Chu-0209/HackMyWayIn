@@ -1,0 +1,125 @@
+---
+title: "Computer Networking (Ep01) — Host/ End System & Network Edge"
+date: "2026-05-28"
+category: "Computer Network 筆記"
+tags:
+  - "Networking"
+  - "Cybersec"
+  - "Edge"
+excerpt: "Host & End System 什麼是 Host（主機）/ End system （終端系統）呢？簡單來說就是：真正「使用網路」的那些設備 例如：laptop、phone、web server、gaming PC、cloud VM"
+cover: "/images/posts/networking.png"
+importance: 5
+---
+
+## Host & End System（主機/ 端點系統）
+
+什麼是 Host（主機）/ End system （終端系統）呢？其實簡單來說就是：**真正「使用網路」的那些設備**！
+
+例如：
+- laptop
+- phone
+- web server
+- gaming PC
+- cloud VM
+- IoT device
+- TV
+
+以上任何有需要連接網路的裝置，都可以說他們是 Host/ End system！
+
+> That is, **Host = End system**
+
+### Why Called a Host?
+
+因為它們都屬於 **「具有 IP、能傳送/接收資料的裝置」**。
+or simply put 就是：能 **「通信」** 的裝置！
+例如：
+- web server host
+- DNS host
+
+### Why Called an End System?
+
+因為它們都位於 **「Communication Links/ Path」的兩端**。
+例如：
+- 你的電腦 A  ←→  Google Server B
+
+因此 A & B 都是 end system！
+
+## Network Edge（網路邊緣）
+大概說明完什麼是 Host/End system 後，那什麼是 Edge? 他們之間的差別其實很大，我這就來跟大家 breakdown 一一說明他們之間的不同之處。
+
+前面有提到 Host（End system） 是指那些能夠使用網路的單一裝置。因此，我們說 TV 可以是一個 Host，手機也可以是一個 Host，甚至眼鏡、手錶、汽車等（IoT）也可以是一個 Host。
+
+那 Edge 是什麼？我們現在就來仔細談談，他們之間有什麼差異，並且也會再進一步說明 Network Edge 跟 Network Core 的不同
+### What Is the Network Edge?
+首先，要知道 Edge 不是指單一的設備！而是 **「靠近使用者那測的網路區域」**。這樣說明可能還是有點難懂哈哈，所以我下面舉一個比較生活化的例子來說明：
+
+可以把整個網際網路（Internet）想像成一個的全球物流系統：
+- Host/ End system：來自全球各地的「工廠」跟「住家」
+- Network Core：無數高速公路和大型轉運中心（routers/ switches）組成的核心
+- **Network Edge：「工廠住家」以及「通到高速公路交流道<u>之前</u>的那段區域」**
+
+![Screenshot 2026-05-28 at 8.20.36 pm](https://hackmd.io/_uploads/r1anQnrlGe.png)
+
+
+所以 Network Edge 其實就是**網路的「末梢」**，是所有資料的起點跟終點。它的存在就是將那些==Host/ End system 連接到網際網路核心（第一台骨幹 router）的通道於技術==。
+###### Notes: `The Network Core` 等等馬上就會提到
+
+### Access Network（AN）
+什麼是 Access Network（存取網路）呢？它為什麼會被放在 Network Edge 底下討論？原因其實很簡單，因為我們剛剛知道了 Network Edge 其實就是「靠近使用者那端的網路區域」。
+
+既然 Network Edge 的作用就是要讓這些 end systems 能夠與全球進行通訊（交流），那勢必就要有一條路能夠將他們連進這個 Network Core（網路核心）。因此，這一條「從自家門口連接到電信第一台路由器（edge router）」的一哩路，我們就說他是一個 Access Network。
+
+那根據身處的環境不同，常見的 Access Network 有以下幾種（相對比較繁雜，有興趣的可以大概看一下掃描過去即可，後續會再針對各項做詳細的介紹）：
+- Home Access（家庭存取）: DSL, Cable, FTTH, 5G Fixed Wireless
+    - FTTH（光纖到戶）、ADSL，或 Modem（數據機）與家用 Wi-Fi 分享器連線
+- Access in the Enterprise (and the Home): Ethernet and WiFi
+    - 學校或公司內部通常由無數的區域網路（LAN）、交換器（Switch）和企業級 Wi-Fi 基地台（AP）組成
+- Wide-Area Wireless Access: 3G, LTE 4G and 5G
+    - 你的手機透過 4G/5G 基地台連網
+
+### Physical Media（PM）
+再來為什麼需要講 Physical Media（物理媒介）呢？因為 Access Network 是一套網路架構與協議，但它沒有辦法憑空傳輸訊號，必須仰賴 Physical Media to carry 電子訊號和光訊號。
+
+> 小結：
+> Access Network 就像是「一條規劃好的交通路線（Logic Concept）」；Physical Media 則是「柏油路、公路、街道」等等實體 medium 的概念。
+
+PM 主要分為兩大類：
+- Guided Media 導向介質（有線）
+    - Twisted Pair 雙絞線：傳統電話線、乙太網路線（Cat5e, Cat6）
+    - Coaxial Cable 同軸電纜：第四台有線電視的線路
+    - Fiber-optic Cable 光纖電纜：光速在玻璃纖維傳輸，速度非常快、抗干擾性強。相較於銅線傳輸：頻寬更大、距離更長/ 速度更快、電阻更高、安全性更高。有興趣可查看：[Fiber-Optic 四大優點](https://www.aten.com/tw/zh/resources/feature-articles/4-key-benefits-fiber-optic-transmission/)
+- Unguided Media 非導向介質（無線） 
+    - Radio（無線電波）：Wi-Fi、Bluetooth、4G/5G 訊號
+
+## Applications on Cybersec（資安應用）
+### 學習的本質與門檻降低
+那跟資安或者說網路安全有什麼關係？幹嘛要學什麼 Physical Media 了解什麼電纜或者數據機？或者什麼 router/ switch？那就是外行看熱鬧，內行看門道了。如果要做 Cybersecurity 但連基礎的網路知識都沒有釐清的話，那真的就是來看看熱鬧而已。
+
+況且，現在學習新知的門檻因為 GenAI 的出現，已經下降到非常低了，不像以前需要做 Info retrieve/ Online Searching，然後自己 Debug 超久。很多問題一旦出現，立馬就有工具可以幫助自己解決，並且還有詳細的解答一併附上，真的非常方便。
+
+### Attack Surface 攻擊面不同
+今天談的 Network Edge 就是一個容易暴露在外、被攻擊的地方，連接上萬種不同的設備（unlike Network Core 只有一種：高速轉發的 packet）。Edge 邊緣有像是 Mac、Linux server、手機、無線印表機、廉價攝影機等等，都是 Network Edge 涵蓋的範圍，其實非常「雜亂」。
+
+### 「人」是最大的安全漏洞
+邊緣就在我們身邊，因此我們才會說：**Edge 邊緣是「人類活動的中心」這個說法**，因為所有的 Hosts 都是通過人在操作。而 Social Engineering Attack, Phishing Attack, Ransomware/ Malware Attack, ...etc 都發生在邊緣。攻擊者不需要去破解 high level 的防火牆，相反只需要騙一個處在 Edge 有 access 權限的員工點開惡意檔案，就可以打入網路內部了。
+
+### 協定暴露的層級不同（Protocol Exposure）
+Network Core 通常只看 Layer 3（Transport Layer），也就是傳輸層的 IP 封包轉發的部分；Network Edge 則涵蓋 Layers 2,4,7 等等脆弱的 Application Layer and Data Link Layer。
+
+常見的攻擊與對應發生的 Layer 層如下：
+- Layer 2（Data Link Layer）：[ARP spoofing 與 MITM](https://www.uuu.com.tw/Public/content/article/20/20200217.htm), [Wi-Fi Deauthentication Attack](https://www.startupdefense.io/cyberattacks/wi-fi-deauth-attack)
+- Layer 7（Application Layer）：網頁、資料庫登入驗證等。[什麼是 SQL Injection](https://www.cloudflare.com/zh-tw/learning/security/threats/sql-injection/), [XSS（網頁漏洞）](https://www.fortinet.com/tw/resources/cyberglossary/cross-site-scripting)等各種精準武器來攻擊 Edge 邊緣伺服器
+
+## Conclusion（總結）
+今天主要談了 Networking 的兩個基本概念（Host/End system, Network Edge），還有稍微提到了一些些 Network Core 的部分，其中包含各自的應用以及常見的例子，最後嘗試以 Cybersecurity 的視角來切入，去了解為什麼攻擊會發生在 Edge 等等的內容。
+
+在過去早起的觀念是「Perimeter Defense 邊界防禦」，認為只要把邊緣保護好，核心就會安全。但現在已經轉為耳熟能詳的「**Zero Trust 零信任架構**」，也就是「**無論你是誰、在哪個節點、有什麼權限，我都不去信任你**」。如此，才能達到有效地防護。
+
+## References（參考資料）
+- [趨勢科技｜何謂零信任？](https://www.trendmicro.com/zh_tw/what-is/what-is-zero-trust.html)
+- Computer Networking: A Top-Down Approach 9th Ed
+- [ARP spoofing 與 MITM](https://www.uuu.com.tw/Public/content/article/20/20200217.htm)
+- [Wi-Fi Deauthentication Attack](https://www.startupdefense.io/cyberattacks/wi-fi-deauth-attack)
+- [什麼是 SQL Injection](https://www.cloudflare.com/zh-tw/learning/security/threats/sql-injection/)
+- [XSS（網頁漏洞）](https://www.fortinet.com/tw/resources/cyberglossary/cross-site-scripting)
+- [Fiber-Optic 四大優點](https://www.aten.com/tw/zh/resources/feature-articles/4-key-benefits-fiber-optic-transmission/)
