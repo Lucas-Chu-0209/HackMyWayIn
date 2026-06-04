@@ -1,157 +1,214 @@
 # Hack My Way In
 
-Personal brand and resume website for Lucas Chu.
-Built with Next.js (App Router) + Tailwind CSS.
+Personal website and technical blog for **Lucas Chu** — focused on web development, creative programming, networking, and cybersecurity learning notes.
+
+## Live Site
+
+- Production: `https://hackmywayin.vercel.app`
+
+## Overview
+
+Hack My Way In is a personal website built to serve as:
+
+- a portfolio and personal brand site
+- a technical writing platform
+- a place to publish build logs, learning notes, and project updates
+- a long-term knowledge base for networking and cybersecurity topics
+
+The site is designed with a clean dark/light UI, responsive layouts, MDX-powered content, and a blog structure that can scale over time.
+
+## Features
+
+- **Responsive personal website**
+  - works across desktop, tablet, and mobile layouts
+- **MDX-based blog system**
+  - write posts in Markdown/MDX with frontmatter metadata
+- **Post taxonomy**
+  - categories and tags for organizing content
+- **Dark mode support**
+  - theme-aware UI with smooth transitions
+- **Homepage latest posts section**
+  - highlights the newest published entries
+- **Post detail pages**
+  - dedicated article pages for long-form writing
+- **Sidebar content**
+  - important posts, analytics summaries, and related site information
+- **Pagination**
+  - archive browsing across multiple post pages
+- **Vercel deployment**
+  - optimized for production hosting on Vercel
+
+## Tech Stack
+
+- **Framework:** Next.js
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Content:** MDX / Markdown-based posts
+- **Deployment:** Vercel
+
+## Project Structure
+
+```text
+.
+├── src
+│   ├── app
+│   │   ├── page.tsx
+│   │   ├── posts
+│   │   ├── categories
+│   │   └── ...
+│   ├── components
+│   │   ├── posts
+│   │   ├── Navbar.tsx
+│   │   ├── BlogSidebar.tsx
+│   │   └── ...
+│   ├── content
+│   │   └── posts
+│   └── lib
+│       └── posts.ts
+├── public
+│   └── images
+└── README.md
+```
 
 ## Getting Started
 
-### Run locally
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Lucas-Chu-0209/HackMyWayIn.git
+cd HackMyWayIn
+```
+
+### 2. Install dependencies
+
+Using npm:
+
 ```bash
 npm install
+```
+
+Or using pnpm:
+
+```bash
+pnpm install
+```
+
+### 3. Start the development server
+
+Using npm:
+
+```bash
 npm run dev
 ```
-Then open [http://localhost:3000](http://localhost:3000).
 
-### Build for production
+Or using pnpm:
+
 ```bash
-npm run build
-npm start
+pnpm dev
 ```
 
-## Content
+Then open:
 
-All site content is centralized in `src/content.ts`.
-Edit that file to update:
-- Personal info, bio, tagline
-- Skills (languages, tools)
-- Education
-- Experience
-- Projects (title, description, tags, links, image)
-- Contact links (email, GitHub, LinkedIn, etc.)
-
-## Project Images
-
-Project images live in `public/projects/` and are referenced from `src/content.ts`.
-
-### Supported formats
-
-PNG, JPG, WebP, and AVIF are all supported (handled natively by Next.js `next/image`). WebP is recommended for the best file-size-to-quality ratio; PNG is ideal when you need a transparent background.
-
-### Card image presentation
-
-The left panel of each project card uses a **4:3 aspect-ratio frame** with padding. Images are displayed with `object-contain`, so they are always shown in full without cropping. The frame's background colour (blue gradient) remains visible around the image on all sides, giving a clean, padded look.
-
-- **Landscape / desktop demo images** — the image fills the width of the frame and gains top/bottom margins.
-- **Portrait / mobile demo images** — the image fills the height of the frame and gains left/right margins.
-- Both orientations display correctly on desktop and mobile screens.
-
-### Recommended image dimensions
-
-| Demo type | Ratio | Recommended resolution | Notes |
-|-----------|-------|------------------------|-------|
-| Desktop app / website | 16:10 or 4:3 | **1600 × 1000 px** (16:10) or **1200 × 900 px** (4:3) | Common browser-window screenshot ratios |
-| Mobile app | 9:16 or 3:4 | **1080 × 1920 px** (9:16) or **1200 × 1600 px** (3:4) | Standard smartphone screenshot size |
-
-Keep files **under 300 KB** — use WebP or optimise with tools like [Squoosh](https://squoosh.app/).
-
-### Adding an image to a project
-
-1. Add your image file to `public/projects/` (e.g. `public/projects/my-project.png`).
-2. In `src/content.ts`, add an `image` field to the project entry:
-
-```ts
-{
-  title: "My Project",
-  // ...other fields...
-  image: { src: "/projects/my-project.png", alt: "My Project preview" },
-}
+```text
+http://localhost:3000
 ```
 
-If no `image` field is provided (or the field is omitted), the card shows a decorative placeholder automatically.
+## Writing a New Blog Post
 
-## Avatar
+Posts are stored as MDX/Markdown files under the content directory.
 
-The avatar is currently a placeholder (circular gradient with initials "LC").
+Example frontmatter:
 
-To replace it:
-1. **Photo**: Add your image to `public/avatar.png` and update `src/components/Avatar.tsx` to use `<Image src="/avatar.png" ... />` from `next/image`.
-2. **3D / animated avatar**: Replace the contents of `src/components/Avatar.tsx` with your embed (Spline, Rive, Three.js, etc.).
-
-## Structure
-
+```md
+---
+title: "Computer Networking (Ep1) — Host/End system, Network Edge"
+date: "2026-05-28"
+category: "Computer Network 筆記"
+tags:
+  - "Networking"
+  - "Cybersec"
+  - "Edge"
+excerpt: "Host & End System 什麼是 Host（主機）/ End system（終端系統）呢？簡單來說就是：真正使用網路的那些設備..."
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
 ```
-src/
-├── app/
-│   ├── layout.tsx       # Root layout + metadata
-│   ├── page.tsx         # Main page (assembles sections)
-│   └── globals.css      # Global styles (Tailwind base)
-├── components/
-│   ├── Navbar.tsx        # Sticky navbar, scroll hide/show, mobile drawer
-│   ├── Avatar.tsx        # Avatar placeholder (swap later)
-│   ├── SectionHeader.tsx # Section title + subtitle + accent bar
-│   ├── SkillChip.tsx     # Skill tag badge
-│   ├── TimelineItem.tsx  # Timeline entry (Education/Experience)
-│   ├── ProjectCard.tsx   # Project display card
-│   ├── SocialLinkButton.tsx  # Social/contact link button
-│   ├── HeroSection.tsx   # Hero / landing section
-│   ├── AboutSection.tsx  # About section
-│   ├── ProjectsSection.tsx # Projects section
-│   └── ContactSection.tsx  # Contact section
-└── content.ts            # All site content data
-```
+
+After adding a new post file, it should automatically appear in:
+
+- the homepage latest posts section
+- the `/posts` archive
+- relevant category pages
+- relevant tag pages
 
 ## Deployment
 
-Deploy to Vercel for free:
-1. Push to GitHub
-2. Go to [vercel.com](https://vercel.com), import your repo
-3. Deploy — Vercel auto-detects Next.js
+This site is deployed on **Vercel**.
 
-### Analytics env vars (Vercel KV)
+### Production URL
 
-Analytics uses `@vercel/kv` with these server-side environment variables:
+- `https://hackmywayin.vercel.app`
 
-- `KV_REST_API_URL`
-- `KV_REST_API_TOKEN`
-- `VISITOR_SALT` (required in production for salted anonymous visitor hashing)
+### Deploy with Vercel
 
-Key schema:
+1. Push your latest code to GitHub
+2. Import the repository into Vercel
+3. Vercel will automatically detect the Next.js project
+4. Configure environment variables if needed
+5. Deploy
 
-- `views:post:{slug}` → integer per post
-- `views:total` → integer site-wide views
-- `visitors:total:set` → set of salted anonymous visitor hashes
-- `visitors:total` → integer site-wide unique visitors
+For future updates:
 
-On Vercel, add a Redis/KV integration first, then set `VISITOR_SALT` in Project Settings → Environment Variables.
+- push changes to your branch
+- merge into your main branch
+- Vercel can automatically redeploy on new commits
 
-### Local analytics setup
+## Recommended Git Workflow
 
-You can pull Vercel env vars without a global install:
+Example workflow:
 
 ```bash
-npx vercel link
-npx vercel env pull .env.local
+git checkout -b feature/update-readme
+git add .
+git commit -m "Update README for personal website"
+git push origin feature/update-readme
 ```
 
-If `npx vercel` is unavailable, manually create `.env.local` with the three variables above.
+Then open a pull request and merge into `main`.
 
-### Verify tracking works
+## Design Goals
 
-1. Run `npm run dev`.
-2. Open any post page and check Network for `POST /api/analytics/track`.
-3. Confirm response JSON contains `ok: true` and `tracked: true`.
-4. Navigate from Homepage to a post and confirm the post's `Views` increases immediately (no refresh required).
-5. Confirm the response includes updated `postViews` / `totalViews` counts and the sidebar `Total Views` updates in-place.
-6. Confirm `Visitors` increases when visiting from a new browser/session.
+This project aims to balance:
 
-Notes:
-- If KV env vars are missing, analytics intentionally returns `tracked: false` and logs a warning in development.
-- If `VISITOR_SALT` is missing in production, view counters still increase but unique visitor counting is disabled.
+- simplicity
+- readability
+- responsive UX
+- maintainable content publishing
+- long-term extensibility
 
-## Roadmap
+The website is not just a portfolio, but also a public record of learning, writing, and building.
 
-- [ ] Replace avatar placeholder with real photo or 3D embed
-- [ ] Fill in real project links (GitHub, Demo, Write-up)
-- [ ] Add contact links (LinkedIn, Instagram, Facebook)
-- [ ] Dark mode toggle
-- [ ] Daily challenge / rating system (bonus)
+## Future Improvements
+
+Possible future enhancements:
+
+- automatic excerpt generation from MDX content
+- search functionality for posts
+- syntax highlighting improvements
+- reading time estimation
+- richer Open Graph metadata
+- post series navigation
+- better analytics dashboards
+- internationalization support
+
+## Author
+
+**Lucas Chu**
+
+- Personal site: `https://hackmywayin.vercel.app`
+
+## License
+
+This project is for personal website and content publishing use.
+
+If you want to reuse parts of the codebase or structure, please check the repository license first or contact the author.
