@@ -1,0 +1,234 @@
+---
+title: "Day 19｜《資安攻防啟蒙 ep.8：攻擊者的第二步：掃描後的分析行動！》"
+date: "2025-09-19"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Nmap"
+  - "Kali Linux"
+  - "UTM"
+excerpt: "昨天我們大致上分享了 Nmap 的一些常見指令，以及對應不同類型應該使用什麼等等，如果大家想進一步了解 Nmap，除了 [Nmap](https://nmap.org/) 官方網站以外，還有很多的 Open Resources 在很多線上平台提供給大家去 Access！那我們再簡單對 Nmap 做一個簡單的 Recap：Nmap 是一個可疑快速找到特定位置的大型網路的網路偵查工具 — 可以用它找出有哪些主機與服務對外暴露、服務的 port / 類型 / 版本等等。因此我們可以說，Nmap 可做為後續風險評估或防禦調整的「第一把尺」。"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+昨天我們大致上分享了 Nmap 的一些常見指令，以及對應不同類型應該使用什麼等等，如果大家想進一步了解 Nmap，除了 [Nmap](https://nmap.org/) 官方網站以外，還有很多的 Open Resources 在很多線上平台提供給大家去 Access！那我們再簡單對 Nmap 做一個簡單的 Recap：
+
+> Nmap 是一個可疑**快速找到特定位置的大型網路**的網路偵查工具 — 可以用它找出有哪些主機與服務對外暴露、服務的 port / 類型 / 版本等等。因此我們可以說，Nmap 可做為後續風險評估或防禦調整的「第一把尺」。
+> 
+
+接續昨天有提到的部分，今天會先小小提供如何將 nmap 的掃描結果整合進報告（.xml 轉 csv / 在 Splunk 或 ELK 裡視覺化）。
+
+一、先產生 Nmap 的 XML 輸出
+
+在你的 attacker VM 上（或你要掃描的環境）執行：
+
+```bash
+# 掃描並輸出 XML（也產生 .nmap 與 .gnmap if needed）
+sudo nmap -sS -sV -p- --script=vuln -oA scan-output 192.168.x.x #（target IP）
+# 會產生 scan-output.xml（以及 scan-output.nmap, scan-output.gnmap）
+```
+
+- `oA` 會產生多種格式；我們接下來會用 `scan-output.xml`
+- 可用 `ls -l scan-output.*` 查看是否有出現剛剛輸出的 files
+
+二、把 Nmap XML 轉成 CSV（Python 範例）
+
+我們的目標是希望把 `scan-output.xml` 解析成 `scan-output.csv` 檔案。而 CSV 欄位通常包括以下幾個常用欄位：`ip, hostname, port, protocol, state, service, product, version, script_id, script_output`。
+
+```python
+#!/usr/bin/env python3
+# 需安裝 python3
+# 使用: python3 nmap_xml_to_csv.py scan-output.xml scan-output.csv
+
+import sys
+import xml.etree.ElementTree as ET
+import csv
+
+if len(sys.argv) != 3:
+    print("Usage: python3 nmap_xml_to_csv.py input.xml output.csv")
+    sys.exit(1)
+
+infile = sys.argv[1]
+outfile = sys.argv[2]
+
+tree = ET.parse(infile)
+root = tree.getroot()
+
+# CSV header
+fields = [
+    "scan_time",
+    "ip",
+    "hostname",
+    "port",
+    "protocol",
+    "state",
+    "service",
+    "product",
+    "version",
+    "extrainfo",
+    "script_id",
+    "script_output"
+]
+
+with open(outfile, "w", newline='', encoding="utf-8") as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=fields)
+    writer.writeheader()
+
+    scan_time = root.get("startstr", "")
+
+    for host in root.findall("host"):
+        # ip
+        addr = ""
+        for a in host.findall("address"):
+            if a.get("addrtype") == "ipv4":
+                addr = a.get("addr")
+        # hostname (if any)
+        hostname = ""
+        hostnames = host.find("hostnames")
+        if hostnames is not None:
+            hn = hostnames.find("hostname")
+            if hn is not None:
+                hostname = hn.get("name", "")
+        ports = host.find("ports")
+        if ports is None:
+            # no port info: write row with empty port?
+            writer.writerow({
+                "scan_time": scan_time,
+                "ip": addr,
+                "hostname": hostname,
+                "port": "",
+                "protocol": "",
+                "state": "",
+                "service": "",
+                "product": "",
+                "version": "",
+                "extrainfo": "",
+                "script_id": "",
+                "script_output": ""
+            })
+            continue
+
+        for port in ports.findall("port"):
+            portid = port.get("portid", "")
+            protocol = port.get("protocol", "")
+            state = ""
+            state_node = port.find("state")
+            if state_node is not None:
+                state = state_node.get("state", "")
+            service = ""
+            product = ""
+            version = ""
+            extrainfo = ""
+            sv = port.find("service")
+            if sv is not None:
+                service = sv.get("name", "")
+                product = sv.get("product", "") or ""
+                version = sv.get("version", "") or ""
+                extrainfo = sv.get("extrainfo", "") or ""
+
+            # scripts (may be multiple)
+            scripts = port.findall("script")
+            if len(scripts) == 0:
+                writer.writerow({
+                    "scan_time": scan_time,
+                    "ip": addr,
+                    "hostname": hostname,
+                    "port": portid,
+                    "protocol": protocol,
+                    "state": state,
+                    "service": service,
+                    "product": product,
+                    "version": version,
+                    "extrainfo": extrainfo,
+                    "script_id": "",
+                    "script_output": ""
+                })
+            else:
+                for sc in scripts:
+                    sid = sc.get("id", "")
+                    sout = sc.get("output", "") or ""
+                    writer.writerow({
+                        "scan_time": scan_time,
+                        "ip": addr,
+                        "hostname": hostname,
+                        "port": portid,
+                        "protocol": protocol,
+                        "state": state,
+                        "service": service,
+                        "product": product,
+                        "version": version,
+                        "extrainfo": extrainfo,
+                        "script_id": sid,
+                        "script_output": sout
+                    })
+
+print("Wrote CSV:", outfile)
+```
+
+並執行：
+
+```bash
+python3 nmap_xml_to_csv.py scan-output.xml scan-output.csv
+```
+
+你會得到 `scan-output.csv`，可用 Excel 或 `cat` 檢視。這個 CSV 就適合直接上傳到 Splunk 或匯入 ELK 咯！大家也可以單純打開檔案看看大概長怎樣～ 👀
+
+OK 講完簡單匯出成果報告後，我們就可以來接續這一系列主題文章，掃描後的分析行為～ Gogogo！
+
+---
+
+## 掃描後的分析行動 👀 👀 👀
+
+掃描只是情報蒐集。得到資訊後，攻擊者通常有以下的步驟可以執行：
+
+1. 驗證與枚舉（verification & enumeration）
+
+這步主要是去確認哪些服務真的存在、哪些可連、收集更多 banner、路徑、憑證資訊等等一切對於攻擊者來說有用的資訊。
+
+- 工具：Nmap (`sV`, `-script`)、curl、nikto、whatweb、gobuster/dirb（檔案/目錄枚舉）。
+
+1. 漏洞比對（vulnerability mapping）
+    - 根據 service/version 去 [NVD](https://nvd.nist.gov/vuln)（National Vulnerability Database） 或 [CVE](https://www.cve.org/)（Common Vulnerabilities and Exposures）列表比對已知弱點。
+    - 工具：搜索 NVD/CVE、Shodan/Censys（Shodan 我們在前面資料搜集篇有提到，有興趣的話可以去回顧一下 → [**《資安攻防啟蒙 ep.2：攻擊者的第一步：資料搜集（Reconnaissance）全方位解析》**](https://ithelp.ithome.com.tw/articles/10379584)）、漏洞掃描器（但**需授權才可使用**）。
+
+2. 漏洞驗證（validation）
+
+通常在漏洞驗證的部分，都會經過滲透測試的部分（intrusive activities）因此初學者在這個部分需要特別注意。除了我們一般使用的 VM 虛擬機外，還要注意是否是在內網/部環境進行。
+
+- 嘗試可被自動化測試或人為驗證（有可能是侵入性的！）。
+
+*→（注意：實務上這一步最容易違法；在 Lab 裡用預設弱系統驗證）*
+
+---
+
+## 掃描後的攻擊行為 💣
+
+### 利用/取得存取（exploitation / gaining access 😱）
+
+攻擊方若成功 exploit「**利用軟體中的漏洞得到電腦的控制權的行為**」 ，再來就可以進行登入、植入後門、使自己的權限提升 → 更少的限制手段、防禦能夠去有效地阻擋攻擊者 access 資料
+
+- 防守重點：EDR（Endpoint Detection and Response 端點偵測以及回應，可參考 [Trend 對 EDR 的定義](https://www.trendmicro.com/zh_tw/what-is/xdr/edr.html)）、可疑行為檢測、最小權限、MFA（多因素驗證）、ZTNA（零信任網路存取）等等
+
+### 橫向移動與持久化（lateral movement & persistence）
+
+橫向移動與持久化簡單來說就是在「**內網擴散或建立持續存取方式**」，有點像是已經把病毒注入、完成寄生的感覺，變成橫向式擴散攻擊範圍以及 long-term 的持續性攻擊。
+
+- 防守重點：分段網路、分層權限、網路行為分析等等
+
+### 資料竊取 & 清除痕跡
+
+這個部分通常已經是攻擊尾聲（意即完成資料竊取，並進一步對資料做出某些特定、滿足攻擊者需求的行為，像是將敏感資料外傳並試圖清除 log 或痕跡），涉及到攻擊方當初取得資訊的目的以及意義為何。
+
+- 防守重點：做 real-time 的流量監控、DLP（Data Loss Prevention 資料洩漏保護）、Log 完整性與備援。
+
+---
+
+## 結語
+
+今天大致上說明了如何將 nmap 掃描的資訊輸出並匯成一個報告，這個報告通常可以直接使用常見的分析工具去達成想要的目的，另外提醒大家一點是 `--script=vuln` 只會回報它知道的漏洞檢查；若你想示範「有漏洞被檢出」，可以在 target 上部署一個 intentionally vulnerable service（例如 Metasploitable、DVWA）來示範，這樣 `--script=vuln` 才會有輸出可以分析唷！
+
+> 再來還是需要強調：請避免在未經授權的網段或主機上掃描或測試 exploit；並確保「只在自己的 lab 或有授權的情況下進行」。What we do is “**Ethical Hacking**”.

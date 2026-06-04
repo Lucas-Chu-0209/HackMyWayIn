@@ -1,0 +1,213 @@
+---
+title: "Day 18｜《資安攻防啟蒙 ep.7：攻擊者的第二步：掃描 & 分析—Nmap篇》"
+date: "2025-09-18"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Nmap"
+  - "Kali Linux"
+  - "UTM"
+excerpt: "我們接續昨天的部分開始實際用 VM 操作 kali linux 的 Nmap 指令吧！開始之前，我們確定攻方以及被攻方的 IP，確定目標。`ip addr show` or `ifconfig` 來確定 IP：→ Attacker IP （`192.168.65.2`）確認完，再用相同方式確認 Victim IP（`192.168.65.3`）"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+我們接續昨天的部分開始實際用 VM 操作 kali linux 的 Nmap 指令吧！開始之前，我們確定攻方以及被攻方的 IP，確定目標。`ip addr show` or `ifconfig` 來確定 IP：
+
+![https://ithelp.ithome.com.tw/upload/images/20250918/20175957zmbcJpDAt5.png](https://ithelp.ithome.com.tw/upload/images/20250918/20175957zmbcJpDAt5.png)
+
+→ Attacker IP （`192.168.65.2`）確認完，再用相同方式確認 Victim IP（`192.168.65.3`）
+
+---
+
+## Nmap 掃描流程
+
+Nmap 的掃描流程大致上分為以下五個部分，請看圖：
+
+![Nmap 掃描流程圖](https://ithelp.ithome.com.tw/upload/images/20250918/20175957Hur7Jd122l.png)
+
+*網路截取自 [https://minmin0625.medium.com/滲透測試lab-nmap-part2-主機掃描-host-discovery-21fdfeb6e504](https://minmin0625.medium.com/%E6%BB%B2%E9%80%8F%E6%B8%AC%E8%A9%A6lab-nmap-part2-%E4%B8%BB%E6%A9%9F%E6%8E%83%E6%8F%8F-host-discovery-21fdfeb6e504)*
+
+再來我們來分別拆解這五個部分：
+
+### 網路偵查 / 主機發現（Host discovery）
+
+目標：找出哪些 IP 存在（活主機），節省後續掃描時間。
+
+- kali linux 指令範例：
+
+```bash
+# Ping sweep（主機發現）
+sudo nmap -sn 192.168.65.0/24
+```
+
+說明：`sn`（原來的 ping sweep）「**只做主機發現，不做 port scan**」。若目標封 ICMP，可用 `Pn` 跳過偵測直接掃描（但效能會較慢）。
+
+- 範例輸出：
+
+![https://ithelp.ithome.com.tw/upload/images/20250918/20175957GropHscLXF.png](https://ithelp.ithome.com.tw/upload/images/20250918/20175957GropHscLXF.png)
+
+
+### 端口掃描（Port scan）— 快速找開放 port
+
+目標：找出哪些 port 開放、有哪些服務可能存在。大家可以跟著手動測試看看～ 👀
+
+常用的有：
+
+1. 快速掃描 top ports：
+    
+    ```bash
+    # 前 100 常見 ports
+    sudo nmap --top-ports 100 192.168.50.10 -T4 -oN top100.txt
+    ```
+    
+    - `-T4` 是**提升掃描速度**
+    - `-oN` 是保存純文字輸出
+2. 全埠掃描（0-65535）：
+    
+    ```bash
+    # 掃描全部的 port 沒有特別針對
+    sudo nmap -p- 192.168.50.10 -T4
+    ```
+    
+3. SYN scan（隱匿性較高，需 root）：
+    
+    ```bash
+    sudo nmap -sS -p22,80,443 192.168.50.10
+    ```
+    
+4. TCP connect（沒 raw 權限可用）：
+    
+    ```bash
+    nmap -sT 192.168.50.10
+    ```
+    
+
+說明：`sS`（SYN scan）速度快、較少建立完整連線（不建立完整 TCP 連線 → 較少日誌）；`sT` 建立完整 TCP 3-way handshake，較容易被記錄。
+
+### 服務與版本偵測（Service/version detection）
+
+目標：知道 port 上執行的是哪個服務與版本，為後續漏洞判斷做基礎。
+
+範例：
+
+```bash
+# -sV 版本偵測, -p 指定常見開放埠
+sudo nmap -sV -p22,80,443 192.168.50.10
+```
+
+- `sV` 會嘗試回應字串、banner 等，並比對版本庫。
+
+### NSE（Nmap Scripting Engine）腳本
+
+NSE 是 Nmap 的一個擴充機制（一種 extention），可以去做一些更為複雜的掃描工作（像是探測服務細節、版本或配置檢測、已知漏洞掃描、弱密碼嘗試或 brute force 等等）。
+
+它的大致語法：`nmap -—script <script-name-or-pattern> [-p <ports>] <target>`
+
+目標：自動化檢測（enum、弱點檢測、憑證檢查、http enum等）。
+
+範例：
+
+- 常用腳本集合（default + safe）：
+    
+    ```bash
+    sudo nmap -sV --script "default,safe" 192.168.50.10
+    ```
+    
+- 漏洞掃描（vuln 類）：
+    
+    ```bash
+    sudo nmap --script vuln -p80,139,445 192.168.50.10
+    ```
+    
+- 指定腳本（例如 SSL 檢查）：
+    
+    ```bash
+    sudo nmap --script ssl-enum-ciphers -p 443 192.168.50.10
+    ```
+    
+
+特別說明：NSE 有非常多腳本（enum、auth、vuln、exploit 等），如果要查看詳細的內容，可用 `ls /usr/share/nmap/scripts` 或 `nmap --script-help <script>` 來檢視！👀
+
+### OS Fingerprinting（作業系統判定）
+
+目標：辨識目標作業系統與版本（有助於判斷漏洞利用可能性）。
+
+範例：
+
+- `-O` 嘗試判斷作業系統
+
+```bash
+# -O 嘗試判斷作業系統
+sudo nmap -O 192.168.50.10
+```
+
+- 結合 `A`（aggressive）做綜合偵測：
+
+```bash
+sudo nmap -A 192.168.50.10 # A = O -sV --script=... --traceroute 等的快捷組合，資料豐富但輸出的複雜度也相對會大很多，可能會有多餘不需要的資訊。
+```
+
+### UDP 掃描
+
+目標：找出 UDP 服務（DNS、SNMP、NTP 等），常常會被忽略但其實具一定風險！
+
+範例：
+
+```bash
+sudo nmap -sU -p 53,161,123 192.168.50.10
+```
+
+說明：UDP 掃描通常較慢且回傳不穩定，需耐心或指定常見 UDP 端口。
+
+### 其他常用技巧（偽裝、繞過防火牆、時間控制）
+
+- 繞過 ICMP/簡易防火牆：
+    - `Pn`（對目標不做 ping 偵測）
+- 偽裝來源或 Decoy（小心法律風險）：
+    - `D RND:10,10.0.0.1`（decoy）或 `S`（source-ip，需 raw）
+- 片段封包（可能繞過簡單封包過濾器）：
+    - `f`
+- 調整速度：
+    - `T0`（慢）到 `T5`（快，噪音大）；預設 `T3`，測試常用 `T4`。
+
+---
+
+## 防禦方（藍隊）應注意的指標與對策
+
+- 偵測掃描行為：連續大量 SYN、奇怪的端口分佈、短時間內大量不同 port 掃描 → 建議 IDS 規則、rate limiting、連線阈值。
+- 記錄完整連線：用 firewall 日誌（iptables/ufw）、主機 intrusion logs，結合 SIEM（例：Splunk）做聚合。
+- 偽裝偵測：若 scan 使用 decoys 或分片，IDS 可以檢查不一致的 IP 行為或分片重組異常。
+- 減少資訊曝露：banner 降低詳盡資訊（例如 Apache hide version）、關閉不必要服務、UDP 端口封鎖。
+
+## 進階練習！
+
+1. 在兩台 VM（Kali + 選擇的靶機）上重現以下流程並寫報告：`sn` → `-top-ports` → `sS -p-` → `sV -sC` → `-script vuln`。截圖或貼出 `.nmap` 的片段並解釋每個發現的風險。
+2. 模擬防守：在目標 VM 起一個簡單 web server（例如 `python3 -m http.server 8080`），觀察 nmap 掃描的 request 與 web server log 的差異，寫下如何在 server log 偵測到掃描行為。
+3. 試著比較 `sS` 與 `sT` 在 IDS／目標日誌中的差別（觀察 SYN vs full-handshake 記錄）。
+
+## 常用指令速查表
+
+```
+nmap -sn <network>                 # 快速主機發現
+nmap -sS -p- <ip>                  # SYN 全端口掃描
+nmap -sT <ip>                      # TCP connect 掃描
+nmap -sU -p <ports> <ip>           # UDP 掃描
+nmap -sV -p <ports> <ip>           # 服務/版本偵測
+nmap -O <ip>                       # OS 判斷作業系統
+nmap -A <ip>                       # aggressive (綜合偵測)
+nmap --script vuln -p <ports> <ip> # NSE 漏洞掃描
+nmap --top-ports <N> <ip>          # 掃描最常用的 N 個 port
+nmap -oN file.txt <ip>             # 儲存純文字報告
+nmap -oA basefile <ip>             # 同時生成 .nmap, .gnmap, .xml
+```
+
+---
+
+## 今日結語
+
+> 今天我們用 UTM + Kali 把 Nmap 的偵查到漏洞列舉流程完整跑一次，並把常用的指令與攻擊目的做對應說明。再來會示範如何把 nmap 的結果整合進報告（.xml 轉 csv / 在 Splunk 或 ELK 裡視覺化），以及掃描後續攻擊方會如何開始攻擊等等內容。大家明天見啦～！😍
+>

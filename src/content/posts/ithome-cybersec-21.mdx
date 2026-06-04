@@ -1,0 +1,66 @@
+---
+title: "Day 21｜《資安攻防啟蒙 ep.10：Metasploit 入侵工具介紹》"
+date: "2025-09-21"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Kali Linux"
+  - "Metasploit"
+excerpt: "今天我們就來介紹一個知名的滲透測試工具 Metasploit！這個工具通常會內建在 Kali VM 裡面，而掃描的常見工具就是用我們前面幾篇已經有提到的 Nmap 或 Shodan 平台來進行資訊搜集（Recon.）還有弱點掃描的部分。再尋找完可利用的漏洞後，就會利用 Metasploit 去載入 payload，設定 Target 目標然後進行 Exploit 的動作。"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+今天我們就來介紹一個知名的滲透測試工具 **Metasploit**！這個工具通常會內建在 Kali VM 裡面，而掃描的常見工具就是用我們前面幾篇已經有提到的 Nmap 或 Shodan 平台來進行資訊搜集（Recon.）還有弱點掃描的部分。再尋找完可利用的漏洞後，就會利用 Metasploit 去載入 payload，設定 Target 目標然後進行 Exploit 的動作。
+
+---
+
+## Metasploit 工具 💣
+
+基本上 Metasploit 工具執行測試的流程如下：
+
+1. 選擇已知的漏洞（Exsploit）
+2. 選擇目標（Target）主機，指定 IP 和作業系統，因為不同的作業系統有不同的攻擊方式
+3. 選擇攻擊的 payload 傳遞給目標
+4. 執行 Exsploitation（有分為兩個部分，check 跟 exploit）
+    1. Check → 不會有實際的攻擊行為，單純的測試所以不會造成系統/設備的損害
+    2. Exploit → **真正意義上的攻擊行動**，所以在操作上需要非常格外地小心！
+5. Manipulation 操作受害者電腦設備
+
+> 記得在操作前，都要確定雙方（Victim & Attacker）都是設定成「Host-only 或者是 internal network」的形式，確保安全性 → 測試的 Exploit/ payload 流量不會流到外網造成損傷以及感染，也不會被外部掃到；且可控性也較高，因為在同一網段方便截取封包、分析以及監控。
+> 
+
+*📍！不要用 Shared or Bridged！*
+
+## 實作範例（不會包含實際攻擊行為）
+
+第一步 → 在 VM 打開 `Metasploit framework` ，然後先去選擇已知的漏洞！
+
+- 輸入 `use exploit/windows/rdp/cve_2019_0708_bluekeep_rce`
+- 然後查看漏洞的詳細資訊，輸入 `info`
+
+![https://ithelp.ithome.com.tw/upload/images/20250921/20175957Ln49aWhfqg.png](https://ithelp.ithome.com.tw/upload/images/20250921/20175957Ln49aWhfqg.png)
+
+執行完後接下來應該會看到一串資訊，如下：
+
+![https://ithelp.ithome.com.tw/upload/images/20250921/20175957VaaQ2VYstj.png](https://ithelp.ithome.com.tw/upload/images/20250921/20175957VaaQ2VYstj.png)
+
+紅色框框處就是**可以作用的對象**，意即「可影響的 scope」。這邊細心的人會看到一個問題，我們等等就會說明～！
+
+第二步 → 通常攻擊者會開始選擇攻擊目標，指定的 IP 以及作業系統，剛剛有說明，因為不同作業系統存在不同的攻擊方式，因此在攻擊前就需要知道對方的作業系統。
+
+接下來我們 supposed 要選擇作業系統 set target，但由於我這邊是使用 UTM（ios/MacOS）的作業系統，所以並不在「可以作用的對象」當中，所以再進行 check or exploit 的時候，會沒有辦法 work！再特別說明一下，這邊只是拿這個 exploit 漏洞來跟大家說明大致上的流程，不會實際做完整個攻擊的示範，主要是希望大家知道原理。
+
+> Host-only、Host-only、Host-only｜internal network、internal network、internal network 很重要，記得去 VM 設定！！！雙方都需要一致！
+> 
+
+再來就是設定 payload 以及 check 去做測試，這邊我們就先略為帶過（因為某些緣故，可能比較不方便在公開平台大方地操作，還請大家見諒 🙏 ）。最後，我們會談一下攻擊跟防禦的關係作為今天的總結吧～
+
+## 攻擊與防禦的 Mutual 關係
+
+我們只有去了解攻擊背後的原理、大致流程（通常是血與淚換來的！💸）才能知道如何針對特定的攻擊，去做出完美的防禦跟。你不知道對方怎麼出牌、對方的思路，空空的單靠自己空想是做不出來的！
+
+因此，學習攻擊的類型、攻擊的背後技術，其實是很重要的一環，而 Ethical Hacking 白帽駭客在做的事情正是這個跟，在取得官方授權攻擊的情況下，去進行 Legal 的模擬攻擊，目的就是為了發現系統、伺服器可能存在的漏洞以及安全風險，並進而協助企業加強其防禦能力，防止受到駭客的攻擊！

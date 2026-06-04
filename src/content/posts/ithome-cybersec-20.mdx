@@ -1,0 +1,65 @@
+---
+title: "Day 20｜《資安攻防啟蒙 ep.9：攻擊者的第三步：Exploit 漏洞利用 & 攻擊 🧨—序篇》"
+date: "2025-09-20"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Exploitation"
+excerpt: "今天終於來到了攻擊的第三部曲「Exploit 漏洞利用」啦！也即將正式進入鐵人賽的中下旬，成功完成 20 天的關卡。今天的內容主要會講述攻擊者在資料搜集後，針對漏洞去進行的下一步攻擊、惡意行為，在電資領域術語當中，我們稱它為 **Exploit** → 意即「**有目標地利用軟體中的漏洞去得到電腦控制權的行為**」。那我們就來看看常見的漏洞大致分類以及如何運作吧！"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+今天終於來到了攻擊的第三部曲「Exploit 漏洞利用」啦！也即將正式進入鐵人賽的中下旬，成功完成 20 天的關卡。今天的內容主要會講述攻擊者在資料搜集後，針對漏洞去進行的下一步攻擊、惡意行為，在電資領域術語當中，我們稱它為 **Exploit** → 意即「**有目標地利用軟體中的漏洞去得到電腦控制權的行為**」。那我們就來看看常見的漏洞大致分類以及如何運作吧！
+
+---
+
+## 漏洞攻擊 Exploitation Attack
+
+我們又稱之為「入侵（Intrusion）」，剛剛有提到是帶著目標性地去利用軟體、伺服器的弱點，進行滲透、發起攻擊，其中像是 Dos （阻斷式服務攻擊）或者是更難纏的 DDos （分散式阻斷服務攻擊），目的都是讓伺服器爆滿，使網站或應用程式無法正常運作；或者是安裝惡意軟體程式碼，像是（Malware、Ransomware 勒索軟體、特洛伊木馬程式、病毒等等）。
+
+> 把「漏洞」變成「可利用的行為或程式碼」，使攻擊者取得未授權行為（例如執行程式碼、取得敏感資訊、升權等等）。😱
+> 
+
+### Exploit 在攻擊鏈扮演的角色
+
+所謂攻擊鏈：（Recon 偵查/搜集 → Weaponisation 武裝 → Delivery 傳遞 → Exploit 漏洞利用 → Installation 安裝 → Command & Control 控制系統 or 網路 → Actions 攻擊行為）
+
+Cyber kill chain diagram:
+
+![https://ithelp.ithome.com.tw/upload/images/20250920/20175957Z52EQtYWux.png](https://ithelp.ithome.com.tw/upload/images/20250920/20175957Z52EQtYWux.png)
+
+示例圖擷取自 《*Intelligence-Driven Computer Network Defense Informed by Analysis of Adversary Campaigns and Intrusion Kill Chains*》by Eric M. Hutchins∗, Michael J. Cloppert†, Rohan M.Amin, Ph.D.‡Lockheed Martin Corporation 
+
+我們可以看到 Exploitation 是在第四個框框，也就是 Synthesis 的部分。大體來說就是前置動作幾乎完成，是發動攻擊前的部署以及發動攻擊的當下很重要的一個過渡！
+
+### 攻擊者在 Exploit 階段的操作拆解（Ethical Hacker）
+
+- 驗證漏洞（Proof-of-Concept 非毀滅性驗證）
+    - 目的：確認漏洞存在且可被利用（非破壞性）
+    - 方法：搜尋公開 POC、查 NVD/CVE、比對版本（上一篇有介紹 NVD 以及 CVE，簡單來說就是用來**檢索已知的漏洞代碼**的平台）
+- 選擇利用向量（哪種 payload、哪種攻擊路徑）
+    - 考量：目標環境（內網/雲端）、可用輔助帳號、WAF/IPS 是否存在
+- 嚴格控制實驗（**在 Lab 上進行！⬆️**）
+    - 只在授權 target 操作、先備份/快照、逐步升級測試
+- 失敗後的 fallback → 改變策略：social engineering、credential stuffing 等
+
+---
+
+## 後續 Lab 實作須知
+
+為了方便後續的實作，就先說明一下可能會用到的工具以及軟體（未提及的不代表不會用到！需要使用的時候會告知大家～），還有一些簡單的注意事項，如下：
+
+- 推薦 target 的 images：Metasploitable（or Metasploit Framework）, DVWA, WebGoat, Vulnerable Windows/Linux VM
+- 推薦 attacker：**Kali Linux** （我們現在用的！）或專門測試機
+- VM 網路設定：使用 「**Host-only** / Internal｜shared network 或隔離 VLAN」，**絕對不要直接連公網的網路做測試！！！**
+- Lab checklist：
+    - 建立 VM snapshot
+    - 設定內網（兩台 VM）
+    - 開啟 packet capture（tcpdump/**wireshark 封包分析很重要的軟體 🦈**）→ 以便偵測實驗流量
+    - 準備 logging（Syslog、Suricata/Snort、auditd）
+
+明天會分享一些常見的攻擊範例給大家，是可以大家一起實作的簡單攻擊方式，可能會陽春一點（主要是希望帶大家認識攻擊背後的原理以及過程），大家可以期待一下明天的內容！那我們明天見啦～ 👋

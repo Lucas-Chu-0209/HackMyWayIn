@@ -1,0 +1,108 @@
+---
+title: "Day 17｜《資安攻防啟蒙 ep.6：攻擊者的第二步：掃描 & 分析—VM 虛擬機戰前設定》"
+date: "2025-09-17"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Nmap"
+  - "Kali Linux"
+  - "UTM"
+excerpt: "今天我們把昨天的指令與理論通過 Lab 實作的方式帶給大家更全面的理解。今天以及後續幾天的內容會使用 UTM 虛擬機裡的 Kali linux（作為攻擊方）對同一個虛擬網路內的目標 VM 做 Nmap 掃描，並依攻擊目的分類對應要用的 Nmap 指令，以及分享其中的目的。今天的文章內容會比較偏實作導向，會先教大家如何做 VM 環境設定，以及如何確定攻擊方以及目標方兩方的機器有設定成功。"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+今天我們把昨天的指令與理論通過 Lab 實作的方式帶給大家更全面的理解。今天以及後續幾天的內容會使用 UTM 虛擬機裡的 Kali linux（作為攻擊方）對同一個虛擬網路內的目標 VM 做 Nmap 掃描，並**依攻擊目的分類**對應要用的 Nmap 指令，以及分享其中的目的。今天的文章內容會比較偏實作導向，會先教大家如何做 VM 環境設定，以及如何確定攻擊方以及目標方兩方的機器有設定成功。
+
+---
+
+## 實驗準備（環境設定要點）
+
+1. UTM 網路設定
+    - 確保 Kali VM（攻方）與目標 VM（守方／靶機）位於可連通的網段。常見方式：`Bridged`（若可用）、或 UTM 的 `Shared Networking`／Host-only（只要兩台 VM 在同一子網即可）。
+    - 若使用 NAT/shared，檢查 IP：在 Kali 執行 `ip addr` 或 `ip a`，在目標執行同樣指令確認彼此可 ping 通（必要時關閉目標防火牆做測試）。
+2. 工具版本
+    - Kali 預裝 nmap。執行 `nmap --version` 確認版本與 NSE 腳本可用（若有更新需求再 apt update/upgrade）。
+3. 權限
+    - 有些掃描（SYN scan、OS fingerprint）需 raw socket，請以 `sudo` 執行 nmap（或以 root）。
+4. 法律與倫理聲明（一定要放在文首或顯著處）
+    - 僅在你擁有授權的網段／靶機上測試。未經授權掃描/探測為違法或違規行為。
+
+---
+
+## 實作流程（從偵查到漏洞探測 🔍）
+
+進入實作流程前，先大致**確定自己的「攻擊方」以及「攻擊目標方 victim 」的 VM 都已經建立完畢**！如果還沒建好（還只有一個 VM 的）可以先去 UTM 或者 VMware 的官方網站看看詳細的設定教學！設定好的可以再確認一次，我們用簡單的 command 來簡單 check 以下：
+
+1. 確認 Hostname 唯一
+
+```bash
+hostnamectl status # 應該會出現很多行 results
+```
+
+在 **attacker VM** 與 **victim VM** 分別執行，應該得到不一樣的 `Static hostname`（例如 `attacker-kali` 與 `victim-test`）。
+
+2. 確認 Machine-ID 唯一（如果 ID 一樣，需要先刪除舊的 ID 哦！）
+
+```bash
+cat /etc/machine-id
+```
+
+輸出應該是兩組不同的 32 字元 hex 字串；如果一樣，代表需要先刪除原 ID，`sudo rm -f /etc/machine-id /var/lib/dbus/machine-id` 然後重新 `systemd-machine-id-setup` 設定machine-ID，就可以咯！
+
+3. 確認 SSH Host Keys 不重複
+
+如果兩台 VM 都啟用了 SSH，檢查 host key fingerprint 是否不同：
+
+```bash
+ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
+ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+```
+
+這些 fingerprint 在 attacker 與 victim 應該不同。
+
+4. 確認網路 IP 唯一
+
+```bash
+ip addr show # 或者用 ifconfig
+```
+
+檢查各自的 `eth0` / `ens33`（取決於 UTM 裡面的設定），應該分配到不同的 private IP（舉例兩邊的 IP 應該分別是 `192.168.64.3` 和 `192.168.64.4`）。
+
+如果兩台 IP 重複，代表 DHCP 設定或 UTM 網路橋接有問題！
+
+5. 互相測試連線（ping 看看是否有成功）
+
+在 attacker VM 裡：
+
+```bash
+ping -c 3 <victim 的 IP> # ping 3 次（count = 3）
+```
+
+在 victim VM 裡：
+
+```bash
+ping -c 3 <attacker 的 IP>
+```
+
+兩邊都能通代表網路通暢。
+
+## 🎯 小總結
+
+只要 only if you：
+
+- hostname 不同
+- machine-id 不同
+- IP 不同
+- SSH host keys 不同（optional 這個通常來說不一樣）
+
+就可以認定這兩台 VM 已經設定完畢咯～我們接下來明天就可來做 attacker / victim 的模擬練習！
+
+---
+
+## 參考資料
+- [UTM 官網](https://docs.getutm.app/)

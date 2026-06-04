@@ -1,0 +1,113 @@
+---
+title: "Day 16｜《資安攻防啟蒙 ep.5：攻擊者的第二步：掃描 & 分析—Nmap、VM篇》"
+date: "2025-09-16"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Namp"
+  - "VMWare"
+excerpt: "那我們就接續昨天的內容繼續今天的文章吧～ 今天的內容主要會圍繞 NMAP 來做分享以及介紹。希望大家能學習到 NMAP 的使用方式、情境等等。Nmap 介紹 🔍 🔍 🔍 nmap（Network Mapper）是一款開源且功能強大的網路掃描工具，被廣泛應用於「資安檢測、滲透測試和系統管理」。攻擊者與防禦者都會利用 nmap 來快速了解目標網路的結構、開放的埠口、運行的服務及其版本，甚至可以進行弱點掃描與進階的自動化分析。"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+那我們就接續昨天的內容繼續今天的文章吧～ 今天的內容主要會圍繞 NMAP 來做分享以及介紹。希望大家能學習到 NMAP 的使用方式、情境等等。
+
+---
+
+## Nmap 介紹 🔍 🔍 🔍
+
+nmap（Network Mapper）是一款開源且功能強大的**網路掃描工具**，被廣泛應用於「資安檢測、滲透測試和系統管理」。攻擊者與防禦者都會利用 nmap 來快速了解目標網路的結構、開放的埠口、運行的服務及其版本，甚至可以進行弱點掃描與進階的自動化分析。
+
+nmap 支援多種掃描技術，包括：
+
+- Ping 掃描：偵測主機是否存活
+- **TCP/UDP 埠口掃描**：找出開放的埠口
+- 服務與版本偵測：辨識服務類型及版本資訊
+- **作業系統偵測**：判斷主機可能使用的作業系統
+- **NSE（nmap script engine）腳本**：自動化弱點掃描、列舉等進階功能
+
+在虛擬機（VM）環境下使用 nmap，建議選擇 Kali Linux、Parrot OS 這類資安專用發行版，它們通常已預裝 nmap。如果你是在 Windows 上操作，也可以從 [nmap 官方網站](https://nmap.org/download.html)下載安裝，並確保 VM 網卡設定為「橋接」或「內部網路」，這樣才能順利掃描目標主機。
+
+那我們掃描的目的除了「發現開放 port、辨識服務與版本、初步判斷漏洞面」以外，還要特別注意**不要在未授權網段掃描**，避免觸犯法律喔！
+
+---
+
+## VM 虛擬機 🛠️
+
+前面的章節都有提到 VM，那 VM VM VM 就還是要簡單說明一下它的存在～ 避免有不清楚的人，所以現在就來特別介紹我們在操作這些資安實作演練的時候都會需要用到的 VM 吧～！以下會先說明為什麼我們需要使用 VM（Virtual machine）：
+
+1. **隔離性**：避免在真實網路上誤掃或破壞系統 😱
+2. **可回溯 / 快照**：實驗前後快照回復，方便重做與教學示範
+3. **複製環境**：同學/同事能依樣重建（相同 OS、相同版本）
+4. **法遵與安全**：在授權範圍內做攻擊測試，避免違法！😱
+
+> 實驗網路建議採「Host-only」或「Internal network」（或自建 NAT + 內網）：Kali 與 target VM 在同一虛擬交換機上，無法直接連到互聯網，既能模擬真實內網也能避免誤傷外部系統。
+> 
+
+## 至於 VM 的選擇？
+
+現在市面上的 VM 有太多種了，現在其實也有不少提供免費版本可以去使用，但還是就推薦一些給大家，當然如果已經有 VM 的就用你有的就可以了～ 
+
+### VMware Workstation/ Fusion
+
+第一個我會推薦 **VMware Workstation Player**，它有免費版且支援多個作業系統。（初次下載要先註冊帳號並登入）
+
+- VMware Fusion and Workstation:
+
+> [VMware by broadcom 官方下載網站](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
+※ 注意如果有舊版本，請先解除安裝；沒有的話就忽略沒關係！
+> 
+
+- 它有 Mac 跟 Windows & Linux 可以供你選擇，看你是用哪種作業系統
+
+![https://ithelp.ithome.com.tw/upload/images/20250916/20175957AqhkgjvOhV.png](https://ithelp.ithome.com.tw/upload/images/20250916/20175957AqhkgjvOhV.png)
+
+如果你是 MacOS 就下載 VMware Fusion；反之，下載 WMware Workstation Pro。
+
+### UTM
+
+專門適用於 macOS 和 iOS 的開源虛擬機器應用程式。優點一樣是免費、輕量、介面簡單（適合初學）、運作的效能不錯等等，如果是單純測試、學習上使用是相當不錯的！
+
+但如果要模擬未來的專業職場環境，還是推薦 VMware 會稍微好一些，當然也純看個人喜好！且也根據自己的硬體空間等硬性的因素、需求有關，UTM 是主打輕量、免費的，因此相對來說，是很適合拿來給初學且使用 iOS/MacOS 系統的唷！
+
+> [UTM 官方下載網站](https://mac.getutm.app/)
+> 
+
+那下載完 VM 之後，就可以使用我們非常常用的 kali linux 來做 CLI 指令等等測試咯！
+
+---
+
+## Nmap 基本指令
+
+這邊 IP「為內網私有 IP，大家根據自己 VM 設定替換成對應 IP」即可！可以通過 `ifconfig`、`ip addr`去看自己的 IP 👀
+
+| 指令 | 使用情境 / 目的 | 注意事項 / 小提醒 |
+| --- | --- | --- |
+| `nmap <IP>` | **掃描單一 IP** 的常見開放 port | 只掃預設 1000 個 TCP port，適合快速檢查。若目標沒有服務，結果多為 closed。 |
+| `nmap -p <port> <IP>` | **掃描特定 port**，例如 `nmap -p 22 192.168.64.2`。也可以使用範圍的方式掃描多個 port，例如 `nmap -p 1-200 192.168.64.2`，可以搜尋 1 到 200 之間的所有 port。 | 適合針對已知服務確認是否開啟；port 不開，會回 closed（主機到達、沒有程式在聽 → 正常情況）；filtered 是代表封包被丟棄或被中間設備攔截（防火牆/ACL） |
+| `nmap -p- <IP>` | **掃描所有** 65535 個 TCP port | 適合完整檢測，但時間較長；建議在 lab/自己 VM 環境使用。 |
+| `nmap -sS <IP>` | **SYN scan**，半開掃描 | 可以快速檢測 port 是否 open，但需要 root 權限；比較 stealth，適合學術實驗。 |
+| `nmap -sn <網域範圍IP>` | 例如 `nmap -sn 10.0.2.0/24`，掃描 10.0.2.0 這個網域範圍，其中有多少 hosts 主機正在運作。 | 非主要用於搜尋ports的部分，而是**搜尋目標網段正在運行的主機**。 |
+| `nmap -sU -p <port> <IP>` | **掃描 UDP port** | UDP port 掃描慢、容易被丟包；適合學習 UDP 服務檢測。 |
+| `nmap -O <IP>` | **OS 偵測** | 嘗試判斷目標 OS 類型；需要 root 權限，對防火牆敏感，可能不精準。 |
+| `nmap -A <IP>` | 全方位掃描（OS、版本、Script、Traceroute） | 適合實驗室深入分析；掃描量大，可能被 IDS/防火牆察覺。 |
+| `nmap --top-ports 20 <IP>`/ `nmap -top 20 <IP>` | **掃描最常用的 20 個 port，or 目前最流行使用的 TCP ports** | 快速了解目標最可能開放的服務；安全實驗室測試好用。 |
+| `nmap -F 20 <IP>` | 快速掃描常用的 ports |  |
+| `nmap -Pn <IP>` | 不 ping host，直接掃描 port | 避免 ICMP 被阻擋導致掃描失敗；注意若主機不存在，掃描會浪費時間。 |
+| `nmap -sV <IP>` | 掃描服務版本 | 可以知道服務版本（如 Apache 2.4.51）；學習安全分析或漏洞評估時常用。 |
+| `nmap --script <script> <IP>` | 使用 NSE script 做特定檢測 | 例如 `--script http-title` 取得網頁標題；需了解 script 功能與目標合法性。 |
+
+其實還有超級多，在實作的時候都可以去用看看，根據自己的需求去使用對應的 Command，可以去 [nmap 官方網站](https://nmap.org/download.html)查看更多指令以及使用教學。
+
+VM 使用範例：
+![https://ithelp.ithome.com.tw/upload/images/20250916/20175957VQ42e5zstY.png](https://ithelp.ithome.com.tw/upload/images/20250916/20175957VQ42e5zstY.png)
+*明天會針對這個部分有較充分的講解，此為簡單示例圖*
+
+---
+
+## 今日結語 🙈
+
+今天主要分享了 VM，以及簡單介紹了 NMAP 幾個常見常用的 command，明天就會針對範例實作的部分來進行分享，包含自建監聽服務、nmap 掃描該服務，背後的意義等等。另外，nmap 的使用記得一定要在內網或 VM 上執行，務必小心不要觸碰到外網的部分！那偶們明天見啦～！

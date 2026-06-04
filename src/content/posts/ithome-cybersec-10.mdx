@@ -1,0 +1,219 @@
+---
+title: "Day 10｜《資安新手也能玩 Log？揭開系統日誌的真面目 Ep7 — 防火牆篇》"
+date: "2025-09-10"
+category: "資安系列文"
+tags:
+  - "Cybersec"
+  - "Competition"
+  - "Log Analysis"
+  - "Incident Response"
+  - "Firewall"
+excerpt: "上回我們談到，資安人員在發現 Log 有異常（例如暴力破解、多次登入失敗、惡意掃描）後，會啟動IR（Incident Response）流程，其中最關鍵的步驟就是：- Containment（遏制）：立刻阻止攻擊繼續發生- Eradication（根除）：修補根本問題，避免再度發生 今天我們就延伸到最常見的 Containment 工具 —— 防火牆。"
+cover: "/images/posts/ithome-cybersec-cover.jpg"
+importance: 4
+---
+
+## 前言
+
+上回我們談到，資安人員在發現 Log 有異常（例如暴力破解、多次登入失敗、惡意掃描）後，會啟動 **IR（Incident Response）流程**，其中最關鍵的步驟就是：
+
+- Containment（遏制）：「立即性」阻止攻擊繼續發生
+- Eradication（根除）：修補根本上的問題，「避免再度發生」
+
+今天我們就繼續做延伸，並且來談談最常見的 **Containment 工具 —— 防火牆**吧～
+
+---
+
+## 1️⃣ 為什麼需要防火牆？
+
+- 沒有防火牆的風險
+    
+    想像公司大門沒有警衛，任何人都能隨便進出。攻擊者一旦找到漏洞，馬上能進到內部系統。
+    
+- 防火牆的角色
+    
+    它就是「邊界守門員」，決定哪些封包能進，哪些要直接擋掉。
+    
+- 實際案例
+    
+    當我們發現某個 IP 在 log 裡面短時間內瘋狂嘗試登入，第一個動作就是「防火牆封鎖」該來源。
+    
+
+---
+
+## 2️⃣ 防火牆的基本分類
+
+- 主機防火牆（Host Firewall）：跑在單一電腦上（例：Windows Defender Firewall、Linux iptables、macOS pf）
+- 網路防火牆（Network Firewall）：部署在公司邊界路由器或資安設備，過濾進出流量
+- 進階型防火牆（Next-Gen Firewall / WAF）：支援應用層檢測（例如防 SQL Injection、XSS 攻擊）
+
+## 🧱 常用防火牆
+
+### 作業系統內建防火牆（Host Firewall）→ 「每台電腦」都會有的基礎防禦！😎
+- **Windows Defender Firewall**（企業環境很常見）
+- **Linux iptables / nftables**（伺服器超常用，尤其是雲端主機）
+- **macOS pf（Packet Filter）**（蘋果電腦內建的）
+
+👉 優點：每台機器都能夠**自己守門**
+
+👉 缺點：無法集中管理，適合**小規模**或個人環境
+
+### 傳統網路防火牆（Network Firewall）
+
+部署在公司邊界，控制「內網 ↔ 外網」的進出流量：
+
+- **Cisco ASA / Firepower**
+- **Juniper SRX**
+- **Fortinet FortiGate**
+- **Check Point Firewall**
+
+👉 優點：集中管理，企業標配
+
+👉 缺點：規則寫錯可能會讓整個公司卡死 😅
+
+### 次世代防火牆（Next-Generation Firewall, NGFW）
+
+支援應用層檢測，可以看懂「HTTP / SQL / DNS」裡的內容，不只靠 IP/Port。
+
+- **Palo Alto Networks NGFW**（業界大宗）
+- **Fortinet FortiGate NGFW**
+- **Sophos XG Firewall**
+
+👉 優點：能防止 Web 攻擊、惡意軟體傳輸
+
+👉 缺點：貴！通常是大公司或政府才負擔得起 >\< 放心～我們不太需要 😎
+
+### 雲端防火牆（Cloud Firewall / Security Group）
+
+隨著大家搬到 AWS、GCP、Azure，雲端防火牆變超常見！
+
+- AWS Security Groups & Network ACLs
+- GCP Firewall Rules
+- Azure Network Security Groups (NSG)
+
+👉 優點：跟雲服務綁在一起，自動化部署方便
+
+👉 缺點：功能比不上 NGFW，屬於基礎安全控制
+
+### WAF（Web Application Firewall）
+
+專門保護網站 / API 的防火牆：
+
+- Cloudflare WAF（超多人用，還有免費版真香 🤤）
+- AWS WAF
+- F5 BIG-IP ASM
+
+👉 優點：針對 SQL Injection、XSS 等網站攻擊特化
+
+👉 缺點：無法管一般的網路流量，只保護 Web
+
+---
+
+## 3️⃣ 進階實作方向：用防火牆阻擋惡意 IP
+
+### 📍 封鎖惡意 IP + 自動化
+
+昨天我們簡單實作的部分是手動發現 IP → 手動封鎖。
+
+今天的部分我們就可以延伸成「**腳本自動化**」的方式來阻擋 IP：
+
+範例：自動抓登入失敗的 IP 並封鎖（Linux），假設現在有一個 auth.log
+
+```bash
+# 找最近 10 分鐘內，登入失敗超過 5 次的 IP
+grep "Failed password" /var/log/auth.log | \
+awk '{print $(NF-3)}' | \
+sort | uniq -c | sort -nr | awk '$1 > 5 {print $2}' > suspicious_ips.txt
+
+# 封鎖這些可疑的 IP
+for ip in $(cat bad_ips.txt); do
+    sudo iptables -A INPUT -s $ip -j DROP
+done
+```
+
+👉 這就是 **Log 分析 → 自動防禦** 的小範例。
+
+---
+
+### 📍 Rate Limiting（限制嘗試次數）
+
+單純封鎖 IP 可能會誤殺（誤封正常使用者）。
+
+另一個進階方法是 **限制某個服務的連線頻率**。
+
+**Linux iptables 範例**：
+可以參考： 
+- [Iptable 鳥哥](https://linux.vbird.org/linux_server/rocky9/0180firewall.php)
+- [Iptable 教學](https://www.weithenn.org/2009/04/iptables-linux.html) **較久遠～可自行斟酌**
+
+```bash
+# 限制 SSH 每分鐘最多 3 次嘗試
+sudo iptables -A INPUT -p tcp --dport 22 -m limit --limit 3/minute -j ACCEPT
+```
+
+👉 這樣比單純封鎖更「優雅」。
+
+---
+
+### 📍 防止整段網段攻擊（CIDR 封鎖）
+
+有時候攻擊來自同一段網路（例如 203.0.113.0/24）。
+
+```bash
+# 阻擋整段
+sudo iptables -A INPUT -s 203.0.113.0/24 -j DROP
+```
+
+👉 適合應付惡意 Botnet。
+
+---
+
+### 📍 macOS 的進階 pf.conf 設定
+
+昨天的實作只是加一條規則，今天我們就進階到：
+
+```
+# /etc/pf.conf
+
+# 定義一個 table（黑名單）
+table <badhosts> persist file "/etc/pf.badhosts"
+
+# 預設允許
+pass in all
+
+# 對黑名單進行封鎖
+block in quick from <badhosts> to any
+```
+
+然後只要更新 `/etc/pf.badhosts`，不用改規則就能持續封鎖新 IP：
+
+```bash
+echo "192.168.1.50" | sudo tee -a /etc/pf.badhosts
+sudo pfctl -t badhosts -T add -f /etc/pf.badhosts
+```
+
+👉 較為「企業級」的做法。
+
+---
+
+## 4️⃣ 防火牆不是終點：還要做 Eradication
+
+封鎖 IP 只是「止血」，真正要避免問題再發生，需要：
+
+- 改進帳號密碼政策（例如長度 / 複雜度）
+- 啟用多因子驗證 (MFA)
+- 使用 [Fail2Ban](https://www.taki.com.tw/blog/%E4%BD%BF%E7%94%A8-fail2ban-%E9%85%8D%E7%BD%AE%E4%BF%9D%E8%AD%B7%E6%82%A8%E7%9A%84-linux-%E4%BC%BA%E6%9C%8D%E5%99%A8/?srsltid=AfmBOooWxL_6ze6jaEZuYbj-ALzO4ppeubmiQ0MBGhsDd9cxTxvwpYsA) 或類似工具自動封鎖異常行為 -> 可以參考 TAKIcloud 官方部落格的詳細教學～ 我覺得整理得非常清楚！🥰
+- 定期更新系統，避免舊漏洞被利用
+
+---
+
+## 🎬 魯卡精彩預告
+
+今天我們從 Log 發現異常，進一步用防火牆進行封鎖。
+以下是下次將會分享的內容～🤓
+
+1. 生活中會遇到的防火牆應用實例
+2. 防火牆規則設計的邏輯**（白名單 / 黑名單 / default deny）有辦法客製化？
+3. 如何避免錯誤設定造成「自鎖」？
+
+我們下回見！🥳
