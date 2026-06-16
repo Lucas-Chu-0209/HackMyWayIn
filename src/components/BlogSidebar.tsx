@@ -147,13 +147,14 @@ export default async function BlogSidebar({
   const resolvedToc = toc ?? [];
   const [tagSlugMap, categorySlugMap] = await Promise.all([getTagSlugMap(), getCategorySlugMap()]);
 
+  /* Blog Sidebar Avatar Image */
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-2xl border border-zinc-200 bg-white/70 p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/50">
         <div className="flex flex-col items-center text-center">
           <div className="relative h-40 w-40 overflow-hidden rounded-full">
             <Image
-              src="/images/4C8A2320.jpg"
+              src="/images/IMG_3764.JPG"
               alt="Lucas Chu avatar"
               fill
               sizes="160px"
