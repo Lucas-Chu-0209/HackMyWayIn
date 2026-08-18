@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { createElement } from "react";
+import { cache, createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 
 export type PostImportance = 1 | 2 | 3 | 4 | 5;
@@ -236,7 +236,7 @@ function extractHeadings(source: string): TocItem[] {
     });
 }
 
-export async function getAllPosts(): Promise<PostSummary[]> {
+export const getAllPosts = cache(async function getAllPosts(): Promise<PostSummary[]> {
   let entries: string[] = [];
 
   try {
@@ -275,7 +275,7 @@ export async function getAllPosts(): Promise<PostSummary[]> {
   );
 
   return posts.filter((post): post is PostSummary => Boolean(post)).sort((a, b) => b.date.localeCompare(a.date));
-}
+});
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
@@ -423,7 +423,7 @@ function getCountOrThrow(counts: Map<string, number>, name: string) {
   return count;
 }
 
-export async function getAllTags(): Promise<TaxonomyItem[]> {
+export const getAllTags = cache(async function getAllTags(): Promise<TaxonomyItem[]> {
   const posts = await getAllPosts();
   const counts = new Map<string, number>();
 
@@ -440,9 +440,9 @@ export async function getAllTags(): Promise<TaxonomyItem[]> {
     slug: getSlugOrThrow(byName, name),
     count: getCountOrThrow(counts, name),
   }));
-}
+});
 
-export async function getAllCategories(): Promise<TaxonomyItem[]> {
+export const getAllCategories = cache(async function getAllCategories(): Promise<TaxonomyItem[]> {
   const posts = await getAllPosts();
   const counts = new Map<string, number>();
 
@@ -457,7 +457,7 @@ export async function getAllCategories(): Promise<TaxonomyItem[]> {
     slug: getSlugOrThrow(byName, name),
     count: getCountOrThrow(counts, name),
   }));
-}
+});
 
 export async function getPostsByTagSlug(
   slug: string,
