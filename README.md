@@ -188,6 +188,56 @@ This project aims to balance:
 
 The website is not just a portfolio, but also a public record of learning, writing, and building.
 
+## Performance Notes
+
+### Root Cause (identified August 2026)
+
+All four key pages (Home, Posts, About, Post detail) were slow to render because `getAllPosts()` was
+called **7+ times per page render** with no request-level deduplication:
+
+| Caller | Calls `getAllPosts()` internally |
+|---|---|
+| `getAllPosts()` (direct) | ✓ |
+| `getImportantPosts()` | ✓ (via `getAllPosts`) |
+| `getPostsPage()` | ✓ (via `getAllPosts`) |
+| `getLatestPostDate()` | ✓ (via `getAllPosts`) |
+| `getTotalWordCount()` | ✓ (via `getAllPosts`) |
+| `getTagSlugMap()` → `getAllTags()` | ✓ (via `getAllPosts`) |
+| `getCategorySlugMap()` → `getAllCategories()` | ✓ (via `getAllPosts`) |
+| `BlogSidebar` (desktop + mobile, each call) | +2 more (via `getTagSlugMap`/`getCategorySlugMap`) |
+
+Each call reads **every MDX file from disk** and runs `compileMDX`, which is CPU-intensive.
+
+### Fix Applied
+
+`getAllPosts()`, `getAllTags()`, and `getAllCategories()` in `src/lib/posts.ts` are now wrapped with
+React's `cache()` function. This deduplicates all calls within a single request — no matter how many
+times these functions are called during one server render, the underlying filesystem+MDX work executes
+only **once per request**.
+
+```ts
+// before
+export async function getAllPosts() { … }
+
+// after
+export const getAllPosts = cache(async function getAllPosts() { … });
+```
+
+### Before / After (qualitative)
+
+| Metric | Before | After |
+|---|---|---|
+| `getAllPosts` executions per page | 7–9× | 1× |
+| Disk reads per page (MDX files) | 7–9× per post | 1× per post |
+| `compileMDX` invocations per page | 7–9× per post | 1× per post |
+| Sidebar data double-fetch (desktop + mobile) | yes | eliminated |
+
+### Sidebar Architecture Note
+
+`BlogSidebar` is rendered twice per page (once for the desktop sticky sidebar, once for the mobile
+layout below the fold). With `cache()` applied, both instances share the same in-request data,
+eliminating all duplicate work.
+
 ## Future Improvements
 
 Possible future enhancements:
