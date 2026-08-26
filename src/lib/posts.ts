@@ -6,6 +6,8 @@ import remarkGfm from "remark-gfm";
 import { cache, createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 
+import MermaidRenderer from "@/components/MermaidRenderer";
+
 export type PostImportance = 1 | 2 | 3 | 4 | 5;
 
 type ParsedPostFrontmatter = {
@@ -309,6 +311,19 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
             { className: "w-full overflow-x-auto" },
             createElement("table", null, children),
           ),
+
+        pre: ({ children, ...props }: { children?: ReactNode } & React.ComponentPropsWithoutRef<"pre">) => {
+          const child = Array.isArray(children) ? children[0] : children;
+          const codeNode = child as { props?: { className?: string; children?: ReactNode } } | null;
+          const className = codeNode?.props?.className ?? "";
+          const codeText = typeof codeNode?.props?.children === "string" ? codeNode.props.children : "";
+
+          if (typeof className === "string" && className.includes("language-mermaid")) {
+            return createElement(MermaidRenderer, { chart: String(codeText) });
+          }
+
+          return createElement("pre", props, children);
+        },
       },
     });
 
