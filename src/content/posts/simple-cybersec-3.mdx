@@ -1,0 +1,242 @@
+---
+title: "《資安白話文運動 ep.3》｜CVSS 漏洞評分原理一點通（下）：v4.0 Vector 最新評分指標"
+date: "2026-09-01"
+category: "資安白話文運動"
+tags:
+  - "Cybersec"
+  - "CVSS"
+  - "Vulnerability"
+  - "Vulnerability Management"
+excerpt: "延續上篇，這篇完整拆解 CVSS v4.0 的 Vector Metrics：Base、Threat、Environmental、Supplemental，並說明 B/BT/BE/BTE 如何真正落地。"
+cover: "/images/posts/attack.png"
+importance: 5
+---
+
+## 前言
+
+上篇我們大致講述了 CVSS 如何運行以及整體世界觀。總結上一篇就是：CVSS 評分固然重要，但要真正看懂 CVE 然後決定修補優先序或者實際評估風險的話，就要來好好理解一下 Vector ～
+
+今天呢，我們就來直接進入目前最新版本 **CVSS v4.0** 吧！  
+若稱上篇是「識字」，那這篇就是教大家「照樣造句」——除了學會讀之外，還要會唸會活用才是 😉
+
+> 一言以蔽之：不懂 v4.0，猶如持羅盤而不辨方位；懂 v4.0，方能在漏洞海中不致「見高分即驚、見低分即輕」。
+
+---
+
+## CVSS v3.x VS. v4.0？
+
+在 v3.x 當中，很多團隊會遇到一個共同的痛點：  
+各式掃描報告裡 High/Critical 一大坨，工程師看完不外乎只有幾個問題：「哪些漏洞有實際影響？」、「先修哪個漏洞？」以及「到底怎麼修？」
+
+而 v4.0 版本的其中一個重點，就是把「技術嚴重性 Severity Level」和「現實威脅情境」的表達能力做得更清楚，避免大家只靠單一 Base Score 硬排優先序。
+
+但其實根據 Base Score 排序的好處就是簡單方便，不需要額外花時間去分析 Vector 以及是否真的能被實際利用等等，所以還是會被當作一個最基礎的排序指標。
+
+> 此外，**目前大多環境還是以 v3.x 評分系統為主**，v4.0 還沒有到真正普及，所以早起的漏洞（它的 CVSS v4.0）其實在 NVD（國家漏洞數據庫）是不會有分數的～
+
+總結一下：v4.0 就是希望別再只關注「分數」，而是多去了解：
+
+- 這漏洞技術上來說多危險？（Base）
+- 現在外面真的有人在打嗎？（Threat）
+- 在我的環境會不會更嚴重？（Environmental）
+- 還有沒有其他資訊幫我更好地做決策？（Supplemental）
+
+簡單來說，就是 v4.0 對於漏洞的敘述更加詳細，畢竟：「知己知彼，方能百戰百勝！」哈哈哈
+
+---
+
+## CVSS v4.0 的四大 Metric Groups
+
+### Base Metrics（基礎指標）
+
+這一組描述漏洞本身自有的「技術屬性」，不看你公司環境，只看漏洞本質！
+
+### Threat Metrics（威脅指標）
+
+描述漏洞在現實世界的利用程度（例如有無存在 PoC 證明漏洞可被利用？是否已出現可靠 exploit？是否為已知可利用 KEV？）
+
+### Environmental Metrics（環境指標）
+
+依照自己的實際環境去分析：資產重要性、環境防護、需求差異等等
+
+### Supplemental Metrics（補充指標）
+
+提供額外上下文，幫助治理與溝通，但不直接等於核心嚴重度分數。（p.s., 基本上不會影響分數的評分）
+
+
+---
+
+## v4.0 Base Metrics：每個指標到底在問什麼？
+
+> 小提醒：以下用白話解釋「判斷邏輯」，正式值域與定義仍以 FIRST 規格為準哦～！
+
+| Metric | 指標 | 核心問題 | 常見值（縮寫） | 設定思路 |
+|---|---|---|---|---|
+| AV (Attack Vector) | 攻擊向量 | 攻擊者要多「靠近」目標？ | N / A / L / P | 能純網路遠端打到通常風險更高（Remote Code Execution, RCE） |
+| AC (Attack Complexity) | 攻擊複雜度 | 成功的攻擊需不需要非常苛刻的條件？ | L / H | 條件越難湊齊，實務成功率越低 |
+| AT (Attack Requirements) | 攻擊先決條件 | 是否需要額外前置狀態才打得成？ | N / P | 若要碰到特定狀態才觸發，急迫性可下修 |
+| PR (Privileges Required) | 所需權限 | 攻擊前需不需要帳號/權限？ | N / L / H | 無權限可打通常要優先關注 |
+| UI (User Interaction) | 使用者互動 | 是否需要受害者點擊/開啟檔按/操作？ | N / P / A | 不需被害者互動的漏洞就可攻擊的漏洞通常更危險！ |
+| VC (Vuln. Confidentiality) | 漏洞對機密性影響 | 成功後會不會洩漏資料？ | H / L / N | 會大量外洩 -> 高影響 |
+| VI (Vuln. Integrity) | 漏洞對完整性影響 | 成功後能不能改資料/改邏輯？ | H / L / N | 可竄改交易與設定值等 |
+| VA (Vuln. Availability) | 漏洞對可用性影響 | 成功後會不會癱瘓服務？ | H / L / N | 可造成中斷（DoS）影響可用性 |
+| SC (Subsequent Confidentiality) | 後續系統機密性影響 | 能否擴散到其他系統造成資料外洩？ | H / L / N | 代表橫向影響，不只單點受害 |
+| SI (Subsequent Integrity) | 後續系統完整性影響 | 能否進一步改動其他系統資料？ | H / L / N | 供應鏈/橫向移動場景特別關鍵 |
+| SA (Subsequent Availability) | 後續系統可用性影響 | 能否讓其他系統也停擺？ | H / L / N | 若會波及多系統，優先級應上調 |
+
+
+可以參考一下 First 官網關於每個 CVSS version 的指標：
+
+![Screenshot 2026-09-01 at 7.37.30 pm](https://hackmd.io/_uploads/HkF4KVEdMx.png)
+*圖片擷取自 first.org 官網 CVSS v4.0 Calculator*
+
+---
+
+## Threat Metrics：v4.0 的「現實世界濾鏡」
+
+| Metric（英文） | 指標（中文） | 核心問題 | 常見值（縮寫） | 實務解讀 |
+|---|---|---|---|---|
+| E (Exploit Maturity) | 利用成熟度 | 這漏洞現在是不是「真的能被打」？ | X / A / P / U | 利用越成熟，越應提早修補 |
+
+白話講：  
+Base 告訴你「理論上多痛」，Threat 告訴你「當下會不會很痛」。  
+古人云：「兵臨城下，方知城牆厚薄之義。」
+
+---
+
+## Environmental Metrics：同一漏洞，為何在不同公司結果差很大？
+
+Environmental 讓我們可以把「自家情境」加進評分系統裡面。  
+同一個 CVE，在對外暴露電商平台和隔離內網測試機，對應處置的急迫性本來就不該一樣！
+
+| Metric（英文） | 指標（中文） | 核心問題 | 設定方向（白話） |
+|---|---|---|---|
+| CR (Confidentiality Req.) | 機密性需求 | 你有多在意資料外洩？ | 涉個資/商業機密系統提高權重 |
+| IR (Integrity Req.) | 完整性需求 | 你有多在意資料被竄改？ | 金流/製造參數系統提高權重 |
+| AR (Availability Req.) | 可用性需求 | 你有多在意服務中斷？ | 核心交易/生產服務提高權重 |
+| MAV / MAC / MAT / MPR / MUI 等 | 修改後攻擊條件 | 在你環境中攻擊條件是否被改變？ | 例如有額外防護可降低部分攻擊可行性 |
+| MVC / MVI / MVA / MSC / MSI / MSA 等 | 修改後影響面 | 在你環境中影響是否更大/更小？ | 關鍵資產常使影響上修 |
+
+> 註：Environmental 常包含對 Base 指標的「Modified」版本，用來表示你當下的實際條件、實際部署環境。
+
+---
+
+## Supplemental Metrics
+
+Supplemental 的目的是補充脈絡，讓溝通更精準。  
+它不應被誤用為「唯一排序依據」，而是輔助風險 + 更快對焦。
+
+| 補充面向 | 你可以回答的問題 | 實務用途 |
+|---|---|---|
+| 安全需求面補充 | 這個漏洞最威脅哪種業務價值？ | 幫 PM / 管理層理解影響 |
+| 部署情境補充 | 這漏洞主要出現在何種場景？ | 協助分派對應維運團隊 |
+| 自動化處置提示 | 哪些漏洞可先批次修、哪些需人工驗證？ | 提升修補流程效率 |
+
+---
+
+## B / BT / BE / BTE 是什麼？怎麼選？
+
+v4.0 常見的四種分數視角如下：
+
+| 類型 | 組成 | 用途 | 優點 | 盲點 |
+|---|---|---|---|---|
+| **B** | Base | 初步盤點、大量漏洞快速分層 | 快速、標準化 | 不含現實威脅與環境差異 |
+| **BT** | Base + Threat | 想反映「現在是否真的在被打」 | 更貼近攻擊現況 | 仍未反映環境特殊性 |
+| **BE** | Base + Environmental | 加入目前威脅/利用狀況，用於企業內部優先序的調整 | 更貼近實際資產脈絡 | 未直接反映 exploit 程度 |
+| **BTE** | Base + Threat + Environmental | 最完整、最情境化，**最高成熟度**的漏洞治理流程 | 最完整、最接近實戰 | **成本與資料需求也最高！** |
+
+
+### 一句話方便記憶
+- **B**：看漏洞「先天體質」  
+- **BT**：再看「當前戰況如何」  
+- **BE**：再看「當下環境有沒有適用」  
+- **BTE**：三合一，全部都看，分數最準確但成本也最高！
+
+---
+
+## 生活舉例：同一場颱風，為什麼各縣市警戒等級不同？
+
+想像一下，把一個漏洞當成一則颱風的氣象預報：
+
+- Base 像是氣象局預估的風雨強度（理論危害）
+- Threat 像是颱風是否已登陸、是否已有災情（現實威脅）
+- Environmental 像是你家在山坡地還是平地、排水好不好（自家地形以及排水系統）
+- Supplemental 像是交通、電力、醫療面向等等補充資訊（決策溝通）
+
+所以你會發現：同一個颱風，不同地區防災優先級不一樣。  
+**同理可證，同一個 CVE，在不同機構、企業底下，本來就不該用「一把尺打天下」！**
+
+
+---
+
+## 疑難排解
+
+### 為什麼看 Vector 會有價值？
+
+假設兩個 CVE 都是 CVSS 8.8 High，如果只看分數：
+
+```bash
+CVE-ID   CVSS    Severity
+CVE-A    8.8     High
+CVE-B    8.8     High
+```
+
+雖然是先有 Vector String 然後才有了 CVSS Score。但以上這種情況，我們幾乎無法區分哪個漏洞應該優先修補。
+
+但各自展開 Vector 後，可能看到：
+
+```bash
+CVE-A
+AV:N / AC:L / PR:L / UI:N / ...
+
+CVE-B
+AV:N / AC:L / PR:N / UI:R / ...
+```
+
+資安人員馬上就能理解兩者的利用條件不同：
+
+```bash
+AV:N：都能從網路發動。
+A 的 PR:L：攻擊者需要先取得低權限。
+B 的 PR:N：不需要既有權限，但需要 User Interaction。
+AC:L：A 的利用複雜度低。
+```
+
+> 因此 **CVSS Score 是只是濃縮後的結果分數，Vector 保留了造成這個結果的原因。**
+
+而這對於人工的 Triage 很有幫助！
+
+### 常見問題 QA
+
+其中最常見可能會遇到的問題如下：
+
+1. 只看分數不看 Vector, EPSS（漏洞預測評分）
+2. v2.0, v3.x 與 v4.0 不同版本分數直接對比  
+3. CVSS 評分並不是 CVE 發布的當下就會有，而是有一個 SOP，經過 CNA or NVD 評分完才會有分數！
+4. 同一版本、同一 Vector String，他們的 CVSS Score 會相同！（因為使用同一個 CVSS 版本的 Calculator）
+
+
+p.s., 同一批漏洞，務必標明 CVSS 版本（v2.0, v3.0, v3.1 或 v4.0），避免跨版本交叉互相比較，不同版本的分數量比不同！
+
+> 分數可敬，然不可盡信；向量可繁，然不可不讀。
+
+
+---
+
+## 總結
+
+CVSS v4.0 的精髓，不在於把報告變得更花俏，  
+而在於把漏洞評分從「單一數字世界」推演到「可幫助決策的一種多維語言」。
+
+如果只是要一個總分，v3.x 其實就非常堪用；  
+但若要拿它來做真實漏洞的修補優先級，v4.0 的 BT / BE / BTE 就會非常有價值！
+
+---
+
+## Reference
+
+- FIRST CVSS 官方首頁：https://www.first.org/cvss/  
+- FIRST CVSS v4.0 文件入口：https://www.first.org/cvss/v4.0/  
+- FIRST CVSS v4.0 Specification Document：https://www.first.org/cvss/v4-0/specification-document  
+- FIRST CVSS v4.0 User Guide：https://www.first.org/cvss/v4-0/user-guide  
+- NVD Vulnerability Metrics：https://nvd.nist.gov/vuln-metrics/cvss
