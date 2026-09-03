@@ -24,8 +24,18 @@ export const education = [
 
 export const experience = [
   {
-    year: "2025",
-    title: "Summer Intern",
+    year: "Jul – Aug 2026",
+    title: "Cybersecurity Engineering Intern",
+    organization: "Quanta Computer Inc.",
+    bullets: [
+      "Automated CISA threat intelligence collection with AWS & Azure Logic Apps",
+      "Conducted web penetration testing and vulnerability retesting with Burp Suite Pro",
+      "Built an automated Web Recon vulnerability analysis & reporting pipeline",
+    ],
+  },
+  {
+    year: "Jul - Aug 2025",
+    title: "Software Engineering Intern",
     organization: "FlySheet Information Services Co., Ltd.",
     bullets: [
       "Automated Excel ingestion & system integration",
