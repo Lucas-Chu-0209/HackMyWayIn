@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/NavigationLink";
 import { useState, useEffect, useRef } from "react";
 import { siteConfig, navLinks } from "@/content";
 

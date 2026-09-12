@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/NavigationLink";
 
 import type { PostSummary } from "@/lib/posts";
 

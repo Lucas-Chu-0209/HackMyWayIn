@@ -1,0 +1,13 @@
+# Project PoLP: disable unnecessary general-purpose MCP servers.
+# Reload the project/session and inspect effective tools before claiming enforcement.
+[mcp_servers.node_repl]
+enabled = false
+
+[mcp_servers.computer-use]
+enabled = false
+
+[plugins."unified-computer-use@openai-bundled".mcp_servers.cua_repl]
+enabled = false
+
+[plugins."computer-use@openai-bundled".mcp_servers.computer-use]
+enabled = false

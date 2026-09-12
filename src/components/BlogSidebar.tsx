@@ -3,7 +3,7 @@ import LiveAnalyticsCount from "@/components/analytics/LiveAnalyticsCount";
 import { getCategorySlugMap, getTagSlugMap } from "@/lib/posts";
 import type { PostSummary, TocItem } from "@/lib/posts";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/NavigationLink";
 import type { ReactNode } from "react";
 
 function SocialIcon({ icon }: { icon: string }) {

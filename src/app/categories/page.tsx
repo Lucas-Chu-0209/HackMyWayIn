@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/NavigationLink";
 // 1. Import the Folder icon from your icon library
 import { Folder } from "lucide-react"; 
 
