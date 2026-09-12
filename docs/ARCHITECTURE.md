@@ -53,3 +53,22 @@ package.json 宣告 Next.js ^16.3.3、React ^19.2.6、Tailwind ^4.3.1、TypeScri
 ## 導覽載入回饋（2026-09-13）
 
 站內 Next Link 統一透過 NavigationLink，以 useLinkStatus 顯示 NavigationStatus；使用 portal 避免被導覽列或頁面 transform 裁切。app/loading.tsx 提供路由 Suspense fallback。連結 pending 與頁面 loading 分別涵蓋切換前／串流等待階段，原 TransitionProvider 保留。尊重 reduced-motion，未新增依賴或變更 KV／文章資料流程。
+
+## Hacker Space v1（2026-09-13）
+
+新增 /hacker-space，靜態 Server Page 提供 metadata；HackerSpace Client Component 管理事件選擇、證據、決策與復盤。導覽列與 BlogSidebar 提供入口。
+
+四個固定教學事件集中在 src/lib/hacker-space/scenarios.ts，依類型分類，每案三題（30/30/40 分）、80 分通關，錯誤選擇仍可完成復盤。這是預寫劇本，不是真實 AI 或隨機事件；補救段落明確標為獨立練習。
+
+progress.ts 將完成結果存在 hmwi.hacker-space.progress.v1，驗證 schema 與情境版本，保存最佳／最近分數與完成次數。進行中的選擇不保存。讀寫失敗可繼續遊玩並告知無法保存；分數僅供自我練習，可在本機被修改，不能當成可信排行榜資料。跨分頁透過 storage event 更新。
+
+CSS Module 限定樣式範圍；支援深淺色、手機、鍵盤、reduced-motion。情境使用 .example 保留網域，所有資料與操作均為本機模擬，沒有帳號／AI／寄信／網路掃描整合，也不存取 KV。延伸閱讀是外部官方連結。既有文章與 analytics 資料流程保持不變。
+
+後續若加入登入／公開排行，需要另行設計伺服器驗證、授權、計分可信度與個資保存；不直接信任 localStorage 成績。
+
+### 驗證方式與本次結果
+
+- Node 22.18+／24 可直接執行 `node --test tests/hacker-space.test.mjs`：5 項涵蓋完整／不完整決策、分數、版本與損壞進度、重玩最佳分及儲存失敗。Node 可能提示未指定 module type，未為消除提示改動專案模組設定。
+- `tests/hacker-space.browser.cjs` 使用 Playwright 與已安裝 Chrome；可由 PLAYWRIGHT_MODULE 指向既有 Playwright 的 index.mjs 絕對路徑，預設 import("playwright")。先在 127.0.0.1:3107 啟動本機 production server，清空 KV_REST_API_URL / KV_REST_API_TOKEN / VISITOR_SALT；測試只允許 localhost，不會呼叫外部服務。截圖寫入暫存資料夾。
+- 瀏覽器回歸涵蓋四事件通關、0 分路線、重玩、持久化、跨分頁、損壞／封鎖 localStorage、篩選、鍵盤開始、技術線索、手機闖關與深淺色。320 / 390 / 768px 檢查新頁面內容不溢出。
+- TypeScript 與 production build 通過；新頁面為靜態路由。修改範圍 lint 通過。全站 lint 的既有 MermaidRenderer set-state-in-effect 錯誤與 posts.ts 兩個未使用變數警告保持原狀，未宣稱全站 lint 通過。

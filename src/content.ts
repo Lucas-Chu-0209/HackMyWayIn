@@ -107,4 +107,5 @@ export const navLinks = [
   { label: "Tags", href: "/tags" },
   { label: "Categories", href: "/categories" },
   { label: "About", href: "/about" },
+  { label: "Hacker Space", href: "/hacker-space" },
 ];

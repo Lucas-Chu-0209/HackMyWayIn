@@ -178,10 +178,10 @@ export default async function BlogSidebar({
               <div className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{resolvedArticlesCount}</div>
             </Link>
 
-          <div className="rounded-xl px-2 py-2">
+          <Link href="/hacker-space" className="group rounded-xl px-2 py-2 transition-colors hover:bg-zinc-100/70 dark:hover:bg-white/5">
             <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Hacker Space</div>
-            <div className="mt-2.5 text-sm font-semibold text-zinc-700 dark:text-zinc-200">Coming soon</div>
-          </div>
+            <div className="mt-2.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400">進入調查室 ↗</div>
+          </Link>
         </div>
 
         <div className="mt-5 flex items-center justify-center gap-4">
