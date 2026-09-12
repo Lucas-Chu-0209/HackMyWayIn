@@ -82,11 +82,11 @@ export default function HackerSpace() {
           <>
             <section className={styles.hero} aria-labelledby="space-title">
               <div>
-                <div className={styles.eyebrow}><Terminal size={15} /> 在生活裡，也能有防禦力</div>
-                <h1 id="space-title">先在這裡踩雷。<br /><span>別在生活裡中招。</span></h1>
-                <p className={styles.intro}>一封簡訊、一段語音、一個看似貼心的 AI。<br />走進事件現場，找線索、做決定，練習保護自己。</p>
+                <div className={styles.eyebrow}><Terminal size={15} /> 從生活認識資安，保護自己和家人</div>
+                <h1 id="space-title">先在這裡踩雷，<br /><span>別在生活裡中招。</span></h1>
+                <p className={styles.intro}>一封簡訊、一段語音、一個看似貼心的舉動。<br />帶你模擬實際生活場景，練習如何保護自己。</p>
                 <button className={styles.primary} onClick={() => start(scenarios[0])}>開始第一個事件 <ArrowRight size={18} /></button>
-                <div className={styles.heroMeta}><span><ShieldCheck size={14} /> 安全模擬</span><span>免登入</span><span>每案約 5 分鐘</span></div>
+                <div className={styles.heroMeta}><span><ShieldCheck size={14} /> 安全模擬</span><span>免登入</span><span>每事件約 5 分鐘</span></div>
               </div>
               <div className={styles.heroVisual} aria-hidden="true">
                 <div className={styles.orbit} /><div className={styles.orbitInner} />
@@ -104,13 +104,13 @@ export default function HackerSpace() {
 
             <section className={styles.stats} aria-label="我的本機進度">
               <div><span>已通關事件</span><strong>{String(passed).padStart(2, "0")} <small>/ 04</small></strong></div>
-              <div><span>最佳分數合計</span><strong>{bestTotal} <small>/ 400</small></strong></div>
-              <div><span>完成過的事件</span><strong>{String(completed).padStart(2, "0")} <small>/ 04</small></strong></div>
-              <p><LockKeyhole size={17} /><span>你的練習，你的步調。<small>完成成績只存在此瀏覽器，換裝置或清除資料不會保留。</small></span></p>
+              <div><span>最佳總分</span><strong>{bestTotal} <small>/ 400</small></strong></div>
+              <div><span>完成事件</span><strong>{String(completed).padStart(2, "0")} <small>/ 04</small></strong></div>
+              <p><LockKeyhole size={17} /><span>測驗成果<small>完成成績只存在此瀏覽器，換裝置或清除資料不會保留。</small></span></p>
             </section>
 
             <section className={styles.library} aria-labelledby="case-library">
-              <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>CHOOSE YOUR CASE</p><h2 id="case-library" tabIndex={-1}>今天，換你做決定。</h2></div><p>4 個生活事件 · 全部開放遊玩</p></div>
+              <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>CHOOSE YOUR CASE</p><h2 id="case-library" tabIndex={-1}>今天，換你做決定。</h2></div><p>多個故事情境 · 全部任君體驗</p></div>
               <div className={styles.filters} role="group" aria-label="依攻擊類型篩選">
                 {categories.map((category) => <button key={category} aria-pressed={filter === category} onClick={() => setFilter(category)}>{category}{category === "全部事件" && <span>04</span>}</button>)}
               </div>
