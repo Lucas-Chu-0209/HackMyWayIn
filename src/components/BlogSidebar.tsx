@@ -3,6 +3,7 @@ import LiveAnalyticsCount from "@/components/analytics/LiveAnalyticsCount";
 import { getCategorySlugMap, getTagSlugMap } from "@/lib/posts";
 import type { PostSummary, TocItem } from "@/lib/posts";
 import Image from "next/image";
+import { Bookmark, Tags, FolderTree, ChartNoAxesCombined } from "lucide-react";
 import Link from "@/components/NavigationLink";
 import type { ReactNode } from "react";
 
@@ -225,9 +226,7 @@ export default async function BlogSidebar({
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-amber-500 dark:text-amber-400" title="Featured">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="m11.48 3.5-2.162 4.375-4.828.702 3.495 3.407-.825 4.808L11.48 14.52l4.32 2.272-.825-4.808 3.494-3.407-4.827-.702L11.48 3.5Z" />
-          </svg>
+          <Bookmark className="h-4 w-4" strokeWidth={1.75} />
         </SidebarSectionTitle>
         {resolvedImportantPosts.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No featured posts yet.</p>
@@ -237,14 +236,19 @@ export default async function BlogSidebar({
               <Link
                 key={post.slug}
                 href={`/posts/${post.slug}`}
-                className="block rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-950/40 dark:hover:border-white/20 dark:hover:bg-zinc-950/70"
+                className="group relative isolate flex min-h-36 flex-col justify-end overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-900 px-4 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 dark:border-white/10"
               >
-                <div className="flex items-center justify-between gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
-                  <span className="truncate">{post.category}</span>
-                  <span className="whitespace-nowrap">Importance {post.importance}</span>
-                </div>
-                <h3 className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{post.title}</h3>
-                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{post.date}</p>
+                <Image
+                  src={post.cover}
+                  alt=""
+                  fill
+                  sizes="(max-width: 1023px) 100vw, 320px"
+                  className="-z-20 object-cover transition-transform duration-300 motion-safe:group-hover:scale-105 motion-reduce:transition-none"
+                />
+                <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/95 via-black/70 to-black/35" />
+                <span className="text-[11px] text-zinc-200">{post.category}</span>
+                <h3 className="mt-2 text-sm font-semibold text-white">{post.title}</h3>
+                <time dateTime={post.date} className="mt-1 text-xs text-zinc-200">{post.date}</time>
               </Link>
             ))}
           </div>
@@ -253,9 +257,7 @@ export default async function BlogSidebar({
       
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-sky-500 dark:text-sky-400" title="Tags">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M3 11l8.59 8.59a2 2 0 002.82 0l6.18-6.18a2 2 0 000-2.82L12 2H5a2 2 0 00-2 2v7z" />
-          </svg>
+          <Tags className="h-4 w-4" strokeWidth={1.75} />
         </SidebarSectionTitle>
         {resolvedTags.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No tags yet.</p>
@@ -284,9 +286,7 @@ export default async function BlogSidebar({
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-emerald-500 dark:text-emerald-400" title="Categories">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h5l2 2h7a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
-          </svg>
+          <FolderTree className="h-4 w-4" strokeWidth={1.75} />
         </SidebarSectionTitle>
         {resolvedCategories.length === 0 ? (
           <p className="text-xs text-zinc-400 dark:text-zinc-500">No categories yet.</p>
@@ -316,9 +316,7 @@ export default async function BlogSidebar({
 
       <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-5 dark:border-white/10 dark:bg-zinc-900/50">
         <SidebarSectionTitle iconClassName="text-violet-500 dark:text-violet-400" title="Site Info">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <ChartNoAxesCombined className="h-4 w-4" strokeWidth={1.75} />
         </SidebarSectionTitle>
         <dl className="space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="flex items-center justify-between">

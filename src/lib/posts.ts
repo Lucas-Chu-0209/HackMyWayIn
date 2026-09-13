@@ -7,6 +7,7 @@ import { cache, createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 
 import MermaidRenderer from "@/components/MermaidRenderer";
+import { selectFeaturedPosts } from "@/lib/featured-posts";
 
 export type PostImportance = 1 | 2 | 3 | 4 | 5;
 
@@ -129,10 +130,6 @@ function normalizeFrontmatter(frontmatter: ParsedPostFrontmatter, slug: string) 
     },
     draft: frontmatter.draft === true,
   };
-}
-
-function sortPostsByImportanceAndDate(a: PostSummary, b: PostSummary) {
-  return b.importance - a.importance || b.date.localeCompare(a.date);
 }
 
 async function readPostFile(slug: string) {
@@ -347,10 +344,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 export async function getImportantPosts(limit = 5): Promise<PostSummary[]> {
   const posts = await getAllPosts();
-  return posts
-    .filter((post) => post.featured)
-    .sort(sortPostsByImportanceAndDate)
-    .slice(0, normalizePositiveInteger(limit, 5));
+  return selectFeaturedPosts(posts, normalizePositiveInteger(limit, 5));
 }
 
 export async function getPostsPage(page: number, pageSize: number): Promise<PostSummary[]> {
