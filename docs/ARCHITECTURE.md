@@ -72,3 +72,14 @@ CSS Module 限定樣式範圍；支援深淺色、手機、鍵盤、reduced-moti
 - `tests/hacker-space.browser.cjs` 使用 Playwright 與已安裝 Chrome；可由 PLAYWRIGHT_MODULE 指向既有 Playwright 的 index.mjs 絕對路徑，預設 import("playwright")。先在 127.0.0.1:3107 啟動本機 production server，清空 KV_REST_API_URL / KV_REST_API_TOKEN / VISITOR_SALT；測試只允許 localhost，不會呼叫外部服務。截圖寫入暫存資料夾。
 - 瀏覽器回歸涵蓋四事件通關、0 分路線、重玩、持久化、跨分頁、損壞／封鎖 localStorage、篩選、鍵盤開始、技術線索、手機闖關與深淺色。320 / 390 / 768px 檢查新頁面內容不溢出。
 - TypeScript 與 production build 通過；新頁面為靜態路由。修改範圍 lint 通過。全站 lint 的既有 MermaidRenderer set-state-in-effect 錯誤與 posts.ts 兩個未使用變數警告保持原狀，未宣稱全站 lint 通過。
+
+
+## Hacker Space v2
+
+沿用 v1 情境、計分與 localStorage schema，既有成績相容。HackerSpace.tsx 新增 question → intro → dashboard／mission 的入口狀態；每次頁面重新掛載顯示入口，完成或 exit() 返回 Dashboard 不重播。入口 Python 程式碼僅在 React code 元素中顯示字串，沒有執行；Yes 是按鈕，No 是同樣外觀的 span，附帶純裝飾說明。
+
+Challenge Me 在現有劇本中隨機抽題，避開同次造訪剛玩的事件；不是隨機生成故事。任務使用頁面內單一深色視窗，不是多層 modal，保留正常鍵盤與頁面導覽。exit() 直接返回列表，不保存未完成選擇、不攔截 Ctrl+C。決策後仍呈現行動後果，但不呈現分數或依最佳答案變色；結束後才顯示成績與逐題復盤。
+
+Dashboard 以去重分類自動產生總覽／類型卡，顯示已完成的獨立事件數／總數，另列通關數；點卡片篩選 Choose Your Case。Learn More 說明虛構教學來源與目前功能，未來 AI／情資構想標為未提供；FAQ 使用原生 details。
+
+v2 修改集中於 BlogSidebar.tsx、HackerSpace.tsx 及其 CSS Module。入口與任務永遠採深色，Dashboard 沿用全站主題。tests/hacker-space.browser.cjs 已更新為 v2 流程，仍使用本機 3107、隔離 Chrome 與既有 PLAYWRIGHT_MODULE 路徑設定；測試前需停用正式 KV。
