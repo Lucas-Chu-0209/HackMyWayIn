@@ -245,7 +245,7 @@ export default async function BlogSidebar({
                   sizes="(max-width: 1023px) 100vw, 320px"
                   className="-z-20 object-cover transition-transform duration-300 motion-safe:group-hover:scale-105 motion-reduce:transition-none"
                 />
-                <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/95 via-black/70 to-black/35" />
+                <span aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-t from-black/95 via-black/70 to-black/35" />
                 <span className="text-[11px] text-zinc-200">{post.category}</span>
                 <h3 className="mt-2 text-sm font-semibold text-white">{post.title}</h3>
                 <time dateTime={post.date} className="mt-1 text-xs text-zinc-200">{post.date}</time>

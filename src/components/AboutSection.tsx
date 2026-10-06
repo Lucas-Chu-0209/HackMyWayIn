@@ -1,4 +1,4 @@
-import { bio, skills, education, experience } from "@/content";
+import { bio, skills, education, experience, eventsAndActivities } from "@/content";
 import SectionHeader from "./SectionHeader";
 import SkillChip from "./SkillChip";
 import TimelineItem from "./TimelineItem";
@@ -71,6 +71,21 @@ export default function AboutSection() {
                   title={exp.title}
                   organization={exp.organization}
                   bullets={exp.bullets}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Events & Activities */}
+          <div className="grid md:grid-cols-[120px_1fr] gap-4 md:gap-8">
+            <h3 className="text-sm font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Events &amp; Activities</h3>
+            <div>
+              {eventsAndActivities.map((event) => (
+                <TimelineItem
+                  key={`${event.period}-${event.title}`}
+                  period={event.period}
+                  title={event.title}
+                  organization={event.organization}
                 />
               ))}
             </div>
