@@ -64,11 +64,6 @@ export const eventsAndActivities = [
     organization: "高階決策者的 AI 資安戰略—金融監管視角下的 AI 治理與實戰防禦",
   },
   {
-    period: "2026/09",
-    title: "Holmes CTF 2026: The Reichenbach Directive",
-    organization: "Hack The Box",
-  },
-  {
     period: "2026/05",
     title: "2026 CYBERSEC 臺灣資安大會",
     organization: "",
@@ -86,7 +81,7 @@ export const eventsAndActivities = [
   {
     period: "2025/04",
     title: "2025 資通安全概論",
-    organization: "劉得民主講—臺大計算機及資訊網路中心資訊網路組承辦",
+    organization: "劉得民—臺大計算機及資訊網路中心資訊網路組承辦",
   },
   {
     period: "2024/05",
