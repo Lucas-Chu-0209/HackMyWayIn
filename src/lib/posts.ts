@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { cache, createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 
@@ -254,7 +256,8 @@ export const getAllPosts = cache(async function getAllPosts(): Promise<PostSumma
         options: {
           parseFrontmatter: true,
           mdxOptions: {
-            remarkPlugins: [remarkGfm],
+            remarkPlugins: [remarkGfm, remarkMath],
+            rehypePlugins: [[rehypeKatex, { trust: false }]],
           },
         },
       });
@@ -293,7 +296,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       options: {
         parseFrontmatter: true,
         mdxOptions: {
-          remarkPlugins: [remarkGfm],
+          remarkPlugins: [remarkGfm, remarkMath],
+          rehypePlugins: [[rehypeKatex, { trust: false }]],
         },
       },
       components: {

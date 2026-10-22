@@ -83,3 +83,8 @@ Challenge Me 在現有劇本中隨機抽題，避開同次造訪剛玩的事件�
 Dashboard 以去重分類自動產生總覽／類型卡，顯示已完成的獨立事件數／總數，另列通關數；點卡片篩選 Choose Your Case。Learn More 說明虛構教學來源與目前功能，未來 AI／情資構想標為未提供；FAQ 使用原生 details。
 
 v2 修改集中於 BlogSidebar.tsx、HackerSpace.tsx 及其 CSS Module。入口與任務永遠採深色，Dashboard 沿用全站主題。tests/hacker-space.browser.cjs 已更新為 v2 流程，仍使用本機 3107、隔離 Chrome 與既有 PLAYWRIGHT_MODULE 路徑設定；測試前需停用正式 KV。
+
+
+## MDX 數學公式支援
+
+文章摘要及詳情兩處 compileMDX 都使用 remark-gfm、remark-math 與 rehype-katex（trust: false）。支援 `$...$` 行內公式與獨立行 `$$` 區塊公式；KaTeX CSS 及字型由本機套件提供，長公式在 prose 範圍內可水平捲動。文章仍須提供單一 `category` 欄位，檔案讀取仍限於 posts/ 第一層，尚未實作分類子資料夾。
