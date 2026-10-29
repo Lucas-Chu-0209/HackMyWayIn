@@ -781,8 +781,6 @@ $$
 
 ### Misconception 1：程式碼越短，執行效率越高
 
-錯誤。
-
 程式碼長度不等於執行成本。
 
 ```python
@@ -793,23 +791,17 @@ target in values
 
 ### Misconception 2：O(1) 代表執行時間永遠相同
 
-錯誤。
-
 O(1) 代表漸近成本具有常數上界，不代表真實執行時間完全固定。
 
 硬體快取、記憶體配置與執行環境仍可能造成差異。
 
 ### Misconception 3：Big-O 只用來分析 Worst Case
 
-不完全正確。
-
-Big-O 是漸近上界記號，可以描述 Worst-case、Average-case、Expected 或 Amortized 成本函數。
+不完全正確！Big-O 是漸近上界記號，可以描述 Worst-case、Average-case、Expected 或 Amortized 成本函數。
 
 分析時必須明確指出所討論的成本模型與情境。
 
 ### Misconception 4：所有資料結構都有固定的最佳實作方式
-
-錯誤。
 
 相同 ADT 可以透過不同資料結構實作。
 
@@ -821,13 +813,11 @@ Big-O 是漸近上界記號，可以描述 Worst-case、Average-case、Expected 
 
 來實作。
 
-不同實作方式可能具有不同的操作成本與記憶體需求。
+不同實作方式可能具有不同的操作成本與記憶體需求！
 
 ### Misconception 5：時間複雜度比較低的演算法一定比較快
 
-不一定。
-
-當 n 很小時，常數因素可能主導實際執行時間。
+不一定。當 n 很小時，常數因素可能主導實際執行時間。所以還是需要根據當下情境去判斷！
 
 例如：
 
